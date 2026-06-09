@@ -1,0 +1,23 @@
+# Dependencies
+/vendor/
+/node_modules/
+
+# Build output (runtime-only zips are generated, never committed)
+/build/
+
+# Playwright auth state + artifacts
+/tests/e2e/.auth/
+/test-results/
+/playwright-report/
+
+# Lockfiles (regenerated; uncomment to pin if you prefer)
+composer.lock
+package-lock.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+.idea/
+.vscode/

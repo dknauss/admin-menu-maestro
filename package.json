@@ -1,0 +1,19 @@
+{
+	"name": "amx-inline-menu-editor",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Tooling for Admin Menu Customizer: wp-env, PHP integration tests, Playwright E2E.",
+	"scripts": {
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop",
+		"env:clean": "wp-env clean all",
+		"test:php": "wp-scripts test-unit-php --config phpunit-integration.xml.dist",
+		"test:e2e": "playwright test",
+		"test:e2e:headed": "playwright test --headed"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.45.0",
+		"@wordpress/env": "^10.6.0",
+		"@wordpress/scripts": "^30.5.0"
+	}
+}
