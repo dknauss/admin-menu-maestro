@@ -40,8 +40,11 @@ test.describe( 'Inline Admin Menu Editor — editor', () => {
 	test( 'rename persists across reload, then reset restores the default', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?amx_edit=1' );
 
-		// Click Posts to select it; the shared panel opens.
-		await page.locator( '#menu-posts' ).click();
+		// Click the top-level Posts link specifically. The submenu is force-
+		// expanded while editing, so #menu-posts is a tall <li>; clicking its
+		// geometric center would land on a submenu child. Target the menu-top
+		// anchor to select the top-level item unambiguously.
+		await page.locator( '#menu-posts > a.menu-top' ).click();
 		const panel = page.locator( '.amx-toolbar .amx-panel' );
 		await expect( panel ).toBeVisible();
 
@@ -70,10 +73,12 @@ test.describe( 'Inline Admin Menu Editor — editor', () => {
 	test( 'icon pick persists across reload and the autosave carries it', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?amx_edit=1' );
 
-		// Select Posts, open the icon picker from the shared panel.
-		await page.locator( '#menu-posts' ).click();
+		// Select the top-level Posts item (see note in the rename test about why
+		// the menu-top anchor is targeted rather than the whole <li>).
+		await page.locator( '#menu-posts > a.menu-top' ).click();
 		const panel = page.locator( '.amx-toolbar .amx-panel' );
 		await expect( panel ).toBeVisible();
+		// The icon picker is top-level only, so it must be visible here.
 		await panel.locator( '.amx-icon-btn' ).click();
 
 		const picker = page.locator( '.amx-icon-popover' );
