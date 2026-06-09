@@ -37,6 +37,26 @@ test.describe( 'Inline Admin Menu Editor — editor', () => {
 		await expect( page.locator( '#adminmenu .amx-controls' ) ).toHaveCount( 0 );
 	} );
 
+	test( 'folded mode is neutralized — editor stays expanded and selectable', async ( { page } ) => {
+		// Between 783px and 960px WordPress auto-folds the menu to icons and
+		// common.js adds body.folded. The editor must force it back open.
+		await page.setViewportSize( { width: 900, height: 800 } );
+		await page.goto( '/wp-admin/index.php?amx_edit=1' );
+
+		const body = page.locator( 'body' );
+		await expect( body ).toHaveClass( /amx-editing/ );
+		// forceUnfold() + the MutationObserver strip these even if common.js
+		// reapplies them; the web-first assertion retries through that.
+		await expect( body ).not.toHaveClass( /\bfolded\b/ );
+
+		// The menu is at expanded width, and selection still works from a width
+		// that would otherwise be showing icon-only flyouts.
+		await expect( page.locator( '#adminmenu' ) ).toHaveCSS( 'width', '160px' );
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+		await expect( page.locator( '.amx-toolbar .amx-panel' ) ).toBeVisible();
+		await expect( page.locator( '.amx-toolbar .amx-panel .amx-icon-btn' ) ).toBeVisible();
+	} );
+
 	test( 'rename persists across reload, then reset restores the default', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?amx_edit=1' );
 
