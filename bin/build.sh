@@ -5,7 +5,7 @@
 #
 set -euo pipefail
 
-SLUG="amx-inline-menu-editor"
+SLUG="admin-menu-maestro"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT="$ROOT/build"
 STAGE="$OUT/$SLUG"

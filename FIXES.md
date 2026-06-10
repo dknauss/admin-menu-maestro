@@ -17,10 +17,10 @@ rename and icon persistence repros.
 not belong in an installed plugin).
 
 **Fix applied:**
-- Install artifact (`amx-inline-menu-editor.zip`) now contains **runtime only**:
+- Install artifact (`admin-menu-maestro.zip`) now contains **runtime only**:
   main file, `includes/`, `assets/`, `readme.txt`. Integrity-verified with
   `unzip -t`.
-- Dev repo is a **separate** archive (`amx-inline-menu-editor-dev.zip`).
+- Dev repo is a **separate** archive (`admin-menu-maestro-dev.zip`).
 - Build rule going forward: the install zip excludes everything dev-only.
 
 ## ✅ #2 — Slug collision with the real "Admin Menu Customizer"  (FIXED)
@@ -30,8 +30,9 @@ WordPress.org directory, so core's update check overwrote the local code with
 the .org plugin (the documented "plugin confusion" risk).
 
 **Fix applied:**
-- Renamed slug → `amx-inline-menu-editor`; display name → "Inline Admin Menu
-  Editor (AMX)"; text domain updated to match across all PHP.
+- Renamed slug → `admin-menu-maestro`; display name → "Admin Menu Maestro";
+  text domain updated to match across all PHP. (The interim `amx-*` prefix from
+  the original collision fix was later normalized away entirely.)
 - Added `Update URI: false` to the plugin header. Per WP 5.8+, any Update URI
   value other than the canonical w.org URL for the slug makes core skip updates
   entirely — this is the real protection. **Keep this header set** if the slug
@@ -48,11 +49,11 @@ the icon path under the new cadence: the old manual `doSave` did include the
 icon, but once autosave replaced the button, the icon-pick handler had to fire
 the same debounced save as rename/reorder/visibility.
 
-**Fix applied — debounced autosave, no Save button** (`assets/amx-edit.js`):
+**Fix applied — debounced autosave, no Save button** (`assets/admin-menu-maestro.js`):
 - `scheduleAutosave()` debounces ~500ms and coalesces rapid changes into one
   POST. Wired into `sortstop` (reorder), rename commit, **icon pick**,
   visibility toggle, and per-item reset.
-- Payload unchanged — full config (`POST /amx/v1/config`, full replace).
+- Payload unchanged — full config (`POST /admin-menu-maestro/v1/config`, full replace).
 - **No reload on autosave**; the live DOM preview already reflects the change.
   Exit flushes any pending save, then reloads to reconcile. "Reset all" reloads.
 - A subtle "Saving… / Saved ✓ / error" status indicator replaces the Save
@@ -72,8 +73,8 @@ buttons) into *every* item's `<a>` and force-expanded all submenus. In
 `body.folded` mode — 36px icon column with hover flyouts — the injected controls
 and the `display:block !important` submenu override broke the layout.
 
-**Fix applied — click-to-select with one shared panel** (`assets/amx-edit.js`,
-`assets/amx-edit.css`):
+**Fix applied — click-to-select with one shared panel** (`assets/admin-menu-maestro.js`,
+`assets/admin-menu-maestro.css`):
 1. **Folded mode neutralized.** `forceUnfold()` strips `body.folded` /
    `body.auto-fold` on init; a `MutationObserver` re-strips them if `common.js`
    writes them back; the collapse button click is intercepted in the capture
@@ -81,14 +82,14 @@ and the `display:block !important` submenu override broke the layout.
    pins the column to 160px even if the class flickers in for a frame.
 2. **One shared panel.** Per item, only a drag handle (revealed on row
    hover/focus) and a selection target. Clicking an item selects it (navigation
-   suppressed) and applies a `.amx-selected` highlight; exactly one at a time.
+   suppressed) and applies a `.amm-selected` highlight; exactly one at a time.
    The shared toolbar panel reflects the selection: rename field, icon picker
    (top-level only — hidden for submenu items), per-role visibility, and
    reset-this-item. Rename is now a single field bound once, dissolving the old
    double-bind smell.
 3. **No chrome until selection.** On entering edit mode the panel is `hidden`;
    the menu shows only the faint per-row drag affordance. E2E asserts the panel
-   is hidden and that `#adminmenu .amx-controls` count is 0.
+   is hidden and that `#adminmenu .amm-controls` count is 0.
 
 Acceptance: editor renders in both expanded and folded modes; no per-item
 clusters; the shared panel is empty/hidden until an item is selected. The
@@ -100,7 +101,7 @@ covers the gating, selection, and persistence flows.
 
 ## Resolved code smell
 
-The old `amx-edit.js` bound the rename click handler in **two** places —
+The old `admin-menu-maestro.js` bound the rename click handler in **two** places —
 `decorateTop`/`decorateSub` and `renderLabel`'s `{ once: true }` listener —
 risking double-binding. The selection redesign replaced this with a single
 rename `<input>` in the shared panel, bound once on build.

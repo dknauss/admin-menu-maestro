@@ -1,14 +1,14 @@
-# Inline Admin Menu Editor (AMX) — Plugin Specification
+# Admin Menu Maestro — Plugin Specification
 
 ## Overview
 
 A WordPress plugin that makes the admin menu editable **in place**: rename items, reorder them, swap top-level dashicons, and hide items per role. There is no separate settings screen — editing happens on the menu itself, toggled from the admin bar. Customizations are **global** (one configuration applies to everyone) and are stored as a sparse delta layered over the menu WordPress builds each request.
 
-**Plugin name:** Inline Admin Menu Editor (AMX)
-**Plugin slug:** `amx-inline-menu-editor`
-**Text domain:** `amx-inline-menu-editor`
-**PHP namespace:** `AMX`
-**Option key:** `amx_config` (single, autoload `false`)
+**Plugin name:** Admin Menu Maestro
+**Plugin slug:** `admin-menu-maestro`
+**Text domain:** `admin-menu-maestro`
+**PHP namespace:** `AdminMenuMaestro`
+**Option key:** `admin_menu_maestro` (single, autoload `false`)
 **Update URI:** `false` (opts out of WordPress.org update matching — prevents a similarly-named directory plugin from overwriting this code)
 **License:** GPL-2.0-or-later
 
@@ -34,14 +34,14 @@ A WordPress plugin that makes the admin menu editable **in place**: rename items
 
 | Class | File | Responsibility |
 |-------|------|----------------|
-| `Config` | `includes/class-amx-config.php` | Read/write/sanitize the single option. Owns the override schema and the reset. |
-| `Ordering` | `includes/class-amx-ordering.php` | Pure reorder logic (top-level + submenu) with the resilience contract. No WP calls — unit-testable. |
-| `Replay` | `includes/class-amx-replay.php` | On a late `admin_menu` pass, mutate the globals (rename/icon/visibility) and reorder submenus; expose the editor model + pristine snapshot. |
-| `Rest` | `includes/class-amx-rest.php` | `amx/v1/config` GET/POST/DELETE, capability-gated. |
-| `Admin_Bar` | `includes/class-amx-adminbar.php` | The edit-mode toggle node. |
-| `Assets` | `includes/class-amx-assets.php` | Enqueue + localize the editor, edit mode only. |
+| `Config` | `includes/class-config.php` | Read/write/sanitize the single option. Owns the override schema and the reset. |
+| `Ordering` | `includes/class-ordering.php` | Pure reorder logic (top-level + submenu) with the resilience contract. No WP calls — unit-testable. |
+| `Replay` | `includes/class-replay.php` | On a late `admin_menu` pass, mutate the globals (rename/icon/visibility) and reorder submenus; expose the editor model + pristine snapshot. |
+| `Rest` | `includes/class-rest.php` | `admin-menu-maestro/v1/config` GET/POST/DELETE, capability-gated. |
+| `Admin_Bar` | `includes/class-admin-bar.php` | The edit-mode toggle node. |
+| `Assets` | `includes/class-assets.php` | Enqueue + localize the editor, edit mode only. |
 
-Two free functions in the bootstrap: `AMX\capability()` (filterable via `amx_capability`) and `AMX\is_edit_mode()` (capability-gated `?amx_edit=1`).
+Two free functions in the bootstrap: `AdminMenuMaestro\capability()` (filterable via `admin_menu_maestro_capability`) and `AdminMenuMaestro\is_edit_mode()` (capability-gated `?amm_edit=1`).
 
 ### Request lifecycle
 
@@ -52,7 +52,7 @@ Two free functions in the bootstrap: `AMX\capability()` (filterable via `amx_cap
 5. `menu-header.php` renders the menu.
 6. The editor (browser) decorates the rendered menu and collects edits via a **click-to-select** model. Each change **autosaves** (debounced) by `POST`ing the full config to REST — no manual Save button, no reload per change. The menu is reloaded only on **Exit edit mode**, to reconcile the live preview against the server render.
 
-### Data model (`amx_config`)
+### Data model (`admin_menu_maestro`)
 
 ```php
 [
@@ -89,7 +89,7 @@ Both methods obey the same rules:
 
 Empty desired order ⇒ passthrough. These are pure functions (no WP dependency) and carry the densest unit coverage.
 
-### REST contract (`amx/v1/config`)
+### REST contract (`admin-menu-maestro/v1/config`)
 
 | Method | Body | Returns | Notes |
 |--------|------|---------|-------|
@@ -97,7 +97,7 @@ Empty desired order ⇒ passthrough. These are pure functions (no WP dependency)
 | `POST` | `{ config: {...} }` | `{ saved: true, config }` | **Full replace.** Sanitized server-side; returns the stored result. |
 | `DELETE` | — | `{ reset: true, config: {} }` | Deletes the option. |
 
-- **Auth:** `permission_callback` ⇒ `current_user_can( AMX\capability() )`. Cookie-auth nonce via `X-WP-Nonce` (`wp_create_nonce('wp_rest')`).
+- **Auth:** `permission_callback` ⇒ `current_user_can( AdminMenuMaestro\capability() )`. Cookie-auth nonce via `X-WP-Nonce` (`wp_create_nonce('wp_rest')`).
 - **Save semantics:** what you send is what gets stored (after sanitization). Predictable, no merge surprises.
 
 ### DOM-join contract (editor ↔ rendered menu)
@@ -127,7 +127,7 @@ This model supersedes the original always-visible per-item control clusters, whi
 
 ## Security
 
-- **Capability gate everywhere.** Admin-bar node, edit-mode flag, asset enqueue, and every REST method check `AMX\capability()` (default `manage_options`, filterable).
+- **Capability gate everywhere.** Admin-bar node, edit-mode flag, asset enqueue, and every REST method check `AdminMenuMaestro\capability()` (default `manage_options`, filterable).
 - **Nonce on writes.** REST writes require the `wp_rest` cookie-auth nonce.
 - **Server-side sanitization is authoritative.** `Config::sanitize()`:
   - titles ⇒ `sanitize_text_field` (markup stripped);
@@ -163,7 +163,7 @@ Coverage targets the seams most likely to break: the pure ordering logic (unit),
 ## Edge Cases & Known Limits
 
 - **Rename drops count badges.** Core injects badge markup (pending comments, plugin updates) *inside* the title string, so a renamed item loses its badge. Inherent to renaming; documented, not patched.
-- **Separators are preserved, not editable.** Their generated slugs (`separator1`…) have no stable identity to key against. Sorting restricts itself to `li.menu-top.amx-item`, leaving separators in place.
+- **Separators are preserved, not editable.** Their generated slugs (`separator1`…) have no stable identity to key against. Sorting restricts itself to `li.menu-top.amm-item`, leaving separators in place.
 - **Late submenu registration.** Items registered on an unusually late hook (after `admin_menu` `PHP_INT_MAX`) may escape capture. Acceptable for v1; documented.
 - **Custom top-level icons** accept all four native WordPress forms (dashicon / `none` / base64 image data-URI / image URL). Bundled data-URI icons (e.g. Bootstrap Icons) are baked to a fixed grey and so do **not** recolour on hover/active the way dashicon fonts do — a known cosmetic limitation of background-image icons. Arbitrary user-uploaded/pasted SVG (which would need deep markup sanitisation for inline rendering) remains out of scope.
 
@@ -188,7 +188,7 @@ Coverage targets the seams most likely to break: the pure ordering logic (unit),
 - **Why `menu_order` filter for top-level but direct mutation for submenu?** Top-level ordering has a dedicated, stable core API; submenu ordering does not, so we rebuild `$submenu[$parent]` directly (menu-header.php `array_values()` flattens our sequence at render).
 - **Why localize a model instead of scraping the DOM?** The `<li>` id join is deterministic and version-stable; href-scraping is fragile against absolute URLs and query-arg slugs.
 - **Why the admin bar for the toggle?** A toggle that lives inside the menu it rearranges (and can hide) is self-undermining. The admin bar is always present and orthogonal to the edited surface.
-- **Why stateless `?amx_edit=1`?** No persisted edit state to leak, expire, or clean up; capability-gated so the flag alone is inert.
+- **Why stateless `?amm_edit=1`?** No persisted edit state to leak, expire, or clean up; capability-gated so the flag alone is inert.
 - **Why extract `Ordering`?** The resilience rules are the highest-risk logic and were entangled with WP globals. Pulled into a pure class, they become fast, dependency-free unit tests.
 - **Why cosmetic-only visibility?** Authorization is a separate concern with a separate, mature toolset. Bundling half-enforcement manufactures false security — the worst failure mode in access control.
 - **Why autosave instead of a Save button?** The in-place ethos wants changes to stick without ceremony; a manual Save is one more failure point (and was implicated in early "changes don't persist" reports). Debounced autosave with a status indicator, reloading only on Exit, keeps the toolbar light and nothing is lost. "Reset all" is the escape hatch for regret.

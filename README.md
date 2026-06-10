@@ -1,4 +1,4 @@
-# Inline Admin Menu Editor (AMX)
+# Admin Menu Maestro
 
 In-place editing of the WordPress admin menu — rename items, reorder them, swap top-level icons, and hide items per role. Global configuration, no separate settings screen: the editor is toggled from the admin bar and operates on the menu itself.
 
@@ -15,11 +15,11 @@ See `FIXES.md` for the resolved punchlist and `SPEC.md` for the durable design.
 
 ## Important: visibility is cosmetic, not access control
 
-Hiding a menu item only declutters the menu — the underlying page still loads for anyone who knows its URL, because a page's own registered capability is the real lock. For actual access control, pair this with a capability manager (User Role Editor, or PublishPress Capabilities). The `amx_capability` filter lets such a plugin hand editing rights to a custom capability instead of the default `manage_options`.
+Hiding a menu item only declutters the menu — the underlying page still loads for anyone who knows its URL, because a page's own registered capability is the real lock. For actual access control, pair this with a capability manager (User Role Editor, or PublishPress Capabilities). The `admin_menu_maestro_capability` filter lets such a plugin hand editing rights to a custom capability instead of the default `manage_options`.
 
 ## Repository layout
 
-- **Runtime plugin** — `amx-inline-menu-editor.php`, `includes/`, `assets/`, `readme.txt`. This is all that ships to a site.
+- **Runtime plugin** — `admin-menu-maestro.php`, `includes/`, `assets/`, `readme.txt`. This is all that ships to a site.
 - **Dev & tooling** — `tests/`, `composer.json`, `package.json`, `.wp-env.json`, `playwright.config.ts`, `phpunit-*.xml.dist`, `bin/build.sh`.
 - **Docs** — `SPEC.md` (durable specification), `FIXES.md` (active punchlist), `TESTING.md` (how to run each test layer).
 
@@ -28,7 +28,7 @@ Hiding a menu item only declutters the menu — the underlying page still loads 
 Build a runtime-only zip and upload it under Plugins → Add New → Upload:
 
 ```bash
-bin/build.sh        # writes build/amx-inline-menu-editor.zip (runtime files only)
+bin/build.sh        # writes build/admin-menu-maestro.zip (runtime files only)
 ```
 
 Activate it; **Edit Menu** appears in the admin bar. Never ship the dev tooling inside the installed plugin.

@@ -1,4 +1,4 @@
-=== Inline Admin Menu Editor (AMX) ===
+=== Admin Menu Maestro ===
 Contributors: danknauss
 Tags: admin, menu, icons, roles, customize
 Requires at least: 6.4
@@ -42,18 +42,18 @@ If you need to actually *prevent* access, pair this with a capability manager:
 * **PublishPress Capabilities** — menu-aware; its Pro tier can block admin pages
   by URL.
 
-The `amx_capability` filter lets such a plugin hand editing rights to a custom
+The `admin_menu_maestro_capability` filter lets such a plugin hand editing rights to a custom
 capability instead of the default `manage_options`.
 
 == Architecture (for developers) ==
 
-* `Config` — reads/writes/sanitizes a single option (`amx_config`) holding only
+* `Config` — reads/writes/sanitizes a single option (`admin_menu_maestro`) holding only
   the deltas. Reset = delete the option; the natural menu returns automatically.
 * `Replay` — on a late `admin_menu` pass, applies rename/icon/visibility to the
   `$menu`/`$submenu` globals and reorders submenus. Top-level order uses the
   core `custom_menu_order` + `menu_order` filters. Resilient to missing slugs
   (orphans are skipped) and new items (appended at the end).
-* `Rest` — `amx/v1/config` (GET/POST/DELETE), capability-gated, `X-WP-Nonce`.
+* `Rest` — `admin-menu-maestro/v1/config` (GET/POST/DELETE), capability-gated, `X-WP-Nonce`.
 * The editor JS is driven by a localized model (with DOM ids), not DOM scraping,
   and diffs against captured pristine defaults so the stored config stays sparse.
 
