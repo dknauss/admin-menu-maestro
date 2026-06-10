@@ -1,15 +1,15 @@
 # Inline Admin Menu Editor (AMX)
 
-In-place editing of the WordPress admin menu — rename items, reorder them, swap top-level dashicons, and hide items per role. Global configuration, no separate settings screen: the editor is toggled from the admin bar and operates on the menu itself.
+In-place editing of the WordPress admin menu — rename items, reorder them, swap top-level icons, and hide items per role. Global configuration, no separate settings screen: the editor is toggled from the admin bar and operates on the menu itself.
 
 ## Status
 
-v1 complete. The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 23/23, integration 13/13, E2E 4/4 against wp-env). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
+v1 complete. The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44/44, integration 15/15, E2E 6/6 against wp-env). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
 
-- **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved ✓" status indicator instead. Reload only on Exit (which flushes any pending save) and on Reset all.
+- **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved ✓" status indicator instead. Saves are serialized (single-flight) so a slow request can't overwrite newer edits. Reload only on Exit (which flushes any pending save) and on Reset all.
 - **Click-to-select with one shared controls panel.** No edit chrome until an item is selected: each row shows only a hover/focus-revealed drag handle. Selecting an item opens the shared panel (rename, icon picker for top-level items, per-role visibility, reset-this-item).
 - **Stable expanded menu while editing.** Folded/auto-fold mode is neutralized on entry and re-stripped if `common.js` reapplies it, so editing always happens against the expanded menu.
-- **Icon persistence** is wired into autosave and covered by an E2E test (pick → POST carries the icon → survives reload).
+- **Icons: all four native WordPress forms** (dashicon, `none`, base64 image data-URI, image URL), validated server-side. The picker bundles two sets — dashicons and ~87 curated [Bootstrap Icons](https://icons.getbootstrap.com/) — with a search filter and a "No icon" option, and is keyboard-accessible (dialog/tablist roles, arrow-key navigation, focus trap) and mobile-sized. Icon changes persist via autosave (covered by E2E: pick → POST carries the icon → survives reload).
 
 See `FIXES.md` for the resolved punchlist and `SPEC.md` for the durable design.
 

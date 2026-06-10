@@ -60,6 +60,7 @@ Two free functions in the bootstrap: `AMX\capability()` (filterable via `amx_cap
     '<slug>' => [
       'title'        => 'Custom Title',         // optional; top-level or submenu
       'icon'         => 'dashicons-foo',         // optional; TOP-LEVEL ONLY (index 6)
+                                                 //   any of the four native forms (see below)
       'hidden_roles' => [ 'author', 'editor' ],  // optional; roles that do NOT see it
     ],
   ],
@@ -70,6 +71,12 @@ Two free functions in the bootstrap: `AMX\capability()` (filterable via `amx_cap
 
 - **Identity = `menu_slug`** (the `$menu`/`$submenu` index `2`). Slugs may be query-arg URLs (`edit.php?post_type=page`); they are treated as opaque strings, never parsed.
 - The stored config is always a **diff against pristine** — the editor only writes keys that differ from the captured defaults, so untouched items continue to reflect upstream changes (e.g. a plugin renaming its own item).
+- **Icon accepts all four native WordPress menu-icon forms** (the values `add_menu_page()` allows at index `6`), validated by `Config::icon_form()`:
+  1. a `dashicons-*` class;
+  2. the literal `none` (blank, styled via CSS);
+  3. a base64 image **data-URI** (`data:image/{svg+xml|png|gif|jpeg|webp};base64,…`);
+  4. an image **URL** (http(s), protocol-relative, or root-relative).
+  Anything else is rejected to `''`. The picker bundles two sets — the dashicons font and ~87 curated **Bootstrap Icons** (MIT) baked to data-URIs — but the validator, not the picker, is the authority on what may be saved.
 
 ### Ordering contract (`Ordering::top` / `::submenu`)
 
@@ -124,7 +131,7 @@ This model supersedes the original always-visible per-item control clusters, whi
 - **Nonce on writes.** REST writes require the `wp_rest` cookie-auth nonce.
 - **Server-side sanitization is authoritative.** `Config::sanitize()`:
   - titles ⇒ `sanitize_text_field` (markup stripped);
-  - icons ⇒ rejected unless they match `^dashicons-[a-z0-9\-]+$`;
+  - icons ⇒ classified by `Config::icon_form()` into one of the four native forms (dashicon / `none` / base64 image data-URI / http(s)·protocol-relative·root-relative URL) and sanitised per form (`sanitize_html_class`, passthrough, format-validated, `esc_url_raw`); anything else is dropped. Data-URIs render as CSS `background-image` (a non-executing context), so embedded SVG markup cannot run script; URL/whitespace/quote/angle break-out is rejected before `esc_url_raw`;
   - `hidden_roles` ⇒ intersected against live `wp_roles()` (unknown roles dropped);
   - slugs ⇒ tags stripped, but `? = . /` preserved (legitimate in core slugs), so **never** `sanitize_key` on a slug.
 - **No privilege escalation surface.** The plugin cannot grant capabilities or change what any role *can do*; it only reshapes the menu. Hiding is cosmetic by design (see Principle 3).
@@ -158,7 +165,7 @@ Coverage targets the seams most likely to break: the pure ordering logic (unit),
 - **Rename drops count badges.** Core injects badge markup (pending comments, plugin updates) *inside* the title string, so a renamed item loses its badge. Inherent to renaming; documented, not patched.
 - **Separators are preserved, not editable.** Their generated slugs (`separator1`…) have no stable identity to key against. Sorting restricts itself to `li.menu-top.amx-item`, leaving separators in place.
 - **Late submenu registration.** Items registered on an unusually late hook (after `admin_menu` `PHP_INT_MAX`) may escape capture. Acceptable for v1; documented.
-- **Custom (non-dashicon) top-level icons** (SVG/URL) are out of scope for v1; the validator accepts dashicons only.
+- **Custom top-level icons** accept all four native WordPress forms (dashicon / `none` / base64 image data-URI / image URL). Bundled data-URI icons (e.g. Bootstrap Icons) are baked to a fixed grey and so do **not** recolour on hover/active the way dashicon fonts do — a known cosmetic limitation of background-image icons. Arbitrary user-uploaded/pasted SVG (which would need deep markup sanitisation for inline rendering) remains out of scope.
 
 ---
 
@@ -168,7 +175,7 @@ Coverage targets the seams most likely to break: the pure ordering logic (unit),
 2. **Separator management.** Add/move/delete separators, with a synthetic stable id scheme to survive plugin churn.
 3. **Keyboard-accessible reordering.** Move-up/move-down controls and/or ARIA grab semantics, removing the mouse-only dependency.
 4. **Per-item reset in the UI surfaced as an explicit affordance** with a visible "modified" indicator diffing against pristine.
-5. **Custom icon support.** Dashicons picker plus URL/SVG and `none`, with appropriate sanitization.
+5. ~~**Custom icon support.** Dashicons picker plus URL/SVG and `none`, with appropriate sanitization.~~ **Done** — the validator accepts all four native forms and the picker bundles dashicons + Bootstrap Icons. Remaining: media-library/URL input in the UI, arbitrary SVG upload with deep sanitisation, and a `mask-image` path so bundled SVGs recolour with the admin scheme.
 6. **Import/export config** as JSON for staging→production parity and version control.
 7. **Optional enforcement bridge.** Not built-in access control, but a documented, opt-in handoff that sets a hidden item's required capability *in concert with* a capability manager — clearly labelled as defense-in-depth, never as the primary lock.
 8. **Multisite / network-level defaults** with per-site override.
