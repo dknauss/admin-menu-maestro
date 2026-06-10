@@ -1,19 +1,20 @@
 <?php
 /**
- * Integration tests for the amx/v1/config REST routes: capability gating, the
- * save round-trip (including sanitization), and reset. Runs under WP_UnitTestCase.
+ * Integration tests for the admin-menu-maestro/v1/config REST routes: capability
+ * gating, the save round-trip (including sanitization), and reset. Runs under
+ * WP_UnitTestCase.
  *
- * @package AdminMenuCustomizer
+ * @package AdminMenuMaestro
  */
 
-namespace AMX\Tests\Integration;
+namespace AdminMenuMaestro\Tests\Integration;
 
 use WP_REST_Request;
 use WP_UnitTestCase;
 
 class RestConfigTest extends WP_UnitTestCase {
 
-	const ROUTE = '/amx/v1/config';
+	const ROUTE = '/admin-menu-maestro/v1/config';
 
 	/**
 	 * @var \WP_REST_Server
@@ -26,7 +27,7 @@ class RestConfigTest extends WP_UnitTestCase {
 		$wp_rest_server = new \WP_REST_Server();
 		$this->server  = $wp_rest_server;
 		do_action( 'rest_api_init' );
-		delete_option( 'amx_config' );
+		delete_option( 'admin_menu_maestro' );
 	}
 
 	public function tear_down() {
@@ -151,12 +152,12 @@ class RestConfigTest extends WP_UnitTestCase {
 
 	public function test_reset_clears_config() {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
-		update_option( 'amx_config', array( 'items' => array( 'edit.php' => array( 'title' => 'X' ) ) ) );
+		update_option( 'admin_menu_maestro', array( 'items' => array( 'edit.php' => array( 'title' => 'X' ) ) ) );
 
 		$res = $this->server->dispatch( new WP_REST_Request( 'DELETE', self::ROUTE ) );
 
 		$this->assertSame( 200, $res->get_status() );
 		$this->assertTrue( $res->get_data()['reset'] );
-		$this->assertFalse( get_option( 'amx_config' ) );
+		$this->assertFalse( get_option( 'admin_menu_maestro' ) );
 	}
 }

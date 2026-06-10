@@ -1,14 +1,14 @@
 <?php
 /**
- * Pure unit tests for AMX\Ordering. No WordPress, no database — just the
+ * Pure unit tests for AdminMenuMaestro\Ordering. No WordPress, no database — just the
  * resilience contract. Mirrors the cases validated during development.
  *
- * @package AdminMenuCustomizer
+ * @package AdminMenuMaestro
  */
 
-namespace AMX\Tests\Unit;
+namespace AdminMenuMaestro\Tests\Unit;
 
-use AMX\Ordering;
+use AdminMenuMaestro\Ordering;
 use Yoast\PHPUnitPolyfills\TestCases\TestCase;
 
 class OrderingTest extends TestCase {
