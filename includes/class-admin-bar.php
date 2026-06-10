@@ -13,8 +13,16 @@ namespace AdminMenuMaestro;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Registers the edit-mode toggle node in the WordPress admin bar.
+ *
+ * @package AdminMenuMaestro
+ */
 class Admin_Bar {
 
+	/**
+	 * Register the admin-bar hook.
+	 */
 	public function __construct() {
 		add_action( 'admin_bar_menu', array( $this, 'node' ), 100 );
 	}

@@ -19,6 +19,11 @@ namespace AdminMenuMaestro;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Pure menu ordering utilities — no WordPress calls, purely array manipulation.
+ *
+ * @package AdminMenuMaestro
+ */
 class Ordering {
 
 	/**
@@ -56,7 +61,7 @@ class Ordering {
 	 * Reorder a $submenu[$parent] array of rows by a list of desired slugs.
 	 * Rows are WordPress submenu arrays where index 2 is the slug.
 	 *
-	 * @param array[] $children Original child rows.
+	 * @param array[]  $children Original child rows.
 	 * @param string[] $desired Desired slug order.
 	 * @return array[]
 	 */

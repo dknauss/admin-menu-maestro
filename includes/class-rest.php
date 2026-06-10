@@ -18,16 +18,25 @@ namespace AdminMenuMaestro;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * REST controller — exposes GET / POST / DELETE for the menu config.
+ *
+ * @package AdminMenuMaestro
+ */
 class Rest {
 
 	const NS = 'admin-menu-maestro/v1';
 
 	/**
+	 * Shared config instance.
+	 *
 	 * @var Config
 	 */
 	private $config;
 
 	/**
+	 * Store config and register the REST-init hook.
+	 *
 	 * @param Config $config Shared config instance.
 	 */
 	public function __construct( Config $config ) {
@@ -71,7 +80,7 @@ class Rest {
 	}
 
 	/**
-	 * Capability gate for every method.
+	 * Permission callback: returns true only if the current user can edit the menu.
 	 *
 	 * @return bool
 	 */
@@ -80,6 +89,8 @@ class Rest {
 	}
 
 	/**
+	 * Return the current stored config.
+	 *
 	 * @return \WP_REST_Response
 	 */
 	public function get_config() {

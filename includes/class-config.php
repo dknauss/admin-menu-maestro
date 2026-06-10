@@ -27,6 +27,11 @@ namespace AdminMenuMaestro;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Storage and sanitisation layer for the sparse menu-override config.
+ *
+ * @package AdminMenuMaestro
+ */
 class Config {
 
 	/**
