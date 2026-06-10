@@ -10,12 +10,6 @@
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       admin-menu-maestro
- * Update URI:        false
- *
- * The unique slug + "Update URI: false" together prevent a similarly-named
- * plugin in the WordPress.org directory from silently overwriting this local
- * code on update (the "plugin confusion" risk). Do not change the slug to a
- * generic term without keeping Update URI set.
  *
  * @package AdminMenuMaestro
  */

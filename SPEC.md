@@ -9,7 +9,7 @@ A WordPress plugin that makes the admin menu editable **in place**: rename items
 **Text domain:** `admin-menu-maestro`
 **PHP namespace:** `AdminMenuMaestro`
 **Option key:** `admin_menu_maestro` (single, autoload `false`)
-**Update URI:** `false` (opts out of WordPress.org update matching — prevents a similarly-named directory plugin from overwriting this code)
+**Update URI:** omitted (the unique `admin-menu-maestro` .org slug is the collision protection; Plugin Check disallows the header for .org-hosted plugins. Re-add `Update URI: false` only when distributing off-.org under a non-unique slug.)
 **License:** GPL-2.0-or-later
 
 ---
@@ -193,7 +193,7 @@ Coverage targets the seams most likely to break: the pure ordering logic (unit),
 - **Why cosmetic-only visibility?** Authorization is a separate concern with a separate, mature toolset. Bundling half-enforcement manufactures false security — the worst failure mode in access control.
 - **Why autosave instead of a Save button?** The in-place ethos wants changes to stick without ceremony; a manual Save is one more failure point (and was implicated in early "changes don't persist" reports). Debounced autosave with a status indicator, reloading only on Exit, keeps the toolbar light and nothing is lost. "Reset all" is the escape hatch for regret.
 - **Why click-to-select with one shared panel, not per-item controls?** Always-visible per-item button clusters were too heavy and broke against WordPress's own menu CSS in folded mode. A selection model keeps per-item DOM to a handle plus a highlight, moving all controls into a single panel — far less to fight, and it also dissolves an earlier double-bound rename-handler smell.
-- **Why rename the slug and set `Update URI: false`?** The original slug `admin-menu-customizer` collided with a WordPress.org plugin, so core's update check overwrote the local code (the "plugin confusion" risk). A unique slug plus `Update URI: false` makes core skip .org update matching entirely.
+- **Why rename the slug (and why no `Update URI`)?** The original slug `admin-menu-customizer` collided with a WordPress.org plugin, so core's update check overwrote the local code (the "plugin confusion" risk). The durable fix is a **unique slug** (`admin-menu-maestro`, verified free on .org). An interim `Update URI: false` header was used as extra insurance, but it is **disallowed by Plugin Check for .org-hosted plugins** and unnecessary once the plugin owns its slug, so it was removed for submission. Re-add it only for off-.org distribution under a non-unique slug.
 
 ---
 

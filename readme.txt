@@ -2,14 +2,13 @@
 Contributors: danknauss
 Tags: admin, menu, icons, roles, customize
 Requires at least: 6.4
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-In-place editing of the WordPress admin menu: rename, reorder, swap top-level
-icons, and hide items per role. Global config, no separate settings screen.
+In-place editing of the WordPress admin menu: rename, reorder, swap icons, and hide items per role — edited on the menu itself.
 
 == Description ==
 

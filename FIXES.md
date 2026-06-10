@@ -33,10 +33,12 @@ the .org plugin (the documented "plugin confusion" risk).
 - Renamed slug → `admin-menu-maestro`; display name → "Admin Menu Maestro";
   text domain updated to match across all PHP. (The interim `amx-*` prefix from
   the original collision fix was later normalized away entirely.)
-- Added `Update URI: false` to the plugin header. Per WP 5.8+, any Update URI
-  value other than the canonical w.org URL for the slug makes core skip updates
-  entirely — this is the real protection. **Keep this header set** if the slug
-  is ever changed to something more generic.
+- Originally added `Update URI: false` as belt-and-suspenders against the
+  collision. **Removed for the WordPress.org submission**: Plugin Check disallows
+  the header for .org-hosted plugins, and once the plugin owns its unique
+  `admin-menu-maestro` slug on .org there is no collision to guard against (core
+  pulls updates for that slug from .org, i.e. from this plugin). If ever
+  distributed off-.org under a non-unique slug, re-add `Update URI: false`.
 
 ---
 
