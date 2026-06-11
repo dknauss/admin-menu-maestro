@@ -10,6 +10,9 @@
 /test-results/
 /playwright-report/
 
+# PHPUnit run cache
+.phpunit.result.cache
+
 # Lockfiles (regenerated; uncomment to pin if you prefer)
 composer.lock
 package-lock.json

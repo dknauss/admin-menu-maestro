@@ -12,16 +12,23 @@
  *   - Top-level order                          -> the proper core API:
  *     `custom_menu_order` + `menu_order`, which run just after admin_menu.
  *
- * @package AdminMenuCustomizer
+ * @package AdminMenuMaestro
  */
 
-namespace AMX;
+namespace AdminMenuMaestro;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Replay engine — applies stored menu overrides onto the WP menu globals each request.
+ *
+ * @package AdminMenuMaestro
+ */
 class Replay {
 
 	/**
+	 * Shared config instance.
+	 *
 	 * @var Config
 	 */
 	private $config;
@@ -38,6 +45,8 @@ class Replay {
 	);
 
 	/**
+	 * Store config and register admin_menu / menu_order hooks.
+	 *
 	 * @param Config $config Shared config instance.
 	 */
 	public function __construct( Config $config ) {
@@ -86,13 +95,13 @@ class Replay {
 				$ovr = $items[ $slug ];
 
 				if ( isset( $ovr['title'] ) ) {
-					$menu[ $pos ][0] = $ovr['title'];
+					$menu[ $pos ][0] = $ovr['title']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: mutating $menu via admin_menu hook is the documented WP API for menu customization.
 				}
 				if ( isset( $ovr['icon'] ) ) {
-					$menu[ $pos ][6] = $ovr['icon']; // index 6 is top-level only.
+					$menu[ $pos ][6] = $ovr['icon']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: mutating $menu via admin_menu hook is the documented WP API for menu customization. Index 6 is top-level only.
 				}
 				if ( $this->is_hidden_for_current_user( $ovr ) ) {
-					unset( $menu[ $pos ] ); // cosmetic removal; page still loads by URL.
+					unset( $menu[ $pos ] ); // Cosmetic removal; the page still loads by direct URL.
 				}
 			}
 		}
@@ -109,16 +118,17 @@ class Replay {
 					if ( isset( $items[ $slug ] ) ) {
 						$ovr = $items[ $slug ];
 						if ( isset( $ovr['title'] ) ) {
-							$submenu[ $parent ][ $pos ][0] = $ovr['title'];
+							$submenu[ $parent ][ $pos ][0] = $ovr['title']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: mutating $submenu via admin_menu hook is the documented WP API for submenu customization.
 						}
 						if ( $this->is_hidden_for_current_user( $ovr ) ) {
-							unset( $submenu[ $parent ][ $pos ] );
+							unset( $submenu[ $parent ][ $pos ] ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: unsetting $submenu entries via admin_menu hook is the documented WP API for hiding menu items.
 						}
 					}
 				}
 
 				// Reorder this parent's surviving children.
 				if ( ! empty( $cfg['sub_order'][ $parent ] ) ) {
+					// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: reordering $submenu entries via admin_menu hook is the documented WP API for submenu ordering.
 					$submenu[ $parent ] = Ordering::submenu(
 						$submenu[ $parent ],
 						$cfg['sub_order'][ $parent ]

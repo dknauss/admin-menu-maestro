@@ -2,7 +2,7 @@
 /**
  * REST controller for the menu config.
  *
- * Routes (namespace amx/v1):
+ * Routes (namespace admin-menu-maestro/v1):
  *   GET    /config  -> current stored config
  *   POST   /config  -> full-replace save (sanitized)
  *   DELETE /config  -> reset (delete the option)
@@ -11,23 +11,32 @@
  * (X-WP-Nonce header, value = wp_create_nonce('wp_rest')) is validated by core's
  * REST cookie auth layer when the request is same-origin from the admin JS.
  *
- * @package AdminMenuCustomizer
+ * @package AdminMenuMaestro
  */
 
-namespace AMX;
+namespace AdminMenuMaestro;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * REST controller — exposes GET / POST / DELETE for the menu config.
+ *
+ * @package AdminMenuMaestro
+ */
 class Rest {
 
-	const NS = 'amx/v1';
+	const NS = 'admin-menu-maestro/v1';
 
 	/**
+	 * Shared config instance.
+	 *
 	 * @var Config
 	 */
 	private $config;
 
 	/**
+	 * Store config and register the REST-init hook.
+	 *
 	 * @param Config $config Shared config instance.
 	 */
 	public function __construct( Config $config ) {
@@ -71,7 +80,7 @@ class Rest {
 	}
 
 	/**
-	 * Capability gate for every method.
+	 * Permission callback: returns true only if the current user can edit the menu.
 	 *
 	 * @return bool
 	 */
@@ -80,6 +89,8 @@ class Rest {
 	}
 
 	/**
+	 * Return the current stored config.
+	 *
 	 * @return \WP_REST_Response
 	 */
 	public function get_config() {
@@ -99,7 +110,7 @@ class Rest {
 	public function save_config( \WP_REST_Request $request ) {
 		$incoming = $request->get_param( 'config' );
 		if ( ! is_array( $incoming ) ) {
-			return new \WP_Error( 'amx_bad_payload', __( 'Invalid config payload.', 'amx-inline-menu-editor' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'amm_bad_payload', __( 'Invalid config payload.', 'admin-menu-maestro' ), array( 'status' => 400 ) );
 		}
 
 		$saved = $this->config->save( $incoming );

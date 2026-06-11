@@ -20,13 +20,18 @@
  *   'sub_order' => [ '<parent_slug>' => [ '<slug>', ... ] ],
  * ]
  *
- * @package AdminMenuCustomizer
+ * @package AdminMenuMaestro
  */
 
-namespace AMX;
+namespace AdminMenuMaestro;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Storage and sanitisation layer for the sparse menu-override config.
+ *
+ * @package AdminMenuMaestro
+ */
 class Config {
 
 	/**
@@ -43,7 +48,7 @@ class Config {
 	 */
 	public function get() {
 		if ( null === $this->cache ) {
-			$stored      = get_option( AMX_OPTION, array() );
+			$stored      = get_option( ADMIN_MENU_MAESTRO_OPTION, array() );
 			$this->cache = is_array( $stored ) ? $stored : array();
 		}
 		return $this->cache;
@@ -61,7 +66,7 @@ class Config {
 	 */
 	public function save( array $raw ) {
 		$clean = $this->sanitize( $raw );
-		update_option( AMX_OPTION, $clean, false );
+		update_option( ADMIN_MENU_MAESTRO_OPTION, $clean, false );
 		$this->cache = $clean;
 		return $clean;
 	}
@@ -72,7 +77,7 @@ class Config {
 	 * @return void
 	 */
 	public function reset() {
-		delete_option( AMX_OPTION );
+		delete_option( ADMIN_MENU_MAESTRO_OPTION );
 		$this->cache = array();
 	}
 
@@ -115,8 +120,11 @@ class Config {
 					$entry['title'] = sanitize_text_field( $item['title'] );
 				}
 
-				if ( ! empty( $item['icon'] ) && self::is_valid_icon( $item['icon'] ) ) {
-					$entry['icon'] = sanitize_html_class( $item['icon'] );
+				if ( isset( $item['icon'] ) ) {
+					$icon = self::sanitize_icon( $item['icon'] );
+					if ( '' !== $icon ) {
+						$entry['icon'] = $icon;
+					}
 				}
 
 				if ( ! empty( $item['hidden_roles'] ) && is_array( $item['hidden_roles'] ) ) {
@@ -164,15 +172,83 @@ class Config {
 	}
 
 	/**
-	 * v1 accepts dashicons only. The picker offers a curated set, but any
-	 * well-formed dashicons-* class is allowed for forward-compatibility.
+	 * The dashicon-only predicate. A well-formed lowercase dashicons-* class.
 	 *
-	 * Public + static so it is unit-testable in isolation (it is pure).
+	 * Public + static so it is unit-testable in isolation (it is pure). Kept as a
+	 * building block; the broader four-form contract lives in icon_form().
 	 *
 	 * @param string $icon Candidate icon class.
 	 * @return bool
 	 */
 	public static function is_valid_icon( $icon ) {
 		return (bool) preg_match( '/^dashicons-[a-z0-9\-]+$/', (string) $icon );
+	}
+
+	/**
+	 * Classify an icon candidate into one of WordPress's four native menu-icon
+	 * forms (the value that lands at $menu[*][6]), or '' if it doesn't safely
+	 * match any of them. This is the security allowlist — pure (preg only),
+	 * so it carries dense unit coverage and never trusts an unrecognised string.
+	 *
+	 *   - 'dashicon' : a dashicons-* class.
+	 *   - 'none'     : the literal "none" (blank icon, styled via CSS).
+	 *   - 'data'     : a base64 image data-URI (svg+xml / png / gif / jpeg / webp).
+	 *                  Rendered as a CSS background-image — a non-executing context,
+	 *                  so an SVG's internal markup cannot run script. Deep SVG
+	 *                  sanitisation is only needed if we ever inline it (roadmap).
+	 *   - 'url'      : an http(s), protocol-relative, or root-relative image URL.
+	 *                  Whitespace/quote/angle chars are rejected to forbid CSS or
+	 *                  attribute break-out before esc_url_raw() ever runs.
+	 *
+	 * @param string $icon Candidate icon value.
+	 * @return string One of 'dashicon'|'none'|'data'|'url', or '' if rejected.
+	 */
+	public static function icon_form( $icon ) {
+		$icon = (string) $icon;
+
+		if ( '' === $icon ) {
+			return '';
+		}
+		if ( self::is_valid_icon( $icon ) ) {
+			return 'dashicon';
+		}
+		if ( 'none' === $icon ) {
+			return 'none';
+		}
+		if ( preg_match( '#^data:image/(?:svg\+xml|png|gif|jpe?g|webp);base64,[A-Za-z0-9+/]+=*$#', $icon ) ) {
+			return 'data';
+		}
+		if ( preg_match( '#^(?:https?://|//|/)[^\s"\'<>]+$#', $icon ) ) {
+			return 'url';
+		}
+		return '';
+	}
+
+	/**
+	 * Validate + sanitise an icon to its safe stored form, or '' to drop it.
+	 *
+	 * Classification is pure (icon_form); only the url branch needs WordPress
+	 * (esc_url_raw), which is why the full method is exercised by integration
+	 * tests while icon_form() is unit-tested.
+	 *
+	 * @param string $icon Raw icon value.
+	 * @return string Sanitised icon, or '' if invalid.
+	 */
+	public static function sanitize_icon( $icon ) {
+		$icon = (string) $icon;
+
+		switch ( self::icon_form( $icon ) ) {
+			case 'dashicon':
+				return sanitize_html_class( $icon );
+			case 'none':
+				return 'none';
+			case 'data':
+				return $icon; // Format-validated above; safe as a background-image source.
+			case 'url':
+				$url = esc_url_raw( $icon, array( 'http', 'https' ) );
+				return $url ? $url : '';
+			default:
+				return '';
+		}
 	}
 }

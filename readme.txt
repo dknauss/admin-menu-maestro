@@ -1,15 +1,14 @@
-=== Inline Admin Menu Editor (AMX) ===
+=== Admin Menu Maestro ===
 Contributors: danknauss
-Tags: admin, menu, dashicons, roles, customize
+Tags: admin, menu, icons, roles, customize
 Requires at least: 6.4
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-In-place editing of the WordPress admin menu: rename, reorder, swap top-level
-dashicons, and hide items per role. Global config, no separate settings screen.
+In-place editing of the WordPress admin menu: rename, reorder, swap icons, and hide items per role — edited on the menu itself.
 
 == Description ==
 
@@ -18,8 +17,12 @@ place:
 
 * **Rename** any top-level or submenu item (click the label).
 * **Reorder** items by dragging (top-level and within each submenu).
-* **Swap dashicons** on top-level items (submenus carry no icon).
-* **Hide** items from chosen roles.
+* **Swap icons** on top-level items (submenus carry no icon). The picker offers
+  dashicons and bundled Bootstrap Icons, with search; any of WordPress's four
+  native icon forms is accepted (dashicon, "none", base64 image data-URI, or an
+  image URL).
+* **Hide** items from chosen roles. Custom roles registered by other plugins
+  (User Role Editor, Members, etc.) appear automatically.
 * **Reset** a single item to its default, or reset everything at once.
 
 Changes are **global** — one configuration applies to everyone — and are stored
@@ -38,18 +41,18 @@ If you need to actually *prevent* access, pair this with a capability manager:
 * **PublishPress Capabilities** — menu-aware; its Pro tier can block admin pages
   by URL.
 
-The `amx_capability` filter lets such a plugin hand editing rights to a custom
+The `admin_menu_maestro_capability` filter lets such a plugin hand editing rights to a custom
 capability instead of the default `manage_options`.
 
 == Architecture (for developers) ==
 
-* `Config` — reads/writes/sanitizes a single option (`amx_config`) holding only
+* `Config` — reads/writes/sanitizes a single option (`admin_menu_maestro`) holding only
   the deltas. Reset = delete the option; the natural menu returns automatically.
 * `Replay` — on a late `admin_menu` pass, applies rename/icon/visibility to the
   `$menu`/`$submenu` globals and reorders submenus. Top-level order uses the
   core `custom_menu_order` + `menu_order` filters. Resilient to missing slugs
   (orphans are skipped) and new items (appended at the end).
-* `Rest` — `amx/v1/config` (GET/POST/DELETE), capability-gated, `X-WP-Nonce`.
+* `Rest` — `admin-menu-maestro/v1/config` (GET/POST/DELETE), capability-gated, `X-WP-Nonce`.
 * The editor JS is driven by a localized model (with DOM ids), not DOM scraping,
   and diffs against captured pristine defaults so the stored config stays sparse.
 
@@ -65,7 +68,18 @@ capability instead of the default `manage_options`.
 * Submenu sort relies on items registering by the late `admin_menu` pass; a
   plugin that registers submenus on an unusually late hook may not be captured.
 
+== Credits ==
+
+Bundled [Bootstrap Icons](https://icons.getbootstrap.com/) are © The Bootstrap
+Authors, licensed under the MIT License. They are recoloured to the WordPress
+menu grey and embedded as data-URIs; see `bin/generate-bootstrap-icons.mjs`.
+
 == Changelog ==
 
 = 1.0.0 =
-* Initial release: rename, reorder, dashicon swap, per-role visibility, reset.
+* Initial release: rename, reorder, per-role visibility, reset.
+* Icons: accepts all four native WordPress forms (dashicon, none, base64 image
+  data-URI, image URL); picker bundles dashicons + curated Bootstrap Icons with
+  search, keyboard accessibility, and mobile-sized touch targets.
+* Editor: click-to-select with a shared panel, debounced single-flight autosave,
+  and folded-mode neutralization.
