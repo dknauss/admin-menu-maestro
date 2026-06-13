@@ -56,6 +56,8 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 - **V2-06**: Import/export config as JSON (staging→prod parity, version control)
 - **V2-07**: Optional enforcement bridge — opt-in, clearly-labelled defense-in-depth with a capability manager
 - **V2-08**: Multisite / network-level defaults with per-site override
+- **V2-09**: Configurable admin-menu width — a toggle/control to widen the 160px sidebar (long/renamed titles wrap awkwardly at the default). Store a global `menu_width` in config; apply on every admin page via the `#adminmenu/#adminmenuwrap/#adminmenuback` + `#wpcontent/#wpfooter` rules already proven in the folded-mode override. Note: this is the first asset the plugin would load *outside* edit mode; mind folded-mode and `<782px` responsive interaction. (cf. "Wider Admin Menu" plugin, but integrated into the editor.)
+- **V2-10**: *Research* — feasibility of editing the top admin **toolbar** (`#wpadminbar`) too: hide/reorder/rename toolbar nodes via the same in-place model, with a better inline interface than existing tools (cf. "Hide Admin Menu"). Investigate `WP_Admin_Bar` node registration, what's safely hideable, front-end vs admin rendering, per-role handling, and whether the click-to-select editor extends to the toolbar. Deliverable is a feasibility note, not a build commitment.
 
 ## Out of Scope
 
