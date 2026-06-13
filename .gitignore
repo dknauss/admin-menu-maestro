@@ -13,9 +13,9 @@
 # PHPUnit run cache
 .phpunit.result.cache
 
-# Lockfiles (regenerated; uncomment to pin if you prefer)
+# composer.lock is intentionally not committed (this is a distributable plugin,
+# not an app). package-lock.json IS committed so `npm ci` works in CI.
 composer.lock
-package-lock.json
 
 # OS / editor cruft
 .DS_Store
