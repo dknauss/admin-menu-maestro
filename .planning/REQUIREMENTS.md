@@ -67,17 +67,34 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 
 ## Traceability
 
-Populated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (pending roadmap) | — | Pending |
+| SEC-01 | Phase 1: Security Review | Pending |
+| SEC-02 | Phase 1: Security Review | Pending |
+| SEC-03 | Phase 1: Security Review | Pending |
+| SEC-04 | Phase 1: Security Review | Pending |
+| SEC-05 | Phase 1: Security Review | Pending |
+| A11Y-01 | Phase 2: Accessibility Audit | Pending |
+| A11Y-02 | Phase 2: Accessibility Audit | Pending |
+| A11Y-03 | Phase 2: Accessibility Audit | Pending |
+| A11Y-04 | Phase 2: Accessibility Audit | Pending |
+| A11Y-05 | Phase 2: Accessibility Audit | Pending |
+| TEST-01 | Phase 3: Verification | Pending |
+| TEST-02 | Phase 3: Verification | Pending |
+| TEST-03 | Phase 3: Verification | Pending |
+| PERF-01 | Phase 3: Verification | Pending |
+| PERF-02 | Phase 3: Verification | Pending |
+| REL-01 | Phase 4: Release Assets | Pending |
+| REL-02 | Phase 4: Release Assets | Pending |
+| REL-03 | Phase 4: Release Assets | Pending |
+| REL-04 | Phase 4: Release Assets | Pending |
+| REL-05 | Phase 5: Submit | Pending |
 
 **Coverage:**
 - v1 requirements: 20 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 20 ⚠️
+- Mapped to phases: 20
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-13 after initialization*
+*Last updated: 2026-06-13 after roadmap creation*
