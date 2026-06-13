@@ -166,6 +166,7 @@ Coverage targets the seams most likely to break: the pure ordering logic (unit),
 - **Separators are preserved, not editable.** Their generated slugs (`separator1`…) have no stable identity to key against. Sorting restricts itself to `li.menu-top.amm-item`, leaving separators in place.
 - **Late submenu registration.** Items registered on an unusually late hook (after `admin_menu` `PHP_INT_MAX`) may escape capture. Acceptable for v1; documented.
 - **Custom top-level icons** accept all four native WordPress forms (dashicon / `none` / base64 image data-URI / image URL). Bundled data-URI icons (e.g. Bootstrap Icons) are baked to a fixed grey and so do **not** recolour on hover/active the way dashicon fonts do — a known cosmetic limitation of background-image icons. Arbitrary user-uploaded/pasted SVG (which would need deep markup sanitisation for inline rendering) remains out of scope.
+- **`menu-icon-*` must be stripped for custom image icons.** Core gives its own items (Posts, Pages, Media, …) a `menu-icon-{slug}` class — printed on *both* the `<li>` and its `<a>` — whose CSS sets `background-image: none !important` on `div.wp-menu-image`. That rule would hide a data-URI/URL icon. The replay engine drops `menu-icon-*` from the menu row's class field when applying such an icon (and the editor mirrors this on the live `<li>`+`<a>` during preview); a dashicon, which paints via `::before`, keeps the class. Do not reinstate the class for custom-image items.
 
 ---
 

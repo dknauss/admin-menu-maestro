@@ -71,6 +71,40 @@ class ReplayTest extends WP_UnitTestCase {
 		$this->assertSame( 'dashicons-book', $menu[5][6] );
 	}
 
+	public function test_custom_image_icon_strips_menu_icon_class() {
+		global $menu;
+		// Core's own items carry a `menu-icon-*` class whose CSS sets
+		// `background-image:none !important` on div.wp-menu-image — which would
+		// hide a custom data-URI/URL icon. Replay must drop it for those.
+		$menu[5][4] = 'menu-top menu-icon-post';
+
+		$data_uri = 'data:image/svg+xml;base64,PHN2Zy8+';
+		( new Config() )->save(
+			array( 'items' => array( 'edit.php' => array( 'icon' => $data_uri ) ) )
+		);
+
+		$this->run_replay();
+
+		$this->assertSame( $data_uri, $menu[5][6], 'Custom icon should be applied.' );
+		$this->assertStringNotContainsString( 'menu-icon-post', $menu[5][4], 'menu-icon-* class must be stripped for custom image icons.' );
+		$this->assertStringContainsString( 'menu-top', $menu[5][4], 'Other classes must be preserved.' );
+	}
+
+	public function test_dashicon_keeps_menu_icon_class() {
+		global $menu;
+		$menu[5][4] = 'menu-top menu-icon-post';
+
+		// A dashicon renders via ::before, so the menu-icon-* class is harmless
+		// and must be left intact.
+		( new Config() )->save(
+			array( 'items' => array( 'edit.php' => array( 'icon' => 'dashicons-book' ) ) )
+		);
+
+		$this->run_replay();
+
+		$this->assertStringContainsString( 'menu-icon-post', $menu[5][4], 'Dashicon swaps must not strip menu-icon-*.' );
+	}
+
 	public function test_rename_submenu_item() {
 		( new Config() )->save(
 			array( 'items' => array( 'post-new.php' => array( 'title' => 'Write' ) ) )
