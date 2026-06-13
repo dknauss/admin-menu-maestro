@@ -168,11 +168,25 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		// Preview repaints via background-image + core's .svg sizing class.
 		await expect( page.locator( '#menu-posts .wp-menu-image' ) ).toHaveClass( /\bsvg\b/ );
 
+		// Regression: the icon must actually PAINT, not merely carry the class.
+		// Core's `menu-icon-* div.wp-menu-image { background-image:none !important }`
+		// used to win over the inline data-URI, leaving the icon invisible. The fix
+		// strips the menu-icon-* class; assert the computed background resolves and
+		// the class is gone — both live and after reload.
+		await expect
+			.poll( () => page.locator( '#menu-posts .wp-menu-image' ).evaluate( el => getComputedStyle( el ).backgroundImage ) )
+			.toMatch( /^url\("?data:image\/svg\+xml;base64,/ );
+		await expect( page.locator( '#menu-posts' ) ).not.toHaveClass( /menu-icon-/ );
+
 		// Persistence: core re-renders the data-URI icon after reload.
 		await page.goto( '/wp-admin/index.php?amm_edit=1' );
 		const img = page.locator( '#menu-posts .wp-menu-image' );
 		await expect( img ).toHaveClass( /\bsvg\b/ );
 		await expect( img ).toHaveAttribute( 'style', /data:image\/svg\+xml;base64,/ );
+		await expect
+			.poll( () => img.evaluate( el => getComputedStyle( el ).backgroundImage ) )
+			.toMatch( /^url\("?data:image\/svg\+xml;base64,/ );
+		await expect( page.locator( '#menu-posts' ) ).not.toHaveClass( /menu-icon-/ );
 
 		// Clean up.
 		page.once( 'dialog', d => d.accept() );

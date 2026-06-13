@@ -99,6 +99,16 @@ class Replay {
 				}
 				if ( isset( $ovr['icon'] ) ) {
 					$menu[ $pos ][6] = $ovr['icon']; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: mutating $menu via admin_menu hook is the documented WP API for menu customization. Index 6 is top-level only.
+
+					// Custom image icons (data-URI / URL) render as a background on
+					// div.wp-menu-image. Core gives its own items a `menu-icon-*`
+					// class whose CSS sets `background-image:none !important`, which
+					// would hide the custom icon. Drop that class so it shows; a
+					// dashicon (which renders via ::before) is unaffected and keeps it.
+					if ( isset( $menu[ $pos ][4] ) && in_array( Config::icon_form( $ovr['icon'] ), array( 'data', 'url' ), true ) ) {
+						$stripped        = preg_replace( '/\bmenu-icon-[\w-]+/', '', (string) $menu[ $pos ][4] );
+						$menu[ $pos ][4] = trim( preg_replace( '/\s+/', ' ', $stripped ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: see above.
+					}
 				}
 				if ( $this->is_hidden_for_current_user( $ovr ) ) {
 					unset( $menu[ $pos ] ); // Cosmetic removal; the page still loads by direct URL.

@@ -534,6 +534,20 @@
 			img.style.backgroundSize = '20px auto';
 		}
 
+		// Core gives its own items a menu-icon-* class whose CSS sets
+		// background-image:none !important, which hides a custom image icon. Drop
+		// it for data-URI/URL icons (mirrors the Replay engine server-side).
+		// menu-header.php prints that class on BOTH the <li> and its <a>, so the
+		// `.menu-icon-* div.wp-menu-image` rule matches via either ancestor —
+		// strip it from both.
+		function stripMenuIconClass() {
+			[ li, li.querySelector( 'a' ) ].forEach( function ( node ) {
+				if ( node ) {
+					node.className = node.className.replace( /\bmenu-icon-[\w-]+/g, '' ).replace( /\s+/g, ' ' ).trim();
+				}
+			} );
+		}
+
 		if ( /^dashicons-/.test( icon ) ) {
 			// Dashicon glyph: font class, no background image.
 			keep.push( 'dashicons-before', icon );
@@ -541,11 +555,13 @@
 			clearBg();
 		} else if ( /^data:image\//.test( icon ) ) {
 			// Base64 image data-URI: borrow core's ".svg" sizing and paint it.
+			stripMenuIconClass();
 			keep.push( 'svg' );
 			img.className = keep.join( ' ' );
 			setBg();
 		} else if ( /^(https?:\/\/|\/\/|\/)/.test( icon ) ) {
 			// URL icon: core would render an <img>; approximate via background.
+			stripMenuIconClass();
 			img.className = keep.join( ' ' );
 			setBg();
 		} else {
