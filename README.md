@@ -1,10 +1,18 @@
 # Admin Menu Maestro
 
+[![License: GPL-2.0-or-later](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![WordPress 6.4+](https://img.shields.io/badge/WordPress-6.4%2B-21759b.svg?logo=wordpress&logoColor=white)](https://wordpress.org/)
+[![Tested up to WP 7.0](https://img.shields.io/badge/tested%20up%20to-WP%207.0-21759b.svg?logo=wordpress&logoColor=white)](https://wordpress.org/)
+[![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777bb4.svg?logo=php&logoColor=white)](https://www.php.net/)
+[![Live demo in WordPress Playground](https://img.shields.io/badge/▶_Playground-Live_demo-3858e9.svg?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/admin-menu-maestro/main/playground/blueprint-hosted.json)
+
 In-place editing of the WordPress admin menu — rename items, reorder them, swap top-level icons, and hide items per role. Global configuration, no separate settings screen: the editor is toggled from the admin bar and operates on the menu itself.
+
+**▶ [Try it live in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/admin-menu-maestro/main/playground/blueprint-hosted.json)** — boots a throwaway site with the plugin active, User Switching, and test users (editor / author / contributor / subscriber, password `password`) so you can try per-role visibility by switching users.
 
 ## Status
 
-v1 complete. The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44/44, integration 15/15, E2E 6/6 against wp-env). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
+v1 complete, preparing for WordPress.org submission (release-readiness tracked in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44, integration 17, E2E 7 against wp-env on WP 7.0; phpcs clean; Plugin Check 0/0 on the build zip). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
 
 - **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved ✓" status indicator instead. Saves are serialized (single-flight) so a slow request can't overwrite newer edits. Reload only on Exit (which flushes any pending save) and on Reset all.
 - **Click-to-select with one shared controls panel.** No edit chrome until an item is selected: each row shows only a hover/focus-revealed drag handle. Selecting an item opens the shared panel (rename, icon picker for top-level items, per-role visibility, reset-this-item).
@@ -61,11 +69,11 @@ This builds the runtime-only plugin, mounts it into Playground, runs the
 blueprint, and serves at `http://127.0.0.1:9400`. Hide a menu item from a role
 in the editor, then use **Switch To** (admin bar) to view the menu as that user.
 
-> **Hosted Playground:** because this repo is private, playground.wordpress.net
-> can't fetch the plugin. Once the repo is public, swap the `wp plugin activate`
-> step in `playground/blueprint.json` for an `installPlugin` step with a
-> `git:directory` resource pointing at the repo, and open it via
-> `https://playground.wordpress.net/?blueprint-url=…`.
+> **Hosted Playground:** the [Live demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/admin-menu-maestro/main/playground/blueprint-hosted.json)
+> runs the same setup in the browser with no install. It uses
+> `playground/blueprint-hosted.json`, which installs the plugin straight from
+> this public repo via a `git:directory` resource (the local `blueprint.json`
+> mounts it instead).
 
 ## License
 
