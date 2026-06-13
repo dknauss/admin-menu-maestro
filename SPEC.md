@@ -180,6 +180,8 @@ Coverage targets the seams most likely to break: the pure ordering logic (unit),
 6. **Import/export config** as JSON for staging→production parity and version control.
 7. **Optional enforcement bridge.** Not built-in access control, but a documented, opt-in handoff that sets a hidden item's required capability *in concert with* a capability manager — clearly labelled as defense-in-depth, never as the primary lock.
 8. **Multisite / network-level defaults** with per-site override.
+9. **Configurable admin-menu width.** A toggle/control to widen the 160px sidebar so long or renamed titles don't wrap. Global `menu_width` in config, applied on every admin page via the same `#adminmenu`/`#wpcontent` rules used by the folded-mode override. First asset loaded outside edit mode; must respect folded mode and the `<782px` responsive breakpoint. (cf. "Wider Admin Menu", integrated into the editor.)
+10. **Admin toolbar editing (research).** Feasibility of extending the in-place editor to the top admin bar (`#wpadminbar`) — hide/reorder/rename toolbar nodes with a better inline interface than existing tools (cf. "Hide Admin Menu"). Investigate `WP_Admin_Bar` node registration, safely-hideable nodes, front-end vs admin rendering, and per-role handling. Deliverable is a feasibility note first, not a commitment.
 
 ---
 
