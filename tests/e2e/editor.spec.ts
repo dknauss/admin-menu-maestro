@@ -194,4 +194,43 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		await expect( page.locator( '#menu-posts .wp-menu-image' ) ).not.toHaveClass( /\bsvg\b/ );
 	} );
 
+	test( 'dragging a top-level item by the row reorders it and persists', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?amm_edit=1' );
+		await expect( page.locator( '.amm-toolbar' ) ).toBeVisible();
+
+		const order = () =>
+			page.$$eval( '#adminmenu > li.menu-top.amm-item', els => els.map( e => ( e as HTMLElement ).dataset.ammSlug ) );
+		const before = await order();
+		const fromIdx = before.indexOf( 'edit.php' );
+
+		// No handle — grab the row itself and drag Posts down past Media. The
+		// distance threshold means we must move beyond a few pixels to start.
+		const posts = await page.locator( '#menu-posts > a.menu-top' ).boundingBox();
+		const media = await page.locator( '#menu-media > a.menu-top' ).boundingBox();
+		const saveResp = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await page.mouse.move( posts!.x + 40, posts!.y + 10 );
+		await page.mouse.down();
+		const dy = ( media!.y - posts!.y ) + 30;
+		for ( let i = 1; i <= 8; i++ ) {
+			await page.mouse.move( posts!.x + 40, posts!.y + 10 + ( dy * i ) / 8 );
+		}
+		await page.mouse.up();
+		await saveResp;
+
+		const after = await order();
+		expect( after ).not.toEqual( before );
+		expect( after.indexOf( 'edit.php' ) ).toBeGreaterThan( fromIdx );
+
+		// The new order survives a reload (server replays top_order).
+		await page.reload();
+		await expect.poll( order ).toEqual( after );
+
+		// Reset back to the natural order.
+		page.once( 'dialog', d => d.accept() );
+		await page.locator( '.amm-reset-all' ).click();
+		await expect.poll( order ).toEqual( before );
+	} );
+
 } );
