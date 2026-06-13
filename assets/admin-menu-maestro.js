@@ -3,11 +3,12 @@
  *
  * PHP localises ammData with the precise DOM model (the <li> id for each
  * top-level item, ordered submenu slugs, pristine titles/icons). The editor
- * uses a click-to-select model: per item, only a hover-revealed drag handle
- * and a selection target — no per-item button clusters. A single shared
- * controls panel in the bottom toolbar reflects the selected item. Every
- * change (reorder, rename commit, icon pick, visibility toggle, per-item
- * reset) schedules a debounced full-config POST.
+ * uses a click-to-select model with no per-item chrome: clicking a row selects
+ * it (a subtle highlight) and the whole row is draggable to reorder — there are
+ * no drag handles or per-item buttons. A single shared controls panel in the
+ * bottom toolbar reflects the selected item. Every change (reorder, rename
+ * commit, icon pick, visibility toggle, per-item reset) schedules a debounced
+ * full-config POST.
  *
  * The menu is forced to a stable expanded state while editing: body.folded
  * and body.auto-fold are stripped on init and re-stripped if common.js puts
@@ -108,8 +109,6 @@
 			li.classList.add( 'amm-item' );
 			if ( node.hiddenRoles.length ) { li.classList.add( 'amm-has-hidden' ); }
 
-			decorateTop( li );
-
 			// Submenu children: skip the .wp-submenu-head, then zip by index.
 			var subLis = li.querySelectorAll( '.wp-submenu > li:not(.wp-submenu-head)' );
 			node.submenu.forEach( function ( child, idx ) {
@@ -132,25 +131,12 @@
 				sli.dataset.ammSlug = child.slug;
 				sli.classList.add( 'amm-subitem' );
 				if ( child.hiddenRoles.length ) { sli.classList.add( 'amm-has-hidden' ); }
-				decorateSub( sli );
 			} );
 		} );
 
 		buildToolbar();
 		bindMenuSelection();
 		initSortables();
-	}
-
-	function decorateTop( li ) {
-		var handle = el( 'span', 'amm-handle dashicons dashicons-move' );
-		handle.title = I.drag;
-		li.insertBefore( handle, li.firstChild );
-	}
-
-	function decorateSub( sli ) {
-		var handle = el( 'span', 'amm-subhandle dashicons dashicons-move' );
-		handle.title = I.drag;
-		sli.insertBefore( handle, sli.firstChild );
 	}
 
 	/* ---------- click-to-select ------------------------------------------- */
@@ -164,10 +150,6 @@
 			var a = e.target.closest( 'a' );
 			if ( a ) { e.preventDefault(); }
 
-			// Drag handle is for dragging only — don't select.
-			if ( e.target.closest( '.amm-handle, .amm-subhandle' ) ) {
-				return;
-			}
 			// Popovers may be placed over the menu region — let them handle their own clicks.
 			if ( e.target.closest( '.amm-popover' ) ) {
 				return;
@@ -660,22 +642,26 @@
 	/* ---------- sortable --------------------------------------------------- */
 
 	function initSortables() {
+		// No drag handles: the whole row is draggable. A small distance threshold
+		// keeps a plain click as a selection and only starts a drag on real
+		// movement. `cancel` keeps a mousedown inside a submenu (or on a form
+		// control) from starting a top-level drag, so child reordering is handled
+		// solely by the per-submenu sortable below.
 		$( '#adminmenu' ).sortable( {
 			items:     '> li.menu-top.amm-item',
-			handle:    '.amm-handle',
+			cancel:    '.wp-submenu, input, button',
+			distance:  6,
 			axis:      'y',
 			tolerance: 'pointer',
-			cursor:    'grabbing',
 			stop:      scheduleAutosave
 		} );
 
 		$( '#adminmenu .wp-submenu' ).each( function () {
 			$( this ).sortable( {
 				items:     '> li.amm-subitem',
-				handle:    '.amm-subhandle',
+				distance:  6,
 				axis:      'y',
 				tolerance: 'pointer',
-				cursor:    'grabbing',
 				stop:      scheduleAutosave
 			} );
 		} );
