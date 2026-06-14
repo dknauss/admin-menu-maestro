@@ -2,10 +2,11 @@
 
 Three layers, smallest and fastest first.
 
-> **Status:** all three layers have been executed and pass: unit 44/44,
-> integration 23/23, E2E 7/7. The integration suite now also covers
-> missing/invalid REST nonces for all `/config` methods. See the gotchas below
-> before a first run.
+> **Current local status:** unit 44/44 and integration 27/27 pass. The E2E suite
+> now contains 9 specs, including Phase 3 coverage for reset-this-item and
+> per-role visibility, but it was not rerun in the current shell because npm,
+> Docker, and Colima are unavailable. Last live E2E run before the Phase 3 specs
+> were added was 7/7.
 
 ## Gotchas (first run)
 
@@ -53,7 +54,8 @@ export `WP_TESTS_DIR`, then `composer test:integration`.
 ## 3. End-to-end (Playwright, against live WordPress)
 
 Drives the editor in a real browser: edit-mode gating, the admin-bar toggle,
-rename → save → persist → reset, and the icon picker preview.
+rename → save → persist → reset, reset-this-item, per-role visibility, and the
+icon picker preview.
 
 ```bash
 npm run env:start          # if not already running

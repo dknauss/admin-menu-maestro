@@ -89,6 +89,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Security Review | 2/TBD | Complete | Static Codex Security scan complete; nonce integration coverage added; one low-severity DOM XSS hardening issue fixed |
 | 2. Accessibility Audit | 1/TBD | Complete | Static/code audit complete; keyboard selection added; focus management and save announcements hardened; keyboard reorder gap documented for v2 |
-| 3. Verification | 0/TBD | Not started | - |
+| 3. Verification | 1/TBD | In progress | Added E2E specs for reset-this-item and per-role visibility; added integration checks for reset-all edge cases, non-autoloaded storage, edit-mode-only assets, and localized payload budget; local unit/integration green; live E2E pending unavailable npm/Docker/Colima |
 | 4. Release Assets | 0/TBD | Not started | - |
 | 5. Submit | 0/TBD | Not started | - |

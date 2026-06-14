@@ -248,12 +248,31 @@ class RestConfigTest extends WP_UnitTestCase {
 
 	public function test_reset_clears_config() {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
-		update_option( 'admin_menu_maestro', array( 'items' => array( 'edit.php' => array( 'title' => 'X' ) ) ) );
+		update_option(
+			'admin_menu_maestro',
+			array(
+				'items'     => array( 'edit.php' => array( 'title' => 'X' ) ),
+				'top_order' => array( 'edit.php', 'index.php' ),
+				'sub_order' => array( 'edit.php' => array( 'post-new.php', 'edit.php' ) ),
+			)
+		);
 
 		$res = $this->server->dispatch( new WP_REST_Request( 'DELETE', self::ROUTE ) );
 
 		$this->assertSame( 200, $res->get_status() );
 		$this->assertTrue( $res->get_data()['reset'] );
+		$this->assertFalse( get_option( 'admin_menu_maestro' ) );
+	}
+
+	public function test_reset_is_idempotent_when_config_is_empty() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		delete_option( 'admin_menu_maestro' );
+
+		$res = $this->server->dispatch( new WP_REST_Request( 'DELETE', self::ROUTE ) );
+
+		$this->assertSame( 200, $res->get_status() );
+		$this->assertTrue( $res->get_data()['reset'] );
+		$this->assertSame( array(), $res->get_data()['config'] );
 		$this->assertFalse( get_option( 'admin_menu_maestro' ) );
 	}
 }

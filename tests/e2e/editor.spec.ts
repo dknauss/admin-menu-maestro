@@ -90,6 +90,34 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).not.toContainText( 'Articles' );
 	} );
 
+	test( 'reset this item clears a single item override without resetting everything', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?amm_edit=1' );
+
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+		const panel = page.locator( '.amm-toolbar .amm-panel' );
+		await expect( panel ).toBeVisible();
+
+		const rename = panel.locator( '.amm-rename-input' );
+		const renamePosted = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await rename.fill( 'Articles' );
+		await rename.press( 'Enter' );
+		await renamePosted;
+		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).toContainText( 'Articles' );
+
+		const resetPosted = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await panel.locator( '.amm-reset-item' ).click();
+		const payload = ( await resetPosted ).request().postDataJSON();
+		expect( payload?.config?.items?.[ 'edit.php' ] ).toBeUndefined();
+
+		await page.goto( '/wp-admin/index.php?amm_edit=1' );
+		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).toContainText( 'Posts' );
+		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).not.toContainText( 'Articles' );
+	} );
+
 	test( 'icon pick persists across reload and the autosave carries it', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?amm_edit=1' );
 
@@ -192,6 +220,42 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		page.once( 'dialog', d => d.accept() );
 		await page.locator( '.amm-reset-all' ).click();
 		await expect( page.locator( '#menu-posts .wp-menu-image' ) ).not.toHaveClass( /\bsvg\b/ );
+	} );
+
+	test( 'per-role visibility hides an item from that role only', async ( { page, browser } ) => {
+		await page.goto( '/wp-admin/index.php?amm_edit=1' );
+
+		await page.locator( '#menu-media > a.menu-top' ).click();
+		const panel = page.locator( '.amm-toolbar .amm-panel' );
+		await expect( panel ).toBeVisible();
+		await panel.locator( '.amm-vis-btn' ).click();
+
+		const picker = page.locator( '.amm-vis-popover' );
+		await expect( picker ).toBeVisible();
+
+		const saveResp = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await picker.getByLabel( 'Editor' ).check();
+		const payload = ( await saveResp ).request().postDataJSON();
+		expect( payload?.config?.items?.[ 'upload.php' ]?.hidden_roles ).toContain( 'editor' );
+
+		const editorContext = await browser.newContext();
+		const editorPage = await editorContext.newPage();
+		await editorPage.goto( '/wp-login.php' );
+		await editorPage.fill( '#user_login', 'amm_editor' );
+		await editorPage.fill( '#user_pass', 'password' );
+		await editorPage.click( '#wp-submit' );
+		await editorPage.waitForURL( /wp-admin/ );
+		await editorPage.goto( '/wp-admin/index.php' );
+
+		await expect( editorPage.locator( '#menu-media' ) ).toHaveCount( 0 );
+		await expect( editorPage.locator( '#menu-posts' ) ).toBeVisible();
+		await editorContext.close();
+
+		page.once( 'dialog', d => d.accept() );
+		await page.locator( '.amm-reset-all' ).click();
+		await expect( page.locator( '#menu-media' ) ).toBeVisible();
 	} );
 
 	test( 'dragging a top-level item by the row reorders it and persists', async ( { page } ) => {
