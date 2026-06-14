@@ -61,7 +61,8 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 - Await WordPress.org review verdict. On approval: SVN commit to `trunk`, tag `1.0.0`, upload `.wordpress-org/` to the SVN `assets/` dir.
-- Optional: tag `v1.0.0` in git to mark the submitted release.
+
+(Done: git tag `v1.0.0` + GitHub Release "Admin Menu Maestro 1.0.0" published, anchored at the finalize-1.0.0 commit `c5f31b8`.)
 
 ### Blockers/Concerns
 
