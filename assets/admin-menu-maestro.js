@@ -47,10 +47,10 @@
 	function pristineSub( slug ) {
 		return ( D.pristine.sub && D.pristine.sub[ slug ] ) || { title: '' };
 	}
-	function el( tag, cls, html ) {
+	function el( tag, cls, text ) {
 		var n = document.createElement( tag );
 		if ( cls ) { n.className = cls; }
-		if ( html != null ) { n.innerHTML = html; }
+		if ( text != null ) { n.textContent = text; }
 		return n;
 	}
 	function closePopovers() {

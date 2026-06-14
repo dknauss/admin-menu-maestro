@@ -2,12 +2,10 @@
 
 Three layers, smallest and fastest first.
 
-> **Status:** all three layers have now been executed and pass against a local
-> wp-env (Docker via colima): unit 23/23, integration 13/13, E2E 4/4. Two fixes
-> were needed to get there — the integration bootstrap referenced the pre-rename
-> plugin filename, and `@wordpress/scripts` v30 dropped the `test-unit-php`
-> command (`test:php` now calls phpunit directly in the tests container). See the
-> gotchas below before a first run.
+> **Status:** all three layers have been executed and pass: unit 44/44,
+> integration 23/23, E2E 7/7. The integration suite now also covers
+> missing/invalid REST nonces for all `/config` methods. See the gotchas below
+> before a first run.
 
 ## Gotchas (first run)
 

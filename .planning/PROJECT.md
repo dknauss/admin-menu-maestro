@@ -19,7 +19,7 @@ security boundary.
 
 ### Validated
 
-<!-- Shipped and working: unit 44 / integration 17 / e2e 7 green on WP 7.0; phpcs clean; Plugin Check 0/0 on the build zip. -->
+<!-- Shipped and working: unit 44 / integration 23 / e2e 7 green; phpcs clean; Plugin Check 0/0 on the build zip. -->
 
 - ✓ Click-to-select editing (whole-row drag reorder, no handles) — shipped
 - ✓ Debounced single-flight autosave with status indicator — shipped
@@ -28,14 +28,14 @@ security boundary.
 - ✓ Top-level icons in all four native WP forms (dashicon / none / data-URI / URL) + bundled Bootstrap Icons picker — shipped
 - ✓ Folded-mode neutralization (stable expanded menu while editing) — shipped
 - ✓ Sparse-delta storage; reset = delete option; resilient to plugin churn — shipped
-- ✓ REST `amm/v1/config` (GET/POST/DELETE), capability-gated + nonce — shipped
+- ✓ REST `admin-menu-maestro/v1/config` (GET/POST/DELETE), capability-gated + nonce — shipped
 - ✓ WordPress Playground demo (User Switching + role users) — shipped
 
 ### Active
 
 <!-- This milestone: v1.0 WordPress.org release readiness. -->
 
-- [ ] Security review (REST auth, `sanitize_icon` data-URI/URL surface, slug handling, capability filter, option writes)
+- [x] Security review (REST auth, `sanitize_icon` data-URI/URL surface, slug handling, capability filter, option writes)
 - [ ] Accessibility review/audit (keyboard operability, focus management, save announcements)
 - [ ] Extended automated tests (per-role visibility e2e, reset/edge cases)
 - [ ] Performance sanity check (admin-load overhead, edit-mode payload)
@@ -53,6 +53,7 @@ security boundary.
 - **State:** built, tested, documented (SPEC.md = design, FIXES.md = history, TESTING.md = test layers). Public repo: dknauss/admin-menu-maestro.
 - **Codebase map:** SPEC.md serves as the architecture reference, so GSD codebase mapping was skipped. Components: `Config` (option storage + sanitize), `Ordering` (pure reorder), `Replay` (mutates `$menu`/`$submenu` on `admin_menu` PHP_INT_MAX + `menu_order`), `Rest` (REST controller), `Admin_Bar` (toggle), `Assets` (enqueue/localize, edit mode only).
 - **Tooling:** wp-env (WP 7.0), Playwright e2e, PHPUnit unit+integration, WPCS via phpcs, official Plugin Check. `bin/build.sh` emits a runtime-only `admin-menu-maestro.zip`.
+- **Security scan:** Codex Security scan `317283f_20260614T024544Z` produced validated markdown/HTML reports under `/tmp/codex-security-scans/admin-menu-maestro/317283f_20260614T024544Z`; it found one low-severity DOM XSS hardening issue in the editor helper and fixed it by switching `el()` from `innerHTML` to `textContent`. Follow-up nonce integration tests now close SEC-01.
 - **Future roadmap (post-1.0 backlog):** reparenting (top↔sub, highlighting minefield); separator management; keyboard-accessible reordering; per-item-reset UI affordance with a "modified" indicator; custom icon upload (SVG sanitization); import/export config as JSON; optional enforcement bridge (opt-in, clearly-labelled defense-in-depth); multisite/network defaults with per-site override; configurable admin-menu width (V2-09); admin-toolbar editing feasibility research (V2-10).
 
 ## Constraints
@@ -75,4 +76,4 @@ security boundary.
 | Apply GSD for release-readiness + future roadmap | Formalize the path to .org and track post-1.0 work | — Pending |
 
 ---
-*Last updated: 2026-06-13 after initialization (brownfield)*
+*Last updated: 2026-06-13 after Phase 1 Security Review completion*

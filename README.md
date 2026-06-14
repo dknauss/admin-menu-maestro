@@ -13,7 +13,7 @@ In-place editing of the WordPress admin menu — rename items, reorder them, swa
 
 ## Status
 
-v1 complete, preparing for WordPress.org submission (release-readiness tracked in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44, integration 17, E2E 7 against wp-env on WP 7.0; phpcs clean; Plugin Check 0/0 on the build zip). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
+v1 complete, preparing for WordPress.org submission (release-readiness tracked in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44, integration 23, E2E 7; phpcs clean; Plugin Check 0/0 on the build zip). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
 
 - **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved ✓" status indicator instead. Saves are serialized (single-flight) so a slow request can't overwrite newer edits. Reload only on Exit (which flushes any pending save) and on Reset all.
 - **Click-to-select with one shared controls panel.** No edit chrome until an item is selected: each row shows only a hover/focus-revealed drag handle. Selecting an item opens the shared panel (rename, icon picker for top-level items, per-role visibility, reset-this-item).

@@ -51,6 +51,102 @@ class RestConfigTest extends WP_UnitTestCase {
 		$this->assertSame( 403, $res->get_status() );
 	}
 
+	/**
+	 * @dataProvider route_methods
+	 */
+	public function test_missing_rest_nonce_rejects_cookie_authenticated_requests( $method ) {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		update_option( 'admin_menu_maestro', array( 'items' => array( 'edit.php' => array( 'title' => 'Existing' ) ) ) );
+
+		$res = $this->dispatch_as_cookie_auth_request( $this->request_for_method( $method ), null );
+
+		$this->assertSame( 401, $res->get_status(), 'Missing nonce should demote cookie auth to anonymous, so the capability gate rejects the request.' );
+		$this->assertSame( 'Existing', get_option( 'admin_menu_maestro' )['items']['edit.php']['title'], 'Rejected requests must not mutate config.' );
+	}
+
+	/**
+	 * @dataProvider route_methods
+	 */
+	public function test_invalid_rest_nonce_rejects_cookie_authenticated_requests( $method ) {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		update_option( 'admin_menu_maestro', array( 'items' => array( 'edit.php' => array( 'title' => 'Existing' ) ) ) );
+
+		$res = $this->dispatch_as_cookie_auth_request( $this->request_for_method( $method ), 'not-a-valid-nonce' );
+
+		$this->assertWPError( $res );
+		$this->assertSame( 'rest_cookie_invalid_nonce', $res->get_error_code() );
+		$this->assertSame( 403, $res->get_error_data()['status'] );
+		$this->assertSame( 'Existing', get_option( 'admin_menu_maestro' )['items']['edit.php']['title'], 'Rejected requests must not mutate config.' );
+	}
+
+	public function route_methods() {
+		return array(
+			'GET /config'    => array( 'GET' ),
+			'POST /config'   => array( 'POST' ),
+			'DELETE /config' => array( 'DELETE' ),
+		);
+	}
+
+	private function request_for_method( $method ) {
+		$req = new WP_REST_Request( $method, self::ROUTE );
+		if ( 'POST' === $method ) {
+			$req->set_param(
+				'config',
+				array(
+					'items' => array(
+						'edit.php' => array( 'title' => 'Changed' ),
+					),
+				)
+			);
+		}
+		return $req;
+	}
+
+	/**
+	 * Simulate the cookie-auth nonce gate that runs before a real REST request is dispatched.
+	 *
+	 * Direct WP_REST_Server::dispatch() calls exercise route permission callbacks,
+	 * but not the REST cookie authentication filter. This helper runs that filter
+	 * first so missing/invalid X-WP-Nonce behavior is covered by integration tests.
+	 *
+	 * @param WP_REST_Request $request Request to dispatch if cookie auth passes.
+	 * @param string|null     $nonce   Nonce header value, or null for missing.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	private function dispatch_as_cookie_auth_request( WP_REST_Request $request, $nonce ) {
+		$had_cookie_flag = array_key_exists( 'wp_rest_auth_cookie', $GLOBALS );
+		$cookie_flag     = $had_cookie_flag ? $GLOBALS['wp_rest_auth_cookie'] : null;
+		$had_nonce       = isset( $_SERVER['HTTP_X_WP_NONCE'] );
+		$server_nonce    = $had_nonce ? $_SERVER['HTTP_X_WP_NONCE'] : null;
+
+		$GLOBALS['wp_rest_auth_cookie'] = true;
+		if ( null === $nonce ) {
+			unset( $_SERVER['HTTP_X_WP_NONCE'] );
+		} else {
+			$_SERVER['HTTP_X_WP_NONCE'] = $nonce;
+		}
+
+		$auth_result = apply_filters( 'rest_authentication_errors', null );
+
+		if ( $had_cookie_flag ) {
+			$GLOBALS['wp_rest_auth_cookie'] = $cookie_flag;
+		} else {
+			unset( $GLOBALS['wp_rest_auth_cookie'] );
+		}
+		if ( $had_nonce ) {
+			$_SERVER['HTTP_X_WP_NONCE'] = $server_nonce;
+		} else {
+			unset( $_SERVER['HTTP_X_WP_NONCE'] );
+		}
+		remove_filter( 'rest_send_nocache_headers', '__return_true', 20 );
+
+		if ( is_wp_error( $auth_result ) ) {
+			return $auth_result;
+		}
+
+		return $this->server->dispatch( $request );
+	}
+
 	public function test_admin_can_save_and_read_back() {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
 
