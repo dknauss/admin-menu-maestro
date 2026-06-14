@@ -60,6 +60,7 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 - **V2-10**: *Research* — feasibility of editing the top admin **toolbar** (`#wpadminbar`) too: hide/reorder/rename toolbar nodes via the same in-place model, with a better inline interface than existing tools (cf. "Hide Admin Menu"). Investigate `WP_Admin_Bar` node registration, what's safely hideable, front-end vs admin rendering, per-role handling, and whether the click-to-select editor extends to the toolbar. Deliverable is a feasibility note, not a build commitment.
 - **V2-11**: Heavier/solid bundled icon set to match dashicons — the bundled Bootstrap Icons are outline-weight and read thin/light next to WordPress's solid dashicons, so the two tabs don't mix well. First try: switch the curated bundle to Bootstrap's `*-fill` variants where they exist (same MIT dependency, regenerate via `bin/generate-bootstrap-icons.mjs`). If still too light, add **Heroicons Mini** (solid, 20px — the dashicons grid; MIT) as the second set. Low-effort and contained; could be pulled into the v1.0 release polish rather than waiting for v2.
   - *Backup solid candidates if neither fits:* **Material Design Icons** (Pictogrammers / `@mdi/svg`, ~7k blocky glyphs, Apache-2.0); **Remix Icon** fill variants (Apache-2.0); **Material Symbols** Filled (Apache-2.0). All are single-fill, so they recolour cleanly as base64 data-URIs the same way the current bundle does. *Skip* the thin outline sets (Tabler, Feather, Lucide) — same mismatch as outline Bootstrap.
+- **V2-12**: UI/UX design polish — review the edit-mode surface as a working admin tool, not a marketing screen. Improve control hierarchy, spacing, responsive behavior, modified-state affordances, save/error status clarity, icon-picker scanability, and first-run/onboarding cues while staying visually native to WordPress admin. Deliverables should include before/after screenshots, keyboard/mouse walkthrough notes, and regression checks that text does not overlap or resize controls awkwardly.
 
 ## Out of Scope
 
@@ -101,4 +102,4 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-14 after closing Phase 4 Release Assets*
+*Last updated: 2026-06-14 after adding UI/UX design polish to the v2 backlog*

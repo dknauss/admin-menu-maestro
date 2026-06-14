@@ -13,16 +13,23 @@ In-place editing of the WordPress admin menu — rename items, reorder them, swa
 
 **▶ [Try it live in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/admin-menu-maestro/main/playground/blueprint-hosted.json)** — boots a throwaway site with the plugin active, User Switching, and test users (editor / author / contributor / subscriber, password `password`) so you can try per-role visibility by switching users.
 
-## Status
+## Screenshots
 
-v1 complete, preparing for WordPress.org submission (release-readiness tracked in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44, integration 27, E2E 9; phpcs clean; Plugin Check 0/0 on the build zip). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
+Click any screenshot to open the full-size image.
 
-- **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved ✓" status indicator instead. Saves are serialized (single-flight) so a slow request can't overwrite newer edits. Reload only on Exit (which flushes any pending save) and on Reset all.
-- **Click-to-select with one shared controls panel.** No edit chrome until an item is selected: each row shows only a hover/focus-revealed drag handle. Selecting an item opens the shared panel (rename, icon picker for top-level items, per-role visibility, reset-this-item).
-- **Stable expanded menu while editing.** Folded/auto-fold mode is neutralized on entry and re-stripped if `common.js` reapplies it, so editing always happens against the expanded menu.
-- **Icons: all four native WordPress forms** (dashicon, `none`, base64 image data-URI, image URL), validated server-side. The picker bundles two sets — dashicons and ~87 curated [Bootstrap Icons](https://icons.getbootstrap.com/) — with a search filter and a "No icon" option, and is keyboard-accessible (dialog/tablist roles, arrow-key navigation, focus trap) and mobile-sized. Icon changes persist via autosave (covered by E2E: pick → POST carries the icon → survives reload).
+| Edit mode | Icon picker |
+| --- | --- |
+| [![Edit mode with the Posts menu item selected and the shared controls panel open](.wordpress-org/screenshot-1.png)](.wordpress-org/screenshot-1.png) | [![Icon picker with searchable Dashicons and Bootstrap Icons tabs](.wordpress-org/screenshot-2.png)](.wordpress-org/screenshot-2.png) |
+| Posts selected, with the shared controls panel open. | Searchable icon picker with Dashicons and Bootstrap Icons tabs. |
 
-See `FIXES.md` for the resolved punchlist and `SPEC.md` for the durable design.
+| Role visibility | Autosave |
+| --- | --- |
+| [![Per-role visibility picker for hiding a menu item from selected roles](.wordpress-org/screenshot-3.png)](.wordpress-org/screenshot-3.png) | [![Renamed menu item saved through debounced autosave](.wordpress-org/screenshot-4.png)](.wordpress-org/screenshot-4.png) |
+| Per-role visibility picker for hiding a menu item from selected roles. | Renamed menu item saved through debounced autosave. |
+
+## Important: visibility is cosmetic, not access control
+
+Hiding a menu item only declutters the menu — the underlying page still loads for anyone who knows its URL, because a page's own registered capability is the real lock. For actual access control, pair this with a capability manager (User Role Editor, or PublishPress Capabilities). The `admin_menu_maestro_capability` filter lets such a plugin hand editing rights to a custom capability instead of the default `manage_options`.
 
 ## Quick start
 
@@ -44,23 +51,16 @@ See `FIXES.md` for the resolved punchlist and `SPEC.md` for the durable design.
 
 For the longer walkthrough, see [`docs/user-guide.md`](docs/user-guide.md).
 
-## Screenshots
+## Status
 
-Click any screenshot to open the full-size image.
+v1 complete, preparing for WordPress.org submission (release-readiness tracked in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44, integration 27, E2E 9; phpcs clean; Plugin Check 0/0 on the build zip). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
 
-| Edit mode | Icon picker |
-| --- | --- |
-| [![Edit mode with the Posts menu item selected and the shared controls panel open](.wordpress-org/screenshot-1.png)](.wordpress-org/screenshot-1.png) | [![Icon picker with searchable Dashicons and Bootstrap Icons tabs](.wordpress-org/screenshot-2.png)](.wordpress-org/screenshot-2.png) |
-| Posts selected, with the shared controls panel open. | Searchable icon picker with Dashicons and Bootstrap Icons tabs. |
+- **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved ✓" status indicator instead. Saves are serialized (single-flight) so a slow request can't overwrite newer edits. Reload only on Exit (which flushes any pending save) and on Reset all.
+- **Click-to-select with one shared controls panel.** No edit chrome until an item is selected: each row shows only a hover/focus-revealed drag handle. Selecting an item opens the shared panel (rename, icon picker for top-level items, per-role visibility, reset-this-item).
+- **Stable expanded menu while editing.** Folded/auto-fold mode is neutralized on entry and re-stripped if `common.js` reapplies it, so editing always happens against the expanded menu.
+- **Icons: all four native WordPress forms** (dashicon, `none`, base64 image data-URI, image URL), validated server-side. The picker bundles two sets — dashicons and ~87 curated [Bootstrap Icons](https://icons.getbootstrap.com/) — with a search filter and a "No icon" option, and is keyboard-accessible (dialog/tablist roles, arrow-key navigation, focus trap) and mobile-sized. Icon changes persist via autosave (covered by E2E: pick → POST carries the icon → survives reload).
 
-| Role visibility | Autosave |
-| --- | --- |
-| [![Per-role visibility picker for hiding a menu item from selected roles](.wordpress-org/screenshot-3.png)](.wordpress-org/screenshot-3.png) | [![Renamed menu item saved through debounced autosave](.wordpress-org/screenshot-4.png)](.wordpress-org/screenshot-4.png) |
-| Per-role visibility picker for hiding a menu item from selected roles. | Renamed menu item saved through debounced autosave. |
-
-## Important: visibility is cosmetic, not access control
-
-Hiding a menu item only declutters the menu — the underlying page still loads for anyone who knows its URL, because a page's own registered capability is the real lock. For actual access control, pair this with a capability manager (User Role Editor, or PublishPress Capabilities). The `admin_menu_maestro_capability` filter lets such a plugin hand editing rights to a custom capability instead of the default `manage_options`.
+See `FIXES.md` for the resolved punchlist and `SPEC.md` for the durable design.
 
 ## Repository layout
 
