@@ -27,8 +27,8 @@ left to publish responsibly.
 
 ### Testing
 
-- [ ] **TEST-01**: E2E proves per-role visibility — hide from a role, switch user, confirm hidden for them and present for admin (spec added; pending live Playwright/wp-env run)
-- [ ] **TEST-02**: E2E/integration cover reset-this-item and reset-all edge cases (coverage added; reset-this-item spec pending live Playwright/wp-env run)
+- [x] **TEST-01**: E2E proves per-role visibility — hide from a role, switch user, confirm hidden for them and present for admin
+- [x] **TEST-02**: E2E/integration cover reset-this-item and reset-all edge cases
 - [x] **TEST-03**: Icon-form and sanitization edge cases have explicit coverage (rejections + acceptances)
 
 ### Performance
@@ -83,8 +83,8 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | A11Y-03 | Phase 2: Accessibility Audit | Complete |
 | A11Y-04 | Phase 2: Accessibility Audit | Complete |
 | A11Y-05 | Phase 2: Accessibility Audit | Complete |
-| TEST-01 | Phase 3: Verification | Pending |
-| TEST-02 | Phase 3: Verification | Pending |
+| TEST-01 | Phase 3: Verification | Complete |
+| TEST-02 | Phase 3: Verification | Complete |
 | TEST-03 | Phase 3: Verification | Complete |
 | PERF-01 | Phase 3: Verification | Complete |
 | PERF-02 | Phase 3: Verification | Complete |
@@ -101,4 +101,4 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-13 during Phase 3 Verification*
+*Last updated: 2026-06-13 after Phase 3 Verification completion*

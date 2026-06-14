@@ -29,11 +29,17 @@ function ensureEditorUser() {
 			{ stdio: 'inherit' }
 		);
 	}
+	execFileSync( 'npx', [ 'wp-env', 'run', 'tests-cli', 'wp', 'user', 'update', 'amm_editor', '--user_pass=password' ], { stdio: 'inherit' } );
+}
+
+function ensureAdminPassword() {
+	execFileSync( 'npx', [ 'wp-env', 'run', 'tests-cli', 'wp', 'user', 'update', 'admin', '--user_pass=password' ], { stdio: 'inherit' } );
 }
 
 async function globalSetup( config: FullConfig ) {
 	const statePath = './tests/e2e/.auth/admin.json';
 	mkdirSync( dirname( statePath ), { recursive: true } );
+	ensureAdminPassword();
 	ensureEditorUser();
 
 	const browser = await chromium.launch();
