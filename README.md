@@ -24,6 +24,16 @@ v1 complete, preparing for WordPress.org submission (release-readiness tracked i
 
 See `FIXES.md` for the resolved punchlist and `SPEC.md` for the durable design.
 
+## Screenshots
+
+![Edit mode with the Posts menu item selected and the shared controls panel open](.wordpress-org/screenshot-1.png)
+
+![Icon picker with searchable Dashicons and Bootstrap Icons tabs](.wordpress-org/screenshot-2.png)
+
+![Per-role visibility picker for hiding a menu item from selected roles](.wordpress-org/screenshot-3.png)
+
+![Renamed menu item saved through debounced autosave](.wordpress-org/screenshot-4.png)
+
 ## Important: visibility is cosmetic, not access control
 
 Hiding a menu item only declutters the menu — the underlying page still loads for anyone who knows its URL, because a page's own registered capability is the real lock. For actual access control, pair this with a capability manager (User Role Editor, or PublishPress Capabilities). The `admin_menu_maestro_capability` filter lets such a plugin hand editing rights to a custom capability instead of the default `manage_options`.
@@ -31,7 +41,7 @@ Hiding a menu item only declutters the menu — the underlying page still loads 
 ## Repository layout
 
 - **Runtime plugin** — `admin-menu-maestro.php`, `includes/`, `assets/`, `readme.txt`. This is all that ships to a site.
-- **WordPress.org listing assets** — `.wordpress-org/` contains the directory icon (`icon.svg`, `icon-128x128.png`, `icon-256x256.png`) and banners (`banner-772x250.png`, `banner-1544x500.png`).
+- **WordPress.org listing assets** — `.wordpress-org/` contains the directory icon (`icon.svg`, `icon-128x128.png`, `icon-256x256.png`), banners (`banner-772x250.png`, `banner-1544x500.png`), and screenshots (`screenshot-1.png` through `screenshot-4.png`).
 - **Dev & tooling** — `tests/`, `composer.json`, `package.json`, `.wp-env.json`, `playwright.config.ts`, `phpunit-*.xml.dist`, `bin/build.sh`.
 - **Docs** — `SPEC.md` (durable specification), `FIXES.md` (active punchlist), `TESTING.md` (how to run each test layer).
 

@@ -59,6 +59,13 @@ capability instead of the default `manage_options`.
   directory: `icon.svg`, `icon-128x128.png`, `icon-256x256.png`,
   `banner-772x250.png`, and `banner-1544x500.png`.
 
+== Screenshots ==
+
+1. Edit mode with the Posts menu item selected and the shared controls panel open.
+2. Searchable icon picker with Dashicons and Bootstrap Icons tabs.
+3. Per-role visibility picker for hiding a menu item from selected roles.
+4. A renamed menu item saved through debounced autosave.
+
 == Known limits / deferred to v2 ==
 
 * **Reparenting** (moving an item between top-level and submenu) is not included.

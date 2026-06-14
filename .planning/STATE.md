@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-06-13)
 
 Phase: 4 of 5 (Release Assets)
 Plan: 1 of TBD in current phase
-Status: In progress; icon/banner assets complete, screenshots/docs pending
-Last activity: 2026-06-13 — WordPress.org icon/banner assets pulled from remote, verified for required dimensions, and referenced from GitHub/wp.org readmes
+Status: In progress; icon/banner/screenshot assets complete, user docs pending
+Last activity: 2026-06-13 — Screenshot assets captured from wp-env, added to `.wordpress-org/`, and referenced from GitHub/wp.org readmes
 
 Progress: [███████░░░] 70%
 
@@ -52,7 +52,7 @@ Recent decisions affecting current work:
 - Accessibility audit: Static/code audit closed A11Y-01 through A11Y-05. The editor now supports keyboard item selection with `Enter`/`Space`, focus restoration for popovers, save success/failure announcements through `wp.a11y.speak()`, and public documentation of the v1 keyboard-reordering limitation.
 - Verification: Phase 3 is closed. Unit tests remain 44/44. Integration tests now run 27 tests / 61 assertions, adding reset-all idempotence/partial-config coverage plus performance contracts for non-autoloaded storage, edit-mode-only assets, and localized payload budget. Playwright E2E now runs 9/9, including reset-this-item and per-role visibility.
 - Testing tools: Node.js v24.16.0, npm/npx 11.13.0, Colima v0.10.3, Lima v2.1.2, Docker CLI 29.5.3, Docker Compose v5.1.4, and Playwright Chromium were installed under user-local locations. Colima is running with the `colima` Docker context.
-- Release assets: `.wordpress-org/` contains `icon.svg`, `icon-128x128.png`, `icon-256x256.png`, `banner-772x250.png`, and `banner-1544x500.png`. PNG dimensions were verified with `file`. GitHub `README.md` now displays the banner; wp.org `readme.txt` references the listing graphics in the developer architecture section. REL-02 is complete.
+- Release assets: `.wordpress-org/` contains `icon.svg`, `icon-128x128.png`, `icon-256x256.png`, `banner-772x250.png`, `banner-1544x500.png`, and `screenshot-1.png` through `screenshot-4.png`. PNG dimensions were verified with `file`. GitHub `README.md` now displays the banner and screenshots; wp.org `readme.txt` includes matching screenshot captions. REL-01, REL-02, and REL-03 are complete.
 
 ### Pending Todos
 
@@ -65,5 +65,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-06-13
-Stopped at: Phase 4 Release Assets in progress; next action is screenshots and user-facing documentation
+Stopped at: Phase 4 Release Assets in progress; next action is user-facing documentation
 Resume file: None

@@ -38,9 +38,9 @@ left to publish responsibly.
 
 ### Release
 
-- [ ] **REL-01**: readme.txt has a `== Screenshots ==` section matching shipped screenshots
+- [x] **REL-01**: readme.txt has a `== Screenshots ==` section matching shipped screenshots
 - [x] **REL-02**: WordPress.org SVN `assets/` graphics exist: `icon-128x128`, `icon-256x256`, `banner-772x250`, `banner-1544x500`
-- [ ] **REL-03**: Annotated screenshots captured (from the Playground demo) for the listing
+- [x] **REL-03**: Annotated screenshots captured (from the Playground demo) for the listing
 - [ ] **REL-04**: User-facing documentation (how to edit, per-role visibility caveat, icons)
 - [ ] **REL-05**: Final Plugin Check + WPCS pass on the build zip, then submit to WordPress.org
 
@@ -88,9 +88,9 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | TEST-03 | Phase 3: Verification | Complete |
 | PERF-01 | Phase 3: Verification | Complete |
 | PERF-02 | Phase 3: Verification | Complete |
-| REL-01 | Phase 4: Release Assets | Pending |
+| REL-01 | Phase 4: Release Assets | Complete |
 | REL-02 | Phase 4: Release Assets | Complete |
-| REL-03 | Phase 4: Release Assets | Pending |
+| REL-03 | Phase 4: Release Assets | Complete |
 | REL-04 | Phase 4: Release Assets | Pending |
 | REL-05 | Phase 5: Submit | Pending |
 
