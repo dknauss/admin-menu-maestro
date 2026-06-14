@@ -55,6 +55,9 @@ capability instead of the default `manage_options`.
 * `Rest` — `admin-menu-maestro/v1/config` (GET/POST/DELETE), capability-gated, `X-WP-Nonce`.
 * The editor JS is driven by a localized model (with DOM ids), not DOM scraping,
   and diffs against captured pristine defaults so the stored config stays sparse.
+* WordPress.org listing graphics live in the repository's `.wordpress-org/`
+  directory: `icon.svg`, `icon-128x128.png`, `icon-256x256.png`,
+  `banner-772x250.png`, and `banner-1544x500.png`.
 
 == Known limits / deferred to v2 ==
 

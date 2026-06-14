@@ -90,5 +90,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Security Review | 2/TBD | Complete | Static Codex Security scan complete; nonce integration coverage added; one low-severity DOM XSS hardening issue fixed |
 | 2. Accessibility Audit | 1/TBD | Complete | Static/code audit complete; keyboard selection added; focus management and save announcements hardened; keyboard reorder gap documented for v2 |
 | 3. Verification | 2/TBD | Complete | Added and ran E2E coverage for reset-this-item and per-role visibility; added integration checks for reset-all edge cases, non-autoloaded storage, edit-mode-only assets, and localized payload budget; unit 44/44, integration 27/27, E2E 9/9 |
-| 4. Release Assets | 0/TBD | Not started | - |
+| 4. Release Assets | 1/TBD | In progress | WordPress.org icon and banner assets added under `.wordpress-org/` and referenced from the GitHub/wp.org readmes; screenshots and user docs still pending |
 | 5. Submit | 0/TBD | Not started | - |

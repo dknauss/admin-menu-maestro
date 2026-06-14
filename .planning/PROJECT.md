@@ -56,6 +56,7 @@ security boundary.
 - **Security scan:** Codex Security scan `317283f_20260614T024544Z` produced validated markdown/HTML reports under `/tmp/codex-security-scans/admin-menu-maestro/317283f_20260614T024544Z`; it found one low-severity DOM XSS hardening issue in the editor helper and fixed it by switching `el()` from `innerHTML` to `textContent`. Follow-up nonce integration tests now close SEC-01.
 - **Accessibility audit:** Static/code audit closed Phase 2. Keyboard selection now works with `Enter`/`Space`, focus moves into the shared panel, icon/visibility popovers have dialog focus handling, save success/failure is announced through the WordPress a11y API, and the v1 keyboard-reordering gap is documented for v2.
 - **Verification:** Phase 3 is complete. Unit tests are 44/44, wp-env integration is 27/27 with 61 assertions, and Playwright E2E is 9/9. Coverage now includes icon sanitization, reset-all edge cases, non-autoloaded storage, edit-mode-only assets, localized payload budget, reset-this-item, and per-role visibility.
+- **Release assets:** WordPress.org icon and banner graphics exist under `.wordpress-org/` at the required dimensions and are referenced from the GitHub/wp.org readmes. Screenshots and user-facing documentation remain open.
 - **Future roadmap (post-1.0 backlog):** reparenting (top↔sub, highlighting minefield); separator management; keyboard-accessible reordering; per-item-reset UI affordance with a "modified" indicator; custom icon upload (SVG sanitization); import/export config as JSON; optional enforcement bridge (opt-in, clearly-labelled defense-in-depth); multisite/network defaults with per-site override; configurable admin-menu width (V2-09); admin-toolbar editing feasibility research (V2-10).
 
 ## Constraints
@@ -78,4 +79,4 @@ security boundary.
 | Apply GSD for release-readiness + future roadmap | Formalize the path to .org and track post-1.0 work | — Pending |
 
 ---
-*Last updated: 2026-06-13 after Phase 3 Verification completion*
+*Last updated: 2026-06-13 during Phase 4 Release Assets*

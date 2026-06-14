@@ -7,13 +7,15 @@
 [![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777bb4.svg?logo=php&logoColor=white)](https://www.php.net/)
 [![Live demo in WordPress Playground](https://img.shields.io/badge/▶_Playground-Live_demo-3858e9.svg?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/admin-menu-maestro/main/playground/blueprint-hosted.json)
 
+![Admin Menu Maestro banner](.wordpress-org/banner-1544x500.png)
+
 In-place editing of the WordPress admin menu — rename items, reorder them, swap top-level icons, and hide items per role. Global configuration, no separate settings screen: the editor is toggled from the admin bar and operates on the menu itself.
 
 **▶ [Try it live in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/admin-menu-maestro/main/playground/blueprint-hosted.json)** — boots a throwaway site with the plugin active, User Switching, and test users (editor / author / contributor / subscriber, password `password`) so you can try per-role visibility by switching users.
 
 ## Status
 
-v1 complete, preparing for WordPress.org submission (release-readiness tracked in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44, integration 23, E2E 7; phpcs clean; Plugin Check 0/0 on the build zip). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
+v1 complete, preparing for WordPress.org submission (release-readiness tracked in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all three test layers are green (unit 44, integration 27, E2E 9; phpcs clean; Plugin Check 0/0 on the build zip). The editor uses the click-to-select model with debounced autosave specified in [`FIXES.md`](FIXES.md):
 
 - **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved ✓" status indicator instead. Saves are serialized (single-flight) so a slow request can't overwrite newer edits. Reload only on Exit (which flushes any pending save) and on Reset all.
 - **Click-to-select with one shared controls panel.** No edit chrome until an item is selected: each row shows only a hover/focus-revealed drag handle. Selecting an item opens the shared panel (rename, icon picker for top-level items, per-role visibility, reset-this-item).
@@ -29,6 +31,7 @@ Hiding a menu item only declutters the menu — the underlying page still loads 
 ## Repository layout
 
 - **Runtime plugin** — `admin-menu-maestro.php`, `includes/`, `assets/`, `readme.txt`. This is all that ships to a site.
+- **WordPress.org listing assets** — `.wordpress-org/` contains the directory icon (`icon.svg`, `icon-128x128.png`, `icon-256x256.png`) and banners (`banner-772x250.png`, `banner-1544x500.png`).
 - **Dev & tooling** — `tests/`, `composer.json`, `package.json`, `.wp-env.json`, `playwright.config.ts`, `phpunit-*.xml.dist`, `bin/build.sh`.
 - **Docs** — `SPEC.md` (durable specification), `FIXES.md` (active punchlist), `TESTING.md` (how to run each test layer).
 
