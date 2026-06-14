@@ -24,6 +24,26 @@ v1 complete, preparing for WordPress.org submission (release-readiness tracked i
 
 See `FIXES.md` for the resolved punchlist and `SPEC.md` for the durable design.
 
+## Quick start
+
+1. Activate the plugin, then choose **Edit Menu** in the admin bar.
+2. Click a menu item to select it. The shared controls panel opens beside the
+   menu.
+3. Rename an item by editing its label. Press `Enter` to commit or `Escape` to
+   restore the previous label.
+4. Reorder items by dragging menu rows. Top-level items reorder among top-level
+   items; submenu items reorder inside their current parent.
+5. Change a top-level icon from the icon picker. Use Dashicons, bundled
+   Bootstrap Icons, "No icon", or a valid WordPress icon value.
+6. Hide an item from selected roles with the visibility control. This only
+   changes what those roles see in the menu; it does not block the page URL.
+7. Use **Reset this item** to discard one item's customizations, or **Reset
+   all** to delete the saved configuration and return to WordPress defaults.
+8. Choose **Exit Menu Editing** when finished. Pending autosaves are flushed
+   before the page reloads.
+
+For the longer walkthrough, see [`docs/user-guide.md`](docs/user-guide.md).
+
 ## Screenshots
 
 ![Edit mode with the Posts menu item selected and the shared controls panel open](.wordpress-org/screenshot-1.png)
@@ -43,7 +63,7 @@ Hiding a menu item only declutters the menu — the underlying page still loads 
 - **Runtime plugin** — `admin-menu-maestro.php`, `includes/`, `assets/`, `readme.txt`. This is all that ships to a site.
 - **WordPress.org listing assets** — `.wordpress-org/` contains the directory icon (`icon.svg`, `icon-128x128.png`, `icon-256x256.png`), banners (`banner-772x250.png`, `banner-1544x500.png`), and screenshots (`screenshot-1.png` through `screenshot-4.png`).
 - **Dev & tooling** — `tests/`, `composer.json`, `package.json`, `.wp-env.json`, `playwright.config.ts`, `phpunit-*.xml.dist`, `bin/build.sh`.
-- **Docs** — `SPEC.md` (durable specification), `FIXES.md` (active punchlist), `TESTING.md` (how to run each test layer).
+- **Docs** — `docs/user-guide.md` (user walkthrough), `SPEC.md` (durable specification), `FIXES.md` (active punchlist), `TESTING.md` (how to run each test layer).
 
 ## Install (to a site)
 

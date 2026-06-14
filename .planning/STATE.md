@@ -2,24 +2,24 @@
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-13)
+See: .planning/PROJECT.md (updated 2026-06-14)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** Phase 4 — Release Assets (in progress)
+**Current focus:** Phase 5 — Submit (not started)
 
 ## Current Position
 
-Phase: 4 of 5 (Release Assets)
-Plan: 1 of TBD in current phase
-Status: In progress; icon/banner/screenshot assets complete, user docs pending
-Last activity: 2026-06-13 — Screenshot assets captured from wp-env, added to `.wordpress-org/`, and referenced from GitHub/wp.org readmes
+Phase: 5 of 5 (Submit)
+Plan: 0 of TBD in current phase
+Status: Phase 4 closed; ready for final build verification and WordPress.org submission prep
+Last activity: 2026-06-14 — User-facing documentation added to README.md, readme.txt, and docs/user-guide.md; Phase 4 Release Assets closed
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 9
 - Average duration: —
 - Total execution time: 0 hours
 
@@ -30,7 +30,7 @@ Progress: [███████░░░] 70%
 | Security Review | 2 | TBD | — |
 | Accessibility Audit | 1 | TBD | — |
 | Verification | 2 | TBD | — |
-| Release Assets | 1 | TBD | — |
+| Release Assets | 4 | TBD | — |
 
 **Recent Trend:**
 - Last 5 plans: —
@@ -52,7 +52,7 @@ Recent decisions affecting current work:
 - Accessibility audit: Static/code audit closed A11Y-01 through A11Y-05. The editor now supports keyboard item selection with `Enter`/`Space`, focus restoration for popovers, save success/failure announcements through `wp.a11y.speak()`, and public documentation of the v1 keyboard-reordering limitation.
 - Verification: Phase 3 is closed. Unit tests remain 44/44. Integration tests now run 27 tests / 61 assertions, adding reset-all idempotence/partial-config coverage plus performance contracts for non-autoloaded storage, edit-mode-only assets, and localized payload budget. Playwright E2E now runs 9/9, including reset-this-item and per-role visibility.
 - Testing tools: Node.js v24.16.0, npm/npx 11.13.0, Colima v0.10.3, Lima v2.1.2, Docker CLI 29.5.3, Docker Compose v5.1.4, and Playwright Chromium were installed under user-local locations. Colima is running with the `colima` Docker context.
-- Release assets: `.wordpress-org/` contains `icon.svg`, `icon-128x128.png`, `icon-256x256.png`, `banner-772x250.png`, `banner-1544x500.png`, and `screenshot-1.png` through `screenshot-4.png`. PNG dimensions were verified with `file`. GitHub `README.md` now displays the banner and screenshots; wp.org `readme.txt` includes matching screenshot captions. REL-01, REL-02, and REL-03 are complete.
+- Release assets: `.wordpress-org/` contains `icon.svg`, `icon-128x128.png`, `icon-256x256.png`, `banner-772x250.png`, `banner-1544x500.png`, and `screenshot-1.png` through `screenshot-4.png`. PNG dimensions were verified with `file`. GitHub `README.md` now displays the banner, screenshots, and quick-start docs; wp.org `readme.txt` includes matching screenshot captions and usage docs; `docs/user-guide.md` contains the longer walkthrough. REL-01 through REL-04 are complete and Phase 4 is closed.
 
 ### Pending Todos
 
@@ -60,10 +60,10 @@ None yet.
 
 ### Blockers/Concerns
 
-- GitHub reports 8 Dependabot vulnerabilities on the default branch during pushes; npm reports 13 audit findings in the locked JS dependency tree. These are dependency-maintenance items, not blockers for Phase 4 assets.
+- GitHub reports 8 Dependabot vulnerabilities on the default branch during pushes; npm reports 13 audit findings in the locked JS dependency tree. These are dependency-maintenance items to assess during Phase 5, not blockers for the completed release assets.
 
 ## Session Continuity
 
-Last session: 2026-06-13
-Stopped at: Phase 4 Release Assets in progress; next action is user-facing documentation
+Last session: 2026-06-14
+Stopped at: Phase 5 Submit ready to start; next action is final build verification, Plugin Check, WPCS, and submission prep
 Resume file: None
