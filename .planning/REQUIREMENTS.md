@@ -19,11 +19,11 @@ left to publish responsibly.
 
 ### Accessibility
 
-- [ ] **A11Y-01**: The selection model is fully keyboard operable (select, rename, icon, visibility, reset reachable without a mouse)
-- [ ] **A11Y-02**: Focus is managed sensibly on select / panel open / popover open+close
-- [ ] **A11Y-03**: Save status is announced to assistive tech (e.g. `wp.a11y.speak()` on Saved/Error)
-- [ ] **A11Y-04**: Icon picker dialog/tabs/grid expose correct ARIA roles and labels (audit-confirmed)
-- [ ] **A11Y-05**: Keyboard-accessible reordering gap is documented as a known limitation (full fix is v2)
+- [x] **A11Y-01**: The selection model is fully keyboard operable (select, rename, icon, visibility, reset reachable without a mouse)
+- [x] **A11Y-02**: Focus is managed sensibly on select / panel open / popover open+close
+- [x] **A11Y-03**: Save status is announced to assistive tech (e.g. `wp.a11y.speak()` on Saved/Error)
+- [x] **A11Y-04**: Icon picker dialog/tabs/grid expose correct ARIA roles and labels (audit-confirmed)
+- [x] **A11Y-05**: Keyboard-accessible reordering gap is documented as a known limitation (full fix is v2)
 
 ### Testing
 
@@ -78,11 +78,11 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | SEC-03 | Phase 1: Security Review | Complete |
 | SEC-04 | Phase 1: Security Review | Complete |
 | SEC-05 | Phase 1: Security Review | Complete |
-| A11Y-01 | Phase 2: Accessibility Audit | Pending |
-| A11Y-02 | Phase 2: Accessibility Audit | Pending |
-| A11Y-03 | Phase 2: Accessibility Audit | Pending |
-| A11Y-04 | Phase 2: Accessibility Audit | Pending |
-| A11Y-05 | Phase 2: Accessibility Audit | Pending |
+| A11Y-01 | Phase 2: Accessibility Audit | Complete |
+| A11Y-02 | Phase 2: Accessibility Audit | Complete |
+| A11Y-03 | Phase 2: Accessibility Audit | Complete |
+| A11Y-04 | Phase 2: Accessibility Audit | Complete |
+| A11Y-05 | Phase 2: Accessibility Audit | Complete |
 | TEST-01 | Phase 3: Verification | Pending |
 | TEST-02 | Phase 3: Verification | Pending |
 | TEST-03 | Phase 3: Verification | Pending |
@@ -101,4 +101,4 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-13 after Phase 1 Security Review completion*
+*Last updated: 2026-06-13 after Phase 2 Accessibility Audit completion*

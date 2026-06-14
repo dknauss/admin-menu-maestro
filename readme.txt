@@ -65,6 +65,9 @@ capability instead of the default `manage_options`.
   generated slugs (`separator1`…) have no stable identity to key against.
 * **Renaming** an item drops any core-appended count badge (e.g. pending
   comments) from that label, since the badge lives inside the title string.
+* **Keyboard reordering** is not included in v1. Keyboard users can select
+  items, rename them, change icons, change visibility, and reset items, but
+  drag reordering is mouse/touch-only until v2 move controls are added.
 * Submenu sort relies on items registering by the late `admin_menu` pass; a
   plugin that registers submenus on an unusually late hook may not be captured.
 

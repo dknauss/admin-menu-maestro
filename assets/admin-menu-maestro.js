@@ -56,6 +56,11 @@
 	function closePopovers() {
 		document.querySelectorAll( '.amm-popover' ).forEach( function ( p ) { p.remove(); } );
 	}
+	function speak( message ) {
+		if ( window.wp && window.wp.a11y && typeof window.wp.a11y.speak === 'function' ) {
+			window.wp.a11y.speak( message );
+		}
+	}
 	function cssEscape( s ) {
 		if ( window.CSS && window.CSS.escape ) { return window.CSS.escape( s ); }
 		return String( s ).replace( /(["\\\]])/g, '\\$1' );
@@ -157,13 +162,28 @@
 
 			var li = e.target.closest( 'li.amm-item, li.amm-subitem' );
 			if ( ! li ) { return; }
-			selectItem( li );
+			selectItem( li, { focusPanel: true } );
+		}, true );
+
+		menu.addEventListener( 'keydown', function ( e ) {
+			if ( e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar' ) {
+				return;
+			}
+			if ( e.target.closest( '.amm-popover' ) ) {
+				return;
+			}
+
+			var li = e.target.closest( 'li.amm-item, li.amm-subitem' );
+			if ( ! li ) { return; }
+			e.preventDefault();
+			selectItem( li, { focusPanel: true } );
 		}, true );
 	}
 
-	function selectItem( li ) {
+	function selectItem( li, opts ) {
 		var slug = li.dataset.ammSlug;
 		if ( ! slug || ! model[ slug ] ) { return; }
+		opts = opts || {};
 
 		document.querySelectorAll( '.amm-selected' ).forEach( function ( n ) {
 			n.classList.remove( 'amm-selected' );
@@ -172,6 +192,13 @@
 		li.classList.add( 'amm-selected' );
 		populatePanel( slug );
 		closePopovers();
+		if ( opts.focusPanel && panel.rename ) {
+			try {
+				panel.rename.focus( { preventScroll: true } );
+			} catch ( err ) {
+				panel.rename.focus();
+			}
+		}
 	}
 
 	/* ---------- toolbar + shared controls panel --------------------------- */
@@ -180,6 +207,9 @@
 		var bar = el( 'div', 'amm-toolbar' );
 
 		statusEl = el( 'span', 'amm-status amm-status-idle' );
+		statusEl.setAttribute( 'role', 'status' );
+		statusEl.setAttribute( 'aria-live', 'polite' );
+		statusEl.setAttribute( 'aria-atomic', 'true' );
 		statusEl.textContent = I.idle;
 		bar.appendChild( statusEl );
 
@@ -562,7 +592,12 @@
 
 		var slug = selectedSlug;
 		var pop  = el( 'div', 'amm-popover amm-vis-popover' );
+		pop.setAttribute( 'role', 'dialog' );
+		pop.setAttribute( 'aria-modal', 'true' );
+		pop.setAttribute( 'aria-label', I.visibility );
+		pop.tabIndex = -1;
 		pop.appendChild( el( 'p', 'amm-vis-head', I.hideFrom ) );
+		var firstCheckbox = null;
 
 		Object.keys( D.roles ).forEach( function ( roleKey ) {
 			var row = el( 'label', 'amm-vis-row' );
@@ -570,6 +605,7 @@
 			cb.type = 'checkbox';
 			cb.value = roleKey;
 			cb.checked = model[ slug ].hiddenRoles.indexOf( roleKey ) !== -1;
+			if ( ! firstCheckbox ) { firstCheckbox = cb; }
 			cb.addEventListener( 'change', function () {
 				var set = model[ slug ].hiddenRoles;
 				if ( cb.checked ) {
@@ -588,7 +624,34 @@
 			pop.appendChild( row );
 		} );
 
+		pop.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' ) {
+				e.preventDefault();
+				closePopovers();
+				anchorBtn.focus();
+				return;
+			}
+			if ( e.key !== 'Tab' ) { return; }
+			var focusable = pop.querySelectorAll(
+				'input, button, [tabindex]:not([tabindex="-1"])'
+			);
+			focusable = Array.prototype.filter.call( focusable, function ( n ) {
+				return ! n.hidden && n.offsetParent !== null;
+			} );
+			if ( ! focusable.length ) { return; }
+			var first = focusable[ 0 ];
+			var last  = focusable[ focusable.length - 1 ];
+			if ( e.shiftKey && document.activeElement === first ) {
+				e.preventDefault();
+				last.focus();
+			} else if ( ! e.shiftKey && document.activeElement === last ) {
+				e.preventDefault();
+				first.focus();
+			}
+		} );
+
 		placePopover( pop, anchorBtn );
+		( firstCheckbox || pop ).focus();
 	}
 
 	/* ---------- per-item reset -------------------------------------------- */
@@ -725,6 +788,9 @@
 			state === 'saved'  ? I.saved  :
 			state === 'error'  ? I.saveError :
 			I.idle;
+		if ( state === 'saved' || state === 'error' ) {
+			speak( statusEl.textContent );
+		}
 	}
 
 	function scheduleAutosave() {

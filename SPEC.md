@@ -143,8 +143,10 @@ This model supersedes the original always-visible per-item control clusters, whi
 
 - Edit affordances are real `<button>`s with `title` labels; the rename control is a focusable `<input>` in the shared panel, committed on `Enter` and reverted on `Escape`.
 - The menu is forced to a stable expanded state while editing, so all items (and the selection model) are reachable without hover/flyout behaviour.
-- The shared controls panel and status indicator use core `.button`/`.button-primary` classes for native focus styling and contrast.
-- **Known gap (roadmap):** drag reordering is currently mouse/touch only via jQuery-UI sortable. Keyboard item selection (tab/arrow) plus move-up/move-down controls or `aria-grabbed` semantics are deferred to Phase 3.
+- Keyboard users can tab to rendered menu links and press `Enter` or `Space` to select an item; focus then moves to the rename field in the shared controls panel.
+- The icon picker and visibility picker are modal popovers with dialog semantics, trapped tab focus, Escape-to-close behaviour, and focus restoration to the triggering control.
+- The shared controls panel and status indicator use core `.button`/`.button-primary` classes for native focus styling and contrast. Save success/failure is exposed through a polite status live region and `wp.a11y.speak()`.
+- **Known gap (roadmap):** drag reordering is currently mouse/touch only via jQuery-UI sortable. Keyboard move-up/move-down controls or `aria-grabbed` semantics are deferred to v2.
 
 ---
 

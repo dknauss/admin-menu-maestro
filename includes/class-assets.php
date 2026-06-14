@@ -67,7 +67,7 @@ class Assets {
 		wp_enqueue_script(
 			'admin-menu-maestro',
 			ADMIN_MENU_MAESTRO_URL . 'assets/admin-menu-maestro.js',
-			array( 'jquery', 'jquery-ui-sortable', 'wp-i18n' ),
+			array( 'jquery', 'jquery-ui-sortable', 'wp-a11y', 'wp-i18n' ),
 			ADMIN_MENU_MAESTRO_VERSION,
 			true
 		);

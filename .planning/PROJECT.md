@@ -36,7 +36,7 @@ security boundary.
 <!-- This milestone: v1.0 WordPress.org release readiness. -->
 
 - [x] Security review (REST auth, `sanitize_icon` data-URI/URL surface, slug handling, capability filter, option writes)
-- [ ] Accessibility review/audit (keyboard operability, focus management, save announcements)
+- [x] Accessibility review/audit (keyboard operability, focus management, save announcements)
 - [ ] Extended automated tests (per-role visibility e2e, reset/edge cases)
 - [ ] Performance sanity check (admin-load overhead, edit-mode payload)
 - [ ] WordPress.org assets (readme screenshots, icon/banner graphics, screenshots, user docs)
@@ -54,6 +54,7 @@ security boundary.
 - **Codebase map:** SPEC.md serves as the architecture reference, so GSD codebase mapping was skipped. Components: `Config` (option storage + sanitize), `Ordering` (pure reorder), `Replay` (mutates `$menu`/`$submenu` on `admin_menu` PHP_INT_MAX + `menu_order`), `Rest` (REST controller), `Admin_Bar` (toggle), `Assets` (enqueue/localize, edit mode only).
 - **Tooling:** wp-env (WP 7.0), Playwright e2e, PHPUnit unit+integration, WPCS via phpcs, official Plugin Check. `bin/build.sh` emits a runtime-only `admin-menu-maestro.zip`.
 - **Security scan:** Codex Security scan `317283f_20260614T024544Z` produced validated markdown/HTML reports under `/tmp/codex-security-scans/admin-menu-maestro/317283f_20260614T024544Z`; it found one low-severity DOM XSS hardening issue in the editor helper and fixed it by switching `el()` from `innerHTML` to `textContent`. Follow-up nonce integration tests now close SEC-01.
+- **Accessibility audit:** Static/code audit closed Phase 2. Keyboard selection now works with `Enter`/`Space`, focus moves into the shared panel, icon/visibility popovers have dialog focus handling, save success/failure is announced through the WordPress a11y API, and the v1 keyboard-reordering gap is documented for v2.
 - **Future roadmap (post-1.0 backlog):** reparenting (top↔sub, highlighting minefield); separator management; keyboard-accessible reordering; per-item-reset UI affordance with a "modified" indicator; custom icon upload (SVG sanitization); import/export config as JSON; optional enforcement bridge (opt-in, clearly-labelled defense-in-depth); multisite/network defaults with per-site override; configurable admin-menu width (V2-09); admin-toolbar editing feasibility research (V2-10).
 
 ## Constraints
@@ -76,4 +77,4 @@ security boundary.
 | Apply GSD for release-readiness + future roadmap | Formalize the path to .org and track post-1.0 work | — Pending |
 
 ---
-*Last updated: 2026-06-13 after Phase 1 Security Review completion*
+*Last updated: 2026-06-13 after Phase 2 Accessibility Audit completion*
