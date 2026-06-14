@@ -46,13 +46,17 @@ For the longer walkthrough, see [`docs/user-guide.md`](docs/user-guide.md).
 
 ## Screenshots
 
-![Edit mode with the Posts menu item selected and the shared controls panel open](.wordpress-org/screenshot-1.png)
+Click any screenshot to open the full-size image.
 
-![Icon picker with searchable Dashicons and Bootstrap Icons tabs](.wordpress-org/screenshot-2.png)
+| Edit mode | Icon picker |
+| --- | --- |
+| [![Edit mode with the Posts menu item selected and the shared controls panel open](.wordpress-org/screenshot-1.png)](.wordpress-org/screenshot-1.png) | [![Icon picker with searchable Dashicons and Bootstrap Icons tabs](.wordpress-org/screenshot-2.png)](.wordpress-org/screenshot-2.png) |
+| Posts selected, with the shared controls panel open. | Searchable icon picker with Dashicons and Bootstrap Icons tabs. |
 
-![Per-role visibility picker for hiding a menu item from selected roles](.wordpress-org/screenshot-3.png)
-
-![Renamed menu item saved through debounced autosave](.wordpress-org/screenshot-4.png)
+| Role visibility | Autosave |
+| --- | --- |
+| [![Per-role visibility picker for hiding a menu item from selected roles](.wordpress-org/screenshot-3.png)](.wordpress-org/screenshot-3.png) | [![Renamed menu item saved through debounced autosave](.wordpress-org/screenshot-4.png)](.wordpress-org/screenshot-4.png) |
+| Per-role visibility picker for hiding a menu item from selected roles. | Renamed menu item saved through debounced autosave. |
 
 ## Important: visibility is cosmetic, not access control
 
