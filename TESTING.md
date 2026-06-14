@@ -2,11 +2,9 @@
 
 Three layers, smallest and fastest first.
 
-> **Current local status:** unit 44/44 and integration 27/27 pass. The E2E suite
-> now contains 9 specs, including Phase 3 coverage for reset-this-item and
-> per-role visibility, but it was not rerun in the current shell because npm,
-> Docker, and Colima are unavailable. Last live E2E run before the Phase 3 specs
-> were added was 7/7.
+> **Current local status:** all three layers pass: unit 44/44, integration 27/27
+> with 61 assertions, and E2E 9/9. The E2E suite includes Phase 3 coverage for
+> reset-this-item and per-role visibility.
 
 ## Gotchas (first run)
 
@@ -62,6 +60,10 @@ npm run env:start          # if not already running
 npx playwright install     # one-time browser download
 npm run test:e2e           # or: npm run test:e2e:headed
 ```
+
+The E2E global setup normalizes the tests-site `admin` and `amm_editor`
+passwords to `password` before browser login, so reruns are deterministic even
+after a persisted wp-env database has drifted.
 
 Targets the wp-env **tests** instance at `http://localhost:8889`
 (default login `admin` / `password`). `global-setup.ts` authenticates once and
