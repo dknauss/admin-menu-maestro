@@ -54,7 +54,7 @@ security boundary.
 - [ ] UX-01 — "modified" indicator + discoverable per-item reset (V2-04)
 - [ ] UX-02 — UI/UX design polish (V2-12)
 - [ ] DOC-01 — documentation link hygiene (V2-13)
-- [ ] REL-06 — banner source/regeneration pipeline (V2-14)
+- [x] REL-06 — banner source/regeneration pipeline (V2-14) — done early during the wp.org rename
 
 *v1.0 release readiness (security, a11y audit, verification, .org assets, submit) is complete and shipped — see the Validated list and the Submit note in Context.*
 
