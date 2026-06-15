@@ -66,7 +66,7 @@ backlog (origin IDs noted).
 ### Docs & Assets
 
 - [ ] **DOC-01** (from V2-13): In-prose references to project files are markdown links, not bare paths, across README, readme.txt, user guide, SPEC, TESTING, and planning docs.
-- [ ] **REL-06** (from V2-14): The wp.org/GitHub banner is rebuilt from an editable SVG master under `.wordpress-org/source/`, the decorative leader line before "ADMIN MENU" removed, with a repeatable `npm run assets:banners` pipeline (Inkscape render → Pillow downscale/crop); public assets replaced only after visual review.
+- [x] **REL-06** (from V2-14): The wp.org/GitHub banner is rebuilt from an editable SVG master under `.wordpress-org/source/`, the decorative leader line before "ADMIN MENU" removed, with a repeatable `npm run assets:banners` pipeline (Inkscape render → Pillow downscale/crop); public assets replaced only after visual review. — **Done** (shipped during the wp.org rename: brand-first banner with the "THE INLINE ADMIN MENU EDITOR" subtitle).
 
 ## v2 Requirements
 
@@ -127,7 +127,7 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | ICON-01 | Phase 7: Visual Polish & Icons | Pending |
 | UX-02 | Phase 7: Visual Polish & Icons | Pending |
 | DOC-01 | Phase 8: Docs & Brand Assets | Pending |
-| REL-06 | Phase 8: Docs & Brand Assets | Pending |
+| REL-06 | Phase 8: Docs & Brand Assets | Complete (shipped during wp.org rename) |
 
 **Coverage:**
 - v1.0 requirements: 20 total — mapped to phases 1–5, all Complete
