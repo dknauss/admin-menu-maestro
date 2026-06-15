@@ -141,13 +141,41 @@ def build_banners():
         ts-=1; ftag=fnt(f"{FD}/Poppins-Light.ttf",ts)
     tb=dr.textbbox((0,0),tag,font=ftag); th=tb[3]-tb[1]
 
-    g1, botruleh, g3 = 16*S, 6*S, 22*S
-    total=wh+g1+botruleh+g3+th
-    y=(H*S-total)/2
+    # coral descriptor — DESC controls placement: "below" (default), "above", "none".
+    # "below" reads brand-first (MAESTRO / Inline Admin Menu Editor); "above" reuses
+    # the old overline slot but reads generic-phrase-first.
+    desc=os.environ.get("DESC","below")
+    desc_text={"above":"INLINE ADMIN MENU","below":"THE INLINE ADMIN MENU EDITOR"}.get(desc)
+    tr_desc=8*S; CORAL=(239,111,83,255)
+    if desc_text:
+        fit=ww if desc=="below" else maxw   # below: tuck the subtitle under the wordmark
+        ds=30*S
+        while True:
+            f_desc=fnt(f"{FD}/Poppins-Medium.ttf",ds)
+            if tlen(dr,desc_text,f_desc,tr_desc)<=fit or ds<=16*S: break
+            ds-=1
+        db=dr.textbbox((0,0),desc_text,font=f_desc); dh=db[3]-db[1]
+    else:
+        f_desc=None; db=None; dh=0
 
-    # hero (brand wordmark leads — overline removed; descriptor lives in the tagline)
-    master.alpha_composite(word,(tx,int(y))); word_right=tx+ww
-    y+=wh+g1
+    g1, botruleh, g3 = 16*S, 6*S, 22*S
+    blocks=(([dh,g1] if desc=="above" else [])+[wh,g1]
+            +([dh,g1] if desc=="below" else [])+[botruleh,g3,th])
+    y=(H*S-sum(blocks))/2
+
+    def draw_desc(yy):
+        if desc=="above":
+            ly=int(yy+dh*0.55)
+            dr.line([(tx,ly),(tx+26*S,ly)],fill=(239,111,83,210),width=max(2,2*S))
+            tracked(dr,(tx+40*S,yy),desc_text,f_desc,CORAL,tr_desc)
+        else:
+            tracked(dr,(tx,yy),desc_text,f_desc,CORAL,tr_desc)
+
+    if desc=="above":
+        draw_desc(y-db[1]); y+=dh+g1
+    master.alpha_composite(word,(tx,int(y))); word_right=tx+ww; y+=wh+g1
+    if desc=="below":
+        draw_desc(y-db[1]); y+=dh+g1
 
     # bottom gold rule with diamond terminals
     ry=int(y+botruleh/2)
@@ -158,7 +186,8 @@ def build_banners():
 
     dr.text((tx,y-tb[1]),tag,font=ftag,fill=(236,224,196,255))
 
-    for w,h,fn in [(1544,500,"banner-1544x500.png"),(772,250,"banner-772x250.png")]:
+    suf=os.environ.get("VARIANT_SUFFIX","")
+    for w,h,fn in [(1544,500,f"banner-1544x500{suf}.png"),(772,250,f"banner-772x250{suf}.png")]:
         master.resize((w,h),Image.LANCZOS).convert("RGB").save(f"{OUT}/{fn}","PNG",optimize=True); print("wrote",fn)
 
 def build_icons():
