@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:       Maestro - Inline Admin Menu Editor
+ * Plugin Name:       Maestro: The Inline Admin Menu Editor
  * Plugin URI:        https://github.com/dknauss/Maestro/
  * Description:        In-place editing of the WordPress admin menu — rename items, reorder them, swap top-level icons, and hide items per role. Cosmetic only: hiding declutters, it does not lock access.
  * Version:           1.0.0

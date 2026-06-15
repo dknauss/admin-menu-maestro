@@ -4,7 +4,7 @@
 
 A WordPress plugin that makes the admin menu editable **in place**: rename items, reorder them, swap top-level dashicons, and hide items per role. There is no separate settings screen — editing happens on the menu itself, toggled from the admin bar. Customizations are **global** (one configuration applies to everyone) and are stored as a sparse delta layered over the menu WordPress builds each request.
 
-**Plugin name:** Maestro - Inline Admin Menu Editor
+**Plugin name:** Maestro: The Inline Admin Menu Editor
 **Plugin slug:** `maestro-menu-editor`
 **Text domain:** `maestro-menu-editor`
 **PHP namespace:** `Maestro`

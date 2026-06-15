@@ -63,7 +63,7 @@ DEFS=f'<defs><linearGradient id="bg" x1="0" y1="0" x2="0.7" y2="1"><stop offset=
 
 def icon_svg():
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" '
-            f'role="img" aria-label="Maestro - Inline Admin Menu Editor">{DEFS}{mark_inner()}</svg>')
+            f'role="img" aria-label="Maestro: The Inline Admin Menu Editor">{DEFS}{mark_inner()}</svg>')
 
 def banner_svg(W=1544,H=500):
     badge,bx,by=300,104,100
@@ -77,7 +77,7 @@ def banner_svg(W=1544,H=500):
            f'<rect x="{bx+9}" y="{by+9}" width="{badge-18}" height="{badge-18}" fill="none" stroke="{GOLD}" stroke-opacity="0.30" stroke-width="1.5"/>')
     for ccx,ccy in [(bx,by),(bx+badge,by),(bx,by+badge),(bx+badge,by+badge)]:
         frame+=f'<rect x="{ccx-5}" y="{ccy-5}" width="10" height="10" fill="{CORAL}"/>'
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Maestro - Inline Admin Menu Editor">
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="Maestro: The Inline Admin Menu Editor">
 {DEFS}
 <rect width="{W}" height="{H}" fill="{P["deep"]}"/>
 <polygon points="0,0 {W},0 {W},300 0,170" fill="url(#bg)"/>

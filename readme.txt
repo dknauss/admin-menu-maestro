@@ -1,4 +1,4 @@
-=== Maestro - Inline Admin Menu Editor ===
+=== Maestro: The Inline Admin Menu Editor ===
 Contributors: dpknauss
 Donate link: https://www.paypal.com/paypalme/DanKnauss
 Tags: admin menu, menu editor, admin, dashboard, icons
