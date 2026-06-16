@@ -54,7 +54,10 @@ Full phase details, success criteria, and outcomes are archived in
   2. Edit-mode control hierarchy, spacing, and status clarity are improved with no text-overlap or control-resize regressions — confirmed by before/after screenshots and keyboard/mouse walkthrough notes
   3. Icon picker grid is visually scannable at the dashicons grid size (20px glyphs)
   4. UI changes hold at 0 regressions: unit 44/44, integration 29/29, e2e 9/9 green, Plugin Check 0 errors
-**Plans**: TBD
+**Plans**: 3 plans
+  - [ ] 07-01-PLAN.md — TDD fill-resolution policy + regenerate solid icon bundle [ICON-01]
+  - [ ] 07-02-PLAN.md — edit-mode polish: toolbar hierarchy, non-color status, ~20px grid, first-run cue [UX-02]
+  - [ ] 07-03-PLAN.md — e2e regression + side-by-side/before-after screenshots + walkthrough notes [UX-02, ICON-01]
 
 ### Phase 8: Docs & Brand Assets
 **Goal**: In-prose file references across all project docs are live markdown links, and the wp.org/GitHub banner is rebuilt from an editable SVG master with a repeatable generation pipeline
@@ -80,5 +83,5 @@ v1.0 complete (Phases 1–5, archived). v1.1 executes: 6 → 7 → 8
 | 4. Release Assets | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 5. Submit | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 6. Accessibility & Interaction | v1.1 | 0/3 | Not started | - |
-| 7. Visual Polish & Icons | v1.1 | 0/TBD | Not started | - |
+| 7. Visual Polish & Icons | v1.1 | 0/3 | Not started | - |
 | 8. Docs & Brand Assets | v1.1 | 0/TBD | Not started | - |
