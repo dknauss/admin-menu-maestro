@@ -67,7 +67,8 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-- Resolved: GitHub Dependabot now reports **0 open alerts** (verified 2026-06-14, post dependency cleanup). The earlier 8 are closed.
+- Resolved: the earlier 8 Dependabot alerts are closed (2026-06-14 dependency cleanup).
+- Resolved (2026-06-15): a new moderate alert (#13, `js-yaml` GHSA-h67p-54hq-rp68, quadratic merge-key DoS) surfaced after the GHSA was published. Triaged as **dev-only** — `js-yaml@3.14.2` is pulled solely by `@wordpress/env` (local test harness) and is never shipped (`bin/build.sh` packages PHP + assets, not `node_modules`). `npm audit` reports `fixAvailable:false` (wp-env requires js-yaml 3.x; forcing 4.x removes `safeLoad` and breaks wp-env). `npm prune` cleared 1342 orphaned/extraneous packages from `node_modules` but did not change the lockfile or the alert. Alert **dismissed as `tolerable_risk`**. No runtime/user exposure.
 
 ## Session Continuity
 
