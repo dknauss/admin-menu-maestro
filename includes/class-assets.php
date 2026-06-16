@@ -63,11 +63,20 @@ class Assets {
 			MAESTRO_VERSION
 		);
 
+		// Pure helpers consumed by maestro.js at runtime (no build step).
+		wp_enqueue_script(
+			'maestro-logic',
+			MAESTRO_URL . 'assets/maestro-logic.js',
+			array(),
+			MAESTRO_VERSION,
+			true
+		);
+
 		// jquery-ui-sortable is registered in wp-admin out of the box.
 		wp_enqueue_script(
 			'maestro',
 			MAESTRO_URL . 'assets/maestro.js',
-			array( 'jquery', 'jquery-ui-sortable', 'wp-a11y', 'wp-i18n' ),
+			array( 'jquery', 'jquery-ui-sortable', 'wp-a11y', 'wp-i18n', 'maestro-logic' ),
 			MAESTRO_VERSION,
 			true
 		);
