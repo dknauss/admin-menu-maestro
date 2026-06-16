@@ -56,9 +56,9 @@
 	function closePopovers() {
 		document.querySelectorAll( '.maestro-popover' ).forEach( function ( p ) { p.remove(); } );
 	}
-	function speak( message ) {
+	function speak( message, politeness ) {
 		if ( window.wp && window.wp.a11y && typeof window.wp.a11y.speak === 'function' ) {
-			window.wp.a11y.speak( message );
+			window.wp.a11y.speak( message, politeness );
 		}
 	}
 	function cssEscape( s ) {
@@ -178,6 +178,98 @@
 			e.preventDefault();
 			selectItem( li, { focusPanel: true } );
 		}, true );
+
+		menu.addEventListener( 'keydown', function ( e ) {
+			if ( ! e.altKey || ( e.key !== 'ArrowUp' && e.key !== 'ArrowDown' ) ) {
+				return;
+			}
+			// Guard: ignore keypresses inside a popover or form control.
+			if ( e.target.closest( '.maestro-popover, input, button' ) ) {
+				return;
+			}
+			// Require a currently selected maestro item.
+			if ( ! selectedSlug || ! model[ selectedSlug ] ) {
+				return;
+			}
+
+			e.preventDefault();
+
+			var m = model[ selectedSlug ];
+			var dir = e.key === 'ArrowUp' ? 'up' : 'down';
+			var currentSlugs, parentUl;
+
+			if ( m.isSub ) {
+				// Submenu scope: siblings under the same parent.
+				var parentLi = liForSlug( m.parent );
+				parentUl = parentLi ? parentLi.querySelector( '.wp-submenu' ) : null;
+				if ( ! parentUl ) { return; }
+				currentSlugs = Array.prototype.map.call(
+					parentUl.querySelectorAll( 'li.maestro-subitem[data-maestro-slug]' ),
+					function ( n ) { return n.dataset.maestroSlug; }
+				);
+			} else {
+				// Top-level scope.
+				parentUl = menu;
+				currentSlugs = Array.prototype.map.call(
+					menu.querySelectorAll( 'li.menu-top.maestro-item[data-maestro-slug]' ),
+					function ( n ) { return n.dataset.maestroSlug; }
+				);
+			}
+
+			var newOrder = window.maestroLogic.reorderMove( currentSlugs, selectedSlug, dir );
+
+			// Detect boundary clamp: order unchanged means the item is already at the edge.
+			if ( newOrder.join( '\n' ) === currentSlugs.join( '\n' ) ) {
+				var boundaryMsg = dir === 'up'
+					? I.moveAtTop.replace( '%s', m.title )
+					: I.moveAtBottom.replace( '%s', m.title );
+				speak( boundaryMsg, 'assertive' );
+				return;
+			}
+
+			// Physically reorder the DOM nodes to match newOrder.
+			var slugToNode = Object.create( null );
+			if ( m.isSub ) {
+				parentUl.querySelectorAll( 'li.maestro-subitem[data-maestro-slug]' ).forEach( function ( n ) {
+					slugToNode[ n.dataset.maestroSlug ] = n;
+				} );
+			} else {
+				menu.querySelectorAll( 'li.menu-top.maestro-item[data-maestro-slug]' ).forEach( function ( n ) {
+					slugToNode[ n.dataset.maestroSlug ] = n;
+				} );
+			}
+
+			newOrder.forEach( function ( slug ) {
+				var node = slugToNode[ slug ];
+				if ( node ) { parentUl.appendChild( node ); }
+			} );
+
+			// CRITICAL: Re-appending nodes detaches them, dropping focus to <body>.
+			// Restore focus to the moved item's anchor so the next Alt+Arrow chains.
+			var movedLi = liForSlug( selectedSlug );
+			if ( movedLi ) {
+				var focusTarget = movedLi.querySelector( 'a' ) || movedLi;
+				focusTarget.focus( { preventScroll: true } );
+			}
+
+			// Announce the new position politely.
+			var newIndex = newOrder.indexOf( selectedSlug ) + 1;
+			var total = newOrder.length;
+			var movedMsg = I.moved
+				.replace( '%1$s', m.title )
+				.replace( '%2$s', dir === 'down' ? I.dirDown : I.dirUp )
+				.replace( '%3$d', String( newIndex ) )
+				.replace( '%4$d', String( total ) );
+			speak( movedMsg );
+
+			// Set aria-keyshortcuts on the selected row to aid AT discovery.
+			if ( movedLi ) {
+				movedLi.setAttribute( 'aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown' );
+			}
+
+			// Reuse the existing debounced autosave: buildConfig() reads the new DOM order.
+			scheduleAutosave();
+		} );
 	}
 
 	function selectItem( li, opts ) {
@@ -187,9 +279,11 @@
 
 		document.querySelectorAll( '.maestro-selected' ).forEach( function ( n ) {
 			n.classList.remove( 'maestro-selected' );
+			n.removeAttribute( 'aria-keyshortcuts' );
 		} );
 		selectedSlug = slug;
 		li.classList.add( 'maestro-selected' );
+		li.setAttribute( 'aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown' );
 		populatePanel( slug );
 		closePopovers();
 		if ( opts.focusPanel && panel.rename ) {

@@ -60,6 +60,12 @@ body.maestro-editing #collapse-menu {
 	background: rgba( 34, 113, 177, 0.22 );
 	box-shadow: inset 3px 0 0 #2271b1;
 }
+/* Keyboard focus ring on the selected item's anchor for keyboard-reorder users.
+   Uses :focus-visible so it only shows for keyboard navigation, not mouse clicks. */
+.maestro-editing #adminmenu .maestro-selected > a:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: -2px;
+}
 .maestro-editing #adminmenu .maestro-item.maestro-has-hidden > a,
 .maestro-editing #adminmenu .maestro-subitem.maestro-has-hidden > a {
 	opacity: 0.55;

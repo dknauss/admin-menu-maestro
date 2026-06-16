@@ -111,6 +111,14 @@ class Assets {
 					'hideFrom'     => __( 'Hide from these roles:', 'maestro-menu-editor' ),
 					'confirmAll'   => __( 'Reset ALL menu customizations to WordPress defaults? This cannot be undone.', 'maestro-menu-editor' ),
 					'drag'         => __( 'Drag to reorder', 'maestro-menu-editor' ),
+					/* translators: 1: item title, 2: direction ("up"/"down"), 3: new position number, 4: total items. */
+					'moved'        => esc_html__( '%1$s moved %2$s, position %3$d of %4$d', 'maestro-menu-editor' ),
+					/* translators: %s: item title. */
+					'moveAtTop'    => esc_html__( '%s is already first', 'maestro-menu-editor' ),
+					/* translators: %s: item title. */
+					'moveAtBottom' => esc_html__( '%s is already last', 'maestro-menu-editor' ),
+					'dirUp'        => esc_html__( 'up', 'maestro-menu-editor' ),
+					'dirDown'      => esc_html__( 'down', 'maestro-menu-editor' ),
 				),
 			)
 		);
