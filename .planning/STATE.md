@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Polish & Accessibility
 status: planning
-stopped_at: Completed 06-accessibility-interaction/06-01-PLAN.md
-last_updated: "2026-06-16T04:20:53.914Z"
+stopped_at: Completed 06-accessibility-interaction/06-02-PLAN.md
+last_updated: "2026-06-16T04:40:54.080Z"
 last_activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 10
-  completed_plans: 1
+  completed_plans: 2
   percent: 10
 ---
 
@@ -56,6 +56,7 @@ Progress: [█░░░░░░░░░] 10%
 
 *Updated after each plan completion*
 | Phase 06-accessibility-interaction P01 | 43 | 6 tasks | 7 files |
+| Phase 06-accessibility-interaction P02 | 13 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Recent decisions affecting current work:
 - Submit prep: `bin/build.sh` produces `build/maestro-menu-editor.zip`; WPCS (`composer lint`) passed 7/7; official Plugin Check 2.0.0 reported no errors on the extracted build zip; npm audit reports 0 vulnerabilities after removing unused `@wordpress/scripts`; local unit 44/44, integration 29/29, and E2E 9/9 pass. `pretest:e2e` activates the plugin by slug (`maestro-menu-editor/maestro-menu-editor.php`).
 - [Phase 06-accessibility-interaction]: TDD seam for Phase 6 JS: node:test (built-in, zero new deps) + pure helpers in assets/maestro-logic.js; dual-export guard for node:test + browser; node --test auto-discovery used (Node 24.14 lacks directory-form CLI support)
 - [Phase 06-accessibility-interaction]: buildConfig() diff delegated to window.maestroLogic.diffItem() — one source of truth for modified-state detection; payload shape unchanged
+- [Phase 06-accessibility-interaction]: speak() optional politeness arg: omitted = polite (success moves); 'assertive' for boundary clamps — existing callers unchanged
+- [Phase 06-accessibility-interaction]: e2e reset-all cleanup: waitForNavigation() before expect.poll() prevents 51265eval racing doResetAll's window.location.reload()
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-16T04:20:53.911Z
-Stopped at: Completed 06-accessibility-interaction/06-01-PLAN.md
+Last session: 2026-06-16T04:40:54.076Z
+Stopped at: Completed 06-accessibility-interaction/06-02-PLAN.md
 Resume file: None
