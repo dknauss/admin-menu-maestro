@@ -31,7 +31,7 @@ created: 2026-06-15
 - **After every task commit:** the doc-link checker for DOC-01 work.
 - **After the phase:** full regression suite (doc/asset-only changes must not move it).
 - **Before `/gsd:verify-work`:** doc-link checker returns 0 offenders; banner regen
-  reproduces committed PNGs; PHP unit 44/44, integration 29/29, e2e green, Plugin
+  regenerates valid PNGs at exact dimensions (byte-identity is best-case, not required — visual-review gate applies); PHP unit 44/44, integration 29/29, e2e green, Plugin
   Check 0 errors, `composer lint` clean.
 - **Max feedback latency:** < 2s for the doc-link check.
 
@@ -43,11 +43,13 @@ created: 2026-06-15
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | Status |
 |---------|------|------|-------------|-----------|-------------------|--------|
-| _TBD_ (TDD: doc-link checker — flags inline-code refs that resolve to real repo files and aren't links, in in-scope docs; excludes core files + readme.txt) | — | — | DOC-01 | unit/script (node) | `node --test tests/js/doc-links.test.mjs` | ⬜ pending |
-| _TBD_ (convert flagged refs to markdown links; fix stale paths) | — | — | DOC-01 | script | `node bin/check-doc-links.mjs` (0 offenders) | ⬜ pending |
-| _TBD_ (verify `npm run assets:banners` regenerates both banners deterministically) | — | — | REL-06 | regen check | `npm run assets:banners && git diff --quiet -- .wordpress-org/banner-*.png` | ⬜ pending |
-| _TBD_ (reconcile REL-06 criterion wording: Python/Pillow pipeline replaces SVG/Inkscape) | — | — | REL-06 | doc grep | `grep -iq "build_final.py\|Pillow" .planning/REQUIREMENTS.md .planning/ROADMAP.md` | ⬜ pending |
-| _TBD_ (zero-regression full suite) | — | — | DOC-01, REL-06 | full suite | `composer test:unit && npm run test:php && npm run test:e2e && composer lint` | ⬜ pending |
+| 08-01.T1 (TDD: doc-link checker — scanText/findOffenders flag inline-code refs resolving to real repo files, not yet links; exclude core + readme.txt + fenced + image/linked) | 08-01 | 1 | DOC-01 | unit/script (node) | `npm run test:js` (scanText fixtures green; strict findOffenders()===[] is RED until 08-02) | ⬜ pending |
+| 08-01.T2 (wire npm scripts; record RED offender baseline) | 08-01 | 1 | DOC-01 | script (RED gate) | `npm run check:doc-links` (exits non-zero — RED) | ⬜ pending |
+| 08-02.T1 (convert flagged refs to markdown links; fix 3 stale paths → GREEN) | 08-02 | 2 | DOC-01 | script (GREEN gate) | `npm run check:doc-links && npm run test:js` (0 offenders) | ⬜ pending |
+| 08-03.T1 (verify `npm run assets:banners` regenerates both banners; restore committed PNGs) | 08-03 | 1 | REL-06 | regen + dimensions | `npm run assets:banners && file .wordpress-org/banner-772x250.png \| grep -q "772 x 250" && file .wordpress-org/banner-1544x500.png \| grep -q "1544 x 500"` | ⬜ pending |
+| 08-03.T2 (reconcile REL-06 wording: in-code SVG master + Inkscape + Pillow; standalone-svg substitution) | 08-03 | 1 | REL-06 | doc grep | `grep -iq "build_final.py" .planning/REQUIREMENTS.md && grep -iqE "Inkscape\|Pillow" .planning/REQUIREMENTS.md` | ⬜ pending |
+| 08-04.T1 (Docker-free zero-regression gates) | 08-04 | 3 | DOC-01, REL-06 | unit+lint+checker | `composer test:unit && composer lint && npm run check:doc-links && npm run test:js` | ⬜ pending |
+| 08-04.T2 (flip DOC-01 Complete; mark Phase 8 done; sign off) | 08-04 | 3 | DOC-01 | tracking grep | `grep -q "\[x\] \*\*DOC-01" .planning/REQUIREMENTS.md` | ⬜ pending |
 
 ---
 
@@ -67,7 +69,7 @@ created: 2026-06-15
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
 | "Where relative links make sense" / readme.txt policy | DOC-01 | Editorial judgment about which refs benefit from a link | Review flagged refs; confirm core/external files stay code and readme.txt relative paths stay code |
-| REL-06 criterion reconciliation reads accurately | REL-06 | Judgment that the wording faithfully records the mechanism substitution | Confirm REQUIREMENTS/ROADMAP note the Python/Pillow pipeline and that the banners regenerate from committed source |
+| REL-06 criterion reconciliation reads accurately | REL-06 | Judgment that the wording faithfully records the mechanism substitution | Confirm REQUIREMENTS/ROADMAP note the actual mechanism (in-code SVG master in build_final.py + Inkscape render + Pillow LANCZOS downscale; standalone-.svg substitution) and that banners regenerate from committed source |
 
 *The doc-link checker and banner-regen diff give automated coverage of the wiring; manual rows cover the two editorial judgments only.*
 

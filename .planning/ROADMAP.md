@@ -27,7 +27,7 @@ Full phase details, success criteria, and outcomes are archived in
 
 - [ ] **Phase 6: Accessibility & Interaction** — Keyboard-accessible reordering + modified indicator with per-item reset affordance
 - [ ] **Phase 7: Visual Polish & Icons** — Heavier bundled icon set mixed with dashicons + edit-mode UI polish
-- [ ] **Phase 8: Docs & Brand Assets** — Documentation link hygiene + editable SVG banner source with repeatable generation pipeline
+- [ ] **Phase 8: Docs & Brand Assets** — Documentation link hygiene (test-first checker) + verify/reconcile the shipped banner pipeline
 
 ## Phase Details (v1.1)
 
@@ -68,7 +68,11 @@ Full phase details, success criteria, and outcomes are archived in
   2. An editable SVG master for the banner exists under `.wordpress-org/source/` with the decorative leader line before "ADMIN MENU" removed
   3. `npm run assets:banners` regenerates `banner-772x250.png` and `banner-1544x500.png` from the SVG master (Inkscape render + Pillow downscale/crop) without manual steps
   4. The public banner files under `.wordpress-org/` are replaced with the regenerated versions after visual review
-**Plans**: TBD
+**Plans**: 4 plans
+  - [ ] 08-01-PLAN.md — TDD doc-link checker (RED: enumerate inline-code refs resolving to real repo files, not yet links) [DOC-01]
+  - [ ] 08-02-PLAN.md — convert flagged refs to markdown links + fix 3 stale paths (GREEN: 0 offenders) [DOC-01]
+  - [ ] 08-03-PLAN.md — verify `npm run assets:banners` regen + reconcile REL-06 mechanism wording (in-code SVG master + Inkscape + Pillow) [REL-06]
+  - [ ] 08-04-PLAN.md — zero-regression suite + flip DOC-01 Complete + mark Phase 8 done [DOC-01, REL-06]
 
 ## Progress
 
