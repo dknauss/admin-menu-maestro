@@ -297,4 +297,118 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		await expect.poll( order ).toEqual( before );
 	} );
 
+	test( 'modified indicator appears on change and clears on per-item keyboard reset', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// Select the Posts top-level item.
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+		const panel = page.locator( '.maestro-toolbar .maestro-panel' );
+		await expect( panel ).toBeVisible();
+
+		// 1. Initially, #menu-posts must NOT have the modified class.
+		await expect( page.locator( '#menu-posts' ) ).not.toHaveClass( /maestro-modified/ );
+
+		// 2. Rename to 'Articles' and commit (Enter).
+		const rename = panel.locator( '.maestro-rename-input' );
+		const savePosted = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await rename.fill( 'Articles' );
+		await rename.press( 'Enter' );
+		await savePosted;
+
+		// 3. After the change, the indicator must be present.
+		await expect( page.locator( '#menu-posts' ) ).toHaveClass( /maestro-modified/ );
+		// The non-color badge glyph must be in the row.
+		await expect( page.locator( '#menu-posts .maestro-modified-badge' ) ).toBeVisible();
+		// The screen-reader-text "(modified)" node must exist inside the row.
+		await expect( page.locator( '#menu-posts .maestro-modified-sr' ) ).toBeAttached();
+
+		// 4. Discoverable reset: the panel's .maestro-reset-item must be visible and
+		//    keyboard-reachable. Focus it and activate it via keyboard (Enter), NOT mouse.
+		const resetBtn = panel.locator( '.maestro-reset-item' );
+		await expect( resetBtn ).toBeVisible();
+		// Confirm it has the is-modified emphasis class.
+		await expect( resetBtn ).toHaveClass( /is-modified/ );
+
+		const resetPosted = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		// Keyboard-activate: focus → press Enter (proves keyboard-reachability).
+		await resetBtn.focus();
+		await page.keyboard.press( 'Enter' );
+		// Payload must no longer carry a delta for edit.php.
+		const payload = ( await resetPosted ).request().postDataJSON();
+		expect( payload?.config?.items?.[ 'edit.php' ] ).toBeUndefined();
+
+		// 5. After reset, the indicator must be gone.
+		await expect( page.locator( '#menu-posts' ) ).not.toHaveClass( /maestro-modified/ );
+		await expect( page.locator( '#menu-posts .maestro-modified-badge' ) ).not.toBeAttached();
+
+		// 6. Reload and verify the title is back to 'Posts'.
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).toContainText( 'Posts' );
+		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).not.toContainText( 'Articles' );
+	} );
+
+	test( 'keyboard-only reorder moves a top-level item and persists', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		await expect( page.locator( '.maestro-toolbar' ) ).toBeVisible();
+
+		// Capture the baseline order so we can assert the delta and clean up.
+		const order = () =>
+			page.$$eval( '#adminmenu > li.menu-top.maestro-item', els => els.map( e => ( e as HTMLElement ).dataset.maestroSlug ) );
+		const baseline = await order();
+		const fromIdx = baseline.indexOf( 'edit.php' );
+
+		// Select Posts via keyboard: focus the anchor then press Enter.
+		// selectItem() is called, which populates the panel and moves focus to
+		// the rename input. We then re-focus the anchor to position the first
+		// Alt+Arrow keypress on the menu row.
+		await page.locator( '#menu-posts > a.menu-top' ).focus();
+		await page.locator( '#menu-posts > a.menu-top' ).press( 'Enter' );
+		await expect( page.locator( '.maestro-toolbar .maestro-panel' ) ).toBeVisible();
+
+		// Bring focus back to the menu row anchor for the first keyboard move.
+		await page.locator( '#menu-posts > a.menu-top' ).focus();
+
+		// First Alt+ArrowDown move — await the debounced autosave.
+		const save1 = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await page.keyboard.press( 'Alt+ArrowDown' );
+		await save1;
+
+		// CHAINED MOVE: the JS handler restores focus to the moved item's anchor
+		// after re-appending the DOM node. Without any re-focus here, the second
+		// press fires on the same item and moves it again — proving focus retention.
+		const save2 = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await page.keyboard.press( 'Alt+ArrowDown' );
+		await save2;
+
+		// Posts should have advanced by two positions (boundary permitting).
+		const afterMove = await order();
+		expect( afterMove ).not.toEqual( baseline );
+		const newIdx = afterMove.indexOf( 'edit.php' );
+		expect( newIdx ).toBeGreaterThan( fromIdx );
+		// Two chained moves: index increased by exactly 2 (or clamped at the boundary).
+		const expectedIdx = Math.min( fromIdx + 2, baseline.length - 1 );
+		expect( newIdx ).toBe( expectedIdx );
+
+		// Persistence: reload and assert the server replayed the two-step order.
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		await expect.poll( order ).toEqual( afterMove );
+
+		// Clean up: reset all to restore baseline. Wait for the reload triggered
+		// by doResetAll to complete before polling order, so $$eval does not race
+		// against the navigation destroying the execution context.
+		const resetNav = page.waitForNavigation();
+		page.once( 'dialog', d => d.accept() );
+		await page.locator( '.maestro-reset-all' ).click();
+		await resetNav;
+		await expect.poll( order ).toEqual( baseline );
+	} );
+
 } );

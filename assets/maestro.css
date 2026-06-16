@@ -46,6 +46,66 @@ body.maestro-editing #collapse-menu {
 	display: none !important;
 }
 
+/* ---------- accessibility utilities ------------------------------------- */
+
+/* Canonical WordPress .screen-reader-text implementation (clip-path variant).
+ * Scoped under .maestro-editing to avoid colliding with any WP-core
+ * .screen-reader-text already on the page. Used to expose the "(modified)"
+ * semantic label to assistive technology without showing it visually.
+ * WCAG note: display:none/visibility:hidden also hide from AT — do NOT use
+ * those here. clip-path:inset(50%) hides visually while remaining accessible. */
+.maestro-editing .screen-reader-text {
+	border: 0;
+	clip-path: inset( 50% );
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	word-wrap: normal !important;
+}
+
+/* ---------- modified-state indicator ------------------------------------ */
+
+/* Non-color-only: a filled bullet glyph (•) visible at ≥ 3:1 contrast against
+ * the dark admin-menu background (#1d2327), PLUS a .screen-reader-text sibling
+ * exposing "(modified)" to AT. The glyph is the graphical object (WCAG 1.4.11);
+ * the screen-reader-text carries the semantic meaning so color is never the
+ * sole signal (WCAG 1.4.1).
+ *
+ * Amber #dba617 on #1d2327 gives contrast ratio ≈ 5.5:1 (well above the 3:1
+ * threshold for graphical objects required by WCAG 1.4.11). */
+.maestro-editing #adminmenu .maestro-modified > a {
+	position: relative;
+}
+.maestro-editing #adminmenu .maestro-modified-badge {
+	color: #dba617;
+	font-size: 10px;
+	line-height: 1;
+	margin-left: 4px;
+	vertical-align: middle;
+	pointer-events: none;
+	user-select: none;
+}
+
+/* Per-item reset button: focus-visible outline so keyboard users can see focus */
+.maestro-reset-item:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+/* Emphasise the reset button when the selected item is modified */
+.maestro-reset-item.is-modified {
+	border-color: #dba617;
+	color: #1d2327;
+	background: #dba617;
+}
+.maestro-reset-item.is-modified:hover,
+.maestro-reset-item.is-modified:focus-visible {
+	border-color: #c9961a;
+	background: #c9961a;
+}
+
 /* ---------- per-item DOM: selection only -------------------------------- */
 
 /* No drag handles: the whole row is the drag target (see initSortables). A
@@ -59,6 +119,12 @@ body.maestro-editing #collapse-menu {
 .maestro-editing #adminmenu .maestro-selected > a {
 	background: rgba( 34, 113, 177, 0.22 );
 	box-shadow: inset 3px 0 0 #2271b1;
+}
+/* Keyboard focus ring on the selected item's anchor for keyboard-reorder users.
+   Uses :focus-visible so it only shows for keyboard navigation, not mouse clicks. */
+.maestro-editing #adminmenu .maestro-selected > a:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: -2px;
 }
 .maestro-editing #adminmenu .maestro-item.maestro-has-hidden > a,
 .maestro-editing #adminmenu .maestro-subitem.maestro-has-hidden > a {

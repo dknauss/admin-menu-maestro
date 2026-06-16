@@ -23,11 +23,11 @@ backlog (origin IDs noted).
 
 ### Accessibility
 
-- [ ] **A11Y-06** (from V2-03): Menu items can be reordered with the keyboard (move up/down and/or ARIA grab semantics), closing the documented v1 mouse-only gap.
+- [x] **A11Y-06** (from V2-03): Menu items can be reordered with the keyboard (move up/down and/or ARIA grab semantics), closing the documented v1 mouse-only gap.
 
 ### Editor UX
 
-- [ ] **UX-01** (from V2-04): Each changed item shows a clear "modified" indicator, and per-item reset is a discoverable affordance (not hidden).
+- [x] **UX-01** (from V2-04): Each changed item shows a clear "modified" indicator, and per-item reset is a discoverable affordance (not hidden).
 - [ ] **UX-02** (from V2-12): The edit-mode UI is visually polished and responsive — control hierarchy, spacing, save/error status clarity, icon-picker scanability, first-run cues — native to WP admin, with no text-overlap or control-resize regressions (deliverables: before/after screenshots + keyboard/mouse walkthrough notes).
 
 ### Docs & Assets
@@ -69,8 +69,8 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| A11Y-06 | Phase 6: Accessibility & Interaction | Pending |
-| UX-01 | Phase 6: Accessibility & Interaction | Pending |
+| A11Y-06 | Phase 6: Accessibility & Interaction | Complete |
+| UX-01 | Phase 6: Accessibility & Interaction | Complete |
 | ICON-01 | Phase 7: Visual Polish & Icons | Pending |
 | UX-02 | Phase 7: Visual Polish & Icons | Pending |
 | DOC-01 | Phase 8: Docs & Brand Assets | Pending |

@@ -56,9 +56,9 @@
 	function closePopovers() {
 		document.querySelectorAll( '.maestro-popover' ).forEach( function ( p ) { p.remove(); } );
 	}
-	function speak( message ) {
+	function speak( message, politeness ) {
 		if ( window.wp && window.wp.a11y && typeof window.wp.a11y.speak === 'function' ) {
-			window.wp.a11y.speak( message );
+			window.wp.a11y.speak( message, politeness );
 		}
 	}
 	function cssEscape( s ) {
@@ -67,6 +67,57 @@
 	}
 	function liForSlug( slug ) {
 		return document.querySelector( '[data-maestro-slug="' + cssEscape( slug ) + '"]' );
+	}
+
+	/* ---------- modified-state indicator ----------------------------------- */
+
+	/**
+	 * Refresh the non-color "modified" indicator on a menu row.
+	 *
+	 * Driven by window.maestroLogic.diffItem (pure, unit-tested in Plan 01).
+	 * When the item differs from its pristine default:
+	 *   - adds class .maestro-modified to the <li>
+	 *   - injects a <span class="maestro-modified-badge" aria-hidden="true">•</span>
+	 *     glyph (visible, high-contrast) PLUS a sibling
+	 *     <span class="screen-reader-text">(modified)</span> (AT-only)
+	 * When the item matches its pristine default: removes everything.
+	 *
+	 * WCAG 1.4.1 (color alone): the glyph provides a perceivable non-color signal.
+	 * WCAG 1.4.11 (graphical objects): amber #dba617 on #1d2327 ≈ 5.5:1 contrast.
+	 * AT users hear "(modified)" via the screen-reader-text span.
+	 */
+	function refreshModifiedIndicator( slug ) {
+		var m = model[ slug ];
+		if ( ! m ) { return; }
+
+		var def = m.isSub ? pristineSub( slug ) : pristineTop( slug );
+		var result = window.maestroLogic.diffItem( m, def );
+
+		var li = liForSlug( slug );
+		if ( ! li ) { return; }
+
+		if ( result.modified ) {
+			li.classList.add( 'maestro-modified' );
+
+			// Only inject the badge/sr-text once per row.
+			if ( ! li.querySelector( '.maestro-modified-badge' ) ) {
+				var badge = el( 'span', 'maestro-modified-badge' );
+				badge.setAttribute( 'aria-hidden', 'true' );
+				badge.textContent = '•'; // bullet •
+				li.appendChild( badge );
+			}
+			if ( ! li.querySelector( '.maestro-modified-sr' ) ) {
+				var srText = el( 'span', 'screen-reader-text maestro-modified-sr' );
+				srText.textContent = I.modified;
+				li.appendChild( srText );
+			}
+		} else {
+			li.classList.remove( 'maestro-modified' );
+			var oldBadge = li.querySelector( '.maestro-modified-badge' );
+			if ( oldBadge ) { oldBadge.remove(); }
+			var oldSr = li.querySelector( '.maestro-modified-sr' );
+			if ( oldSr ) { oldSr.remove(); }
+		}
 	}
 
 	/* ---------- folded-mode override -------------------------------------- */
@@ -142,6 +193,13 @@
 		buildToolbar();
 		bindMenuSelection();
 		initSortables();
+
+		// Refresh indicators for any pre-existing (already-saved) overrides so
+		// they show the modified badge immediately on page load, not just after
+		// the first mutation.
+		Object.keys( model ).forEach( function ( slug ) {
+			refreshModifiedIndicator( slug );
+		} );
 	}
 
 	/* ---------- click-to-select ------------------------------------------- */
@@ -178,6 +236,98 @@
 			e.preventDefault();
 			selectItem( li, { focusPanel: true } );
 		}, true );
+
+		menu.addEventListener( 'keydown', function ( e ) {
+			if ( ! e.altKey || ( e.key !== 'ArrowUp' && e.key !== 'ArrowDown' ) ) {
+				return;
+			}
+			// Guard: ignore keypresses inside a popover or form control.
+			if ( e.target.closest( '.maestro-popover, input, button' ) ) {
+				return;
+			}
+			// Require a currently selected maestro item.
+			if ( ! selectedSlug || ! model[ selectedSlug ] ) {
+				return;
+			}
+
+			e.preventDefault();
+
+			var m = model[ selectedSlug ];
+			var dir = e.key === 'ArrowUp' ? 'up' : 'down';
+			var currentSlugs, parentUl;
+
+			if ( m.isSub ) {
+				// Submenu scope: siblings under the same parent.
+				var parentLi = liForSlug( m.parent );
+				parentUl = parentLi ? parentLi.querySelector( '.wp-submenu' ) : null;
+				if ( ! parentUl ) { return; }
+				currentSlugs = Array.prototype.map.call(
+					parentUl.querySelectorAll( 'li.maestro-subitem[data-maestro-slug]' ),
+					function ( n ) { return n.dataset.maestroSlug; }
+				);
+			} else {
+				// Top-level scope.
+				parentUl = menu;
+				currentSlugs = Array.prototype.map.call(
+					menu.querySelectorAll( 'li.menu-top.maestro-item[data-maestro-slug]' ),
+					function ( n ) { return n.dataset.maestroSlug; }
+				);
+			}
+
+			var newOrder = window.maestroLogic.reorderMove( currentSlugs, selectedSlug, dir );
+
+			// Detect boundary clamp: order unchanged means the item is already at the edge.
+			if ( newOrder.join( '\n' ) === currentSlugs.join( '\n' ) ) {
+				var boundaryMsg = dir === 'up'
+					? I.moveAtTop.replace( '%s', m.title )
+					: I.moveAtBottom.replace( '%s', m.title );
+				speak( boundaryMsg, 'assertive' );
+				return;
+			}
+
+			// Physically reorder the DOM nodes to match newOrder.
+			var slugToNode = Object.create( null );
+			if ( m.isSub ) {
+				parentUl.querySelectorAll( 'li.maestro-subitem[data-maestro-slug]' ).forEach( function ( n ) {
+					slugToNode[ n.dataset.maestroSlug ] = n;
+				} );
+			} else {
+				menu.querySelectorAll( 'li.menu-top.maestro-item[data-maestro-slug]' ).forEach( function ( n ) {
+					slugToNode[ n.dataset.maestroSlug ] = n;
+				} );
+			}
+
+			newOrder.forEach( function ( slug ) {
+				var node = slugToNode[ slug ];
+				if ( node ) { parentUl.appendChild( node ); }
+			} );
+
+			// CRITICAL: Re-appending nodes detaches them, dropping focus to <body>.
+			// Restore focus to the moved item's anchor so the next Alt+Arrow chains.
+			var movedLi = liForSlug( selectedSlug );
+			if ( movedLi ) {
+				var focusTarget = movedLi.querySelector( 'a' ) || movedLi;
+				focusTarget.focus( { preventScroll: true } );
+			}
+
+			// Announce the new position politely.
+			var newIndex = newOrder.indexOf( selectedSlug ) + 1;
+			var total = newOrder.length;
+			var movedMsg = I.moved
+				.replace( '%1$s', m.title )
+				.replace( '%2$s', dir === 'down' ? I.dirDown : I.dirUp )
+				.replace( '%3$d', String( newIndex ) )
+				.replace( '%4$d', String( total ) );
+			speak( movedMsg );
+
+			// Set aria-keyshortcuts on the selected row to aid AT discovery.
+			if ( movedLi ) {
+				movedLi.setAttribute( 'aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown' );
+			}
+
+			// Reuse the existing debounced autosave: buildConfig() reads the new DOM order.
+			scheduleAutosave();
+		} );
 	}
 
 	function selectItem( li, opts ) {
@@ -187,9 +337,11 @@
 
 		document.querySelectorAll( '.maestro-selected' ).forEach( function ( n ) {
 			n.classList.remove( 'maestro-selected' );
+			n.removeAttribute( 'aria-keyshortcuts' );
 		} );
 		selectedSlug = slug;
 		li.classList.add( 'maestro-selected' );
+		li.setAttribute( 'aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown' );
 		populatePanel( slug );
 		closePopovers();
 		if ( opts.focusPanel && panel.rename ) {
@@ -303,6 +455,12 @@
 
 		// Icon picker is top-level only; submenu items have no icon column.
 		panel.iconBtn.style.display = m.isSub ? 'none' : '';
+
+		// Reflect modified state on the reset button so it is discoverable in
+		// context: emphasised when the item is actually modified, subdued otherwise.
+		var def = m.isSub ? pristineSub( slug ) : pristineTop( slug );
+		var isModified = window.maestroLogic.diffItem( m, def ).modified;
+		panel.resetBtn.classList.toggle( 'is-modified', isModified );
 	}
 
 	/* ---------- rename (single, idempotent) -------------------------------- */
@@ -319,6 +477,7 @@
 		m.title = next;
 		updateMenuLabel( selectedSlug );
 		populatePanel( selectedSlug ); // refresh breadcrumb for renamed parents
+		refreshModifiedIndicator( selectedSlug );
 		scheduleAutosave();
 	}
 
@@ -353,6 +512,7 @@
 			if ( li ) { applyIconPreview( li, iconId || 'none' ); }
 			closePopovers();
 			anchorBtn.focus();
+			refreshModifiedIndicator( slug );
 			scheduleAutosave();
 		}
 
@@ -617,6 +777,7 @@
 				if ( li ) {
 					li.classList.toggle( 'maestro-has-hidden', model[ slug ].hiddenRoles.length > 0 );
 				}
+				refreshModifiedIndicator( slug );
 				scheduleAutosave();
 			} );
 			row.appendChild( cb );
@@ -675,6 +836,7 @@
 		}
 		updateMenuLabel( selectedSlug );
 		populatePanel( selectedSlug );
+		refreshModifiedIndicator( selectedSlug );
 		scheduleAutosave();
 	}
 
@@ -748,13 +910,14 @@
 			var slug = li.dataset.maestroSlug;
 			cfg.top_order.push( slug );
 
-			var m   = model[ slug ];
-			var def = pristineTop( slug );
+			var m    = model[ slug ];
+			var def  = pristineTop( slug );
+			var diff = window.maestroLogic.diffItem( m, def );
 			var entry = {};
-			if ( m.title && m.title !== def.title ) { entry.title = m.title; }
-			if ( m.icon && m.icon !== def.icon )    { entry.icon  = m.icon; }
-			if ( m.hiddenRoles.length )             { entry.hidden_roles = m.hiddenRoles; }
-			if ( Object.keys( entry ).length )      { cfg.items[ slug ] = entry; }
+			if ( diff.fields.indexOf( 'title' ) !== -1 )       { entry.title = m.title; }
+			if ( diff.fields.indexOf( 'icon' ) !== -1 )        { entry.icon  = m.icon; }
+			if ( diff.fields.indexOf( 'hiddenRoles' ) !== -1 ) { entry.hidden_roles = m.hiddenRoles; }
+			if ( diff.modified )                                { cfg.items[ slug ] = entry; }
 
 			var subLis = li.querySelectorAll( '.wp-submenu > li.maestro-subitem[data-maestro-slug]' );
 			if ( subLis.length ) {
@@ -767,12 +930,13 @@
 					// a top-level slug carries no separate override of its own.
 					if ( topSlugs[ sslug ] ) { return; }
 
-					var sm   = model[ sslug ];
-					var sdef = pristineSub( sslug );
-					var se   = {};
-					if ( sm.title && sm.title !== sdef.title ) { se.title = sm.title; }
-					if ( sm.hiddenRoles.length )               { se.hidden_roles = sm.hiddenRoles; }
-					if ( Object.keys( se ).length )            { cfg.items[ sslug ] = se; }
+					var sm    = model[ sslug ];
+					var sdef  = pristineSub( sslug );
+					var sdiff = window.maestroLogic.diffItem( sm, sdef );
+					var se    = {};
+					if ( sdiff.fields.indexOf( 'title' ) !== -1 )       { se.title = sm.title; }
+					if ( sdiff.fields.indexOf( 'hiddenRoles' ) !== -1 ) { se.hidden_roles = sm.hiddenRoles; }
+					if ( sdiff.modified )                                { cfg.items[ sslug ] = se; }
 				} );
 			}
 		} );

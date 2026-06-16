@@ -1,3 +1,19 @@
+---
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: Polish & Accessibility
+status: planning
+stopped_at: Completed 06-accessibility-interaction/06-03-PLAN.md
+last_updated: "2026-06-16T05:33:30.473Z"
+last_activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
+progress:
+  total_phases: 3
+  completed_phases: 1
+  total_plans: 10
+  completed_plans: 3
+  percent: 10
+---
+
 # Project State
 
 ## Project Reference
@@ -15,7 +31,7 @@ Plan: —
 Status: v1.0 milestone archived → `.planning/milestones/v1.0-*` + `.planning/MILESTONES.md` + `.planning/RETROSPECTIVE.md`. v1.1 scoped + roadmapped — 6 requirements promoted from the v2 backlog (ICON-01, A11Y-06, UX-01, UX-02, DOC-01; REL-06 already done). v1.0.0 remains submitted to WordPress.org, awaiting review (external; on approval → SVN commit to trunk, tag 1.0.0, upload .wordpress-org/ to SVN assets/).
 Last activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
 
-Progress: [░░░░░░░░░░] 0% (v1.1)
+Progress: [█░░░░░░░░░] 10%
 
 ## Performance Metrics
 
@@ -39,6 +55,9 @@ Progress: [░░░░░░░░░░] 0% (v1.1)
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 06-accessibility-interaction P01 | 43 | 6 tasks | 7 files |
+| Phase 06-accessibility-interaction P02 | 13 | 2 tasks | 4 files |
+| Phase 06-accessibility-interaction P03 | 21 | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -58,6 +77,12 @@ Recent decisions affecting current work:
 - Localization: The plugin is translation-ready with the `maestro-menu-editor` text domain and `Domain Path: /languages`. PHP strings use WordPress translation helpers, and editor UI labels are passed to JavaScript through the localized `maestroData.i18n` payload. The repo ships a POT template plus starter catalogs for `es_ES`, `de_DE`, `ja`, `fr_FR`, `pt_BR`, and `it_IT`; WordPress.org language packs can still override and extend them, and native-speaker/Polyglots review is welcome.
 - Docs: Living docs are README.md, readme.txt, docs/user-guide.md, SPEC.md, TESTING.md, and `.planning/*`. `docs/archive/FIXES.md` is historical only and no longer treated as the active punchlist.
 - Submit prep: `bin/build.sh` produces `build/maestro-menu-editor.zip`; WPCS (`composer lint`) passed 7/7; official Plugin Check 2.0.0 reported no errors on the extracted build zip; npm audit reports 0 vulnerabilities after removing unused `@wordpress/scripts`; local unit 44/44, integration 29/29, and E2E 9/9 pass. `pretest:e2e` activates the plugin by slug (`maestro-menu-editor/maestro-menu-editor.php`).
+- [Phase 06-accessibility-interaction]: TDD seam for Phase 6 JS: node:test (built-in, zero new deps) + pure helpers in assets/maestro-logic.js; dual-export guard for node:test + browser; node --test auto-discovery used (Node 24.14 lacks directory-form CLI support)
+- [Phase 06-accessibility-interaction]: buildConfig() diff delegated to window.maestroLogic.diffItem() — one source of truth for modified-state detection; payload shape unchanged
+- [Phase 06-accessibility-interaction]: speak() optional politeness arg: omitted = polite (success moves); 'assertive' for boundary clamps — existing callers unchanged
+- [Phase 06-accessibility-interaction]: e2e reset-all cleanup: waitForNavigation() before expect.poll() prevents 51265eval racing doResetAll's window.location.reload()
+- [Phase 06-accessibility-interaction]: Non-color modified indicator: amber #dba617 bullet glyph (5.5:1 on #1d2327) + clip-path screen-reader-text — color supplementary, shape+text are the signal (WCAG 1.4.1 / 1.4.11)
+- [Phase 06-accessibility-interaction]: refreshModifiedIndicator driven by maestroLogic.diffItem (unit-tested) wired to commitRename, icon choose, visibility change, resetSelected, and init sweep — single source of truth
 
 ### Pending Todos
 
@@ -72,6 +97,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-14
-Stopped at: Phase 5 Submit in progress; next action is commit/push cleanup, confirm CI/GitHub vulnerability state, then complete WordPress.org submission
+Last session: 2026-06-16T05:06:33.825Z
+Stopped at: Completed 06-accessibility-interaction/06-03-PLAN.md
 Resume file: None

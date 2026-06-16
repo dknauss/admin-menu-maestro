@@ -25,7 +25,7 @@ Full phase details, success criteria, and outcomes are archived in
 
 **Milestone Goal:** Refine the shipped editor and finish the accessibility story. No new architecture — keyboard reordering, modified-state indicators, visual polish, heavier icons, documentation link hygiene, and a repeatable banner pipeline.
 
-- [ ] **Phase 6: Accessibility & Interaction** — Keyboard-accessible reordering + modified indicator with per-item reset affordance
+- [x] **Phase 6: Accessibility & Interaction** — Keyboard-accessible reordering + modified indicator with per-item reset affordance (completed 2026-06-16)
 - [ ] **Phase 7: Visual Polish & Icons** — Heavier bundled icon set mixed with dashicons + edit-mode UI polish
 - [ ] **Phase 8: Docs & Brand Assets** — Documentation link hygiene (test-first checker) + verify/reconcile the shipped banner pipeline
 
@@ -86,6 +86,6 @@ v1.0 complete (Phases 1–5, archived). v1.1 executes: 6 → 7 → 8
 | 3. Verification | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 4. Release Assets | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 5. Submit | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
-| 6. Accessibility & Interaction | v1.1 | 0/3 | Not started | - |
+| 6. Accessibility & Interaction | 3/3 | Complete    | 2026-06-16 | - |
 | 7. Visual Polish & Icons | v1.1 | 0/3 | Not started | - |
 | 8. Docs & Brand Assets | v1.1 | 0/TBD | Not started | - |

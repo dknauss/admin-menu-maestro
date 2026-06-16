@@ -63,11 +63,20 @@ class Assets {
 			MAESTRO_VERSION
 		);
 
+		// Pure helpers consumed by maestro.js at runtime (no build step).
+		wp_enqueue_script(
+			'maestro-logic',
+			MAESTRO_URL . 'assets/maestro-logic.js',
+			array(),
+			MAESTRO_VERSION,
+			true
+		);
+
 		// jquery-ui-sortable is registered in wp-admin out of the box.
 		wp_enqueue_script(
 			'maestro',
 			MAESTRO_URL . 'assets/maestro.js',
-			array( 'jquery', 'jquery-ui-sortable', 'wp-a11y', 'wp-i18n' ),
+			array( 'jquery', 'jquery-ui-sortable', 'wp-a11y', 'wp-i18n', 'maestro-logic' ),
 			MAESTRO_VERSION,
 			true
 		);
@@ -102,6 +111,16 @@ class Assets {
 					'hideFrom'     => __( 'Hide from these roles:', 'maestro-menu-editor' ),
 					'confirmAll'   => __( 'Reset ALL menu customizations to WordPress defaults? This cannot be undone.', 'maestro-menu-editor' ),
 					'drag'         => __( 'Drag to reorder', 'maestro-menu-editor' ),
+					/* translators: 1: item title, 2: direction ("up"/"down"), 3: new position number, 4: total items. */
+					'moved'        => esc_html__( '%1$s moved %2$s, position %3$d of %4$d', 'maestro-menu-editor' ),
+					/* translators: %s: item title. */
+					'moveAtTop'    => esc_html__( '%s is already first', 'maestro-menu-editor' ),
+					/* translators: %s: item title. */
+					'moveAtBottom' => esc_html__( '%s is already last', 'maestro-menu-editor' ),
+					'dirUp'        => esc_html__( 'up', 'maestro-menu-editor' ),
+					'dirDown'      => esc_html__( 'down', 'maestro-menu-editor' ),
+					/* translators: Short label appended to modified menu items for screen readers. */
+					'modified'     => esc_html__( '(modified)', 'maestro-menu-editor' ),
 				),
 			)
 		);
