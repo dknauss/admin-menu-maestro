@@ -297,6 +297,60 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		await expect.poll( order ).toEqual( before );
 	} );
 
+	test( 'modified indicator appears on change and clears on per-item keyboard reset', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// Select the Posts top-level item.
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+		const panel = page.locator( '.maestro-toolbar .maestro-panel' );
+		await expect( panel ).toBeVisible();
+
+		// 1. Initially, #menu-posts must NOT have the modified class.
+		await expect( page.locator( '#menu-posts' ) ).not.toHaveClass( /maestro-modified/ );
+
+		// 2. Rename to 'Articles' and commit (Enter).
+		const rename = panel.locator( '.maestro-rename-input' );
+		const savePosted = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		await rename.fill( 'Articles' );
+		await rename.press( 'Enter' );
+		await savePosted;
+
+		// 3. After the change, the indicator must be present.
+		await expect( page.locator( '#menu-posts' ) ).toHaveClass( /maestro-modified/ );
+		// The non-color badge glyph must be in the row.
+		await expect( page.locator( '#menu-posts .maestro-modified-badge' ) ).toBeVisible();
+		// The screen-reader-text "(modified)" node must exist inside the row.
+		await expect( page.locator( '#menu-posts .maestro-modified-sr' ) ).toBeAttached();
+
+		// 4. Discoverable reset: the panel's .maestro-reset-item must be visible and
+		//    keyboard-reachable. Focus it and activate it via keyboard (Enter), NOT mouse.
+		const resetBtn = panel.locator( '.maestro-reset-item' );
+		await expect( resetBtn ).toBeVisible();
+		// Confirm it has the is-modified emphasis class.
+		await expect( resetBtn ).toHaveClass( /is-modified/ );
+
+		const resetPosted = page.waitForResponse(
+			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
+		);
+		// Keyboard-activate: focus → press Enter (proves keyboard-reachability).
+		await resetBtn.focus();
+		await page.keyboard.press( 'Enter' );
+		// Payload must no longer carry a delta for edit.php.
+		const payload = ( await resetPosted ).request().postDataJSON();
+		expect( payload?.config?.items?.[ 'edit.php' ] ).toBeUndefined();
+
+		// 5. After reset, the indicator must be gone.
+		await expect( page.locator( '#menu-posts' ) ).not.toHaveClass( /maestro-modified/ );
+		await expect( page.locator( '#menu-posts .maestro-modified-badge' ) ).not.toBeAttached();
+
+		// 6. Reload and verify the title is back to 'Posts'.
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).toContainText( 'Posts' );
+		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).not.toContainText( 'Articles' );
+	} );
+
 	test( 'keyboard-only reorder moves a top-level item and persists', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
 		await expect( page.locator( '.maestro-toolbar' ) ).toBeVisible();
