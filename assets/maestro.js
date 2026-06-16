@@ -69,6 +69,57 @@
 		return document.querySelector( '[data-maestro-slug="' + cssEscape( slug ) + '"]' );
 	}
 
+	/* ---------- modified-state indicator ----------------------------------- */
+
+	/**
+	 * Refresh the non-color "modified" indicator on a menu row.
+	 *
+	 * Driven by window.maestroLogic.diffItem (pure, unit-tested in Plan 01).
+	 * When the item differs from its pristine default:
+	 *   - adds class .maestro-modified to the <li>
+	 *   - injects a <span class="maestro-modified-badge" aria-hidden="true">•</span>
+	 *     glyph (visible, high-contrast) PLUS a sibling
+	 *     <span class="screen-reader-text">(modified)</span> (AT-only)
+	 * When the item matches its pristine default: removes everything.
+	 *
+	 * WCAG 1.4.1 (color alone): the glyph provides a perceivable non-color signal.
+	 * WCAG 1.4.11 (graphical objects): amber #dba617 on #1d2327 ≈ 5.5:1 contrast.
+	 * AT users hear "(modified)" via the screen-reader-text span.
+	 */
+	function refreshModifiedIndicator( slug ) {
+		var m = model[ slug ];
+		if ( ! m ) { return; }
+
+		var def = m.isSub ? pristineSub( slug ) : pristineTop( slug );
+		var result = window.maestroLogic.diffItem( m, def );
+
+		var li = liForSlug( slug );
+		if ( ! li ) { return; }
+
+		if ( result.modified ) {
+			li.classList.add( 'maestro-modified' );
+
+			// Only inject the badge/sr-text once per row.
+			if ( ! li.querySelector( '.maestro-modified-badge' ) ) {
+				var badge = el( 'span', 'maestro-modified-badge' );
+				badge.setAttribute( 'aria-hidden', 'true' );
+				badge.textContent = '•'; // bullet •
+				li.appendChild( badge );
+			}
+			if ( ! li.querySelector( '.maestro-modified-sr' ) ) {
+				var srText = el( 'span', 'screen-reader-text maestro-modified-sr' );
+				srText.textContent = I.modified;
+				li.appendChild( srText );
+			}
+		} else {
+			li.classList.remove( 'maestro-modified' );
+			var oldBadge = li.querySelector( '.maestro-modified-badge' );
+			if ( oldBadge ) { oldBadge.remove(); }
+			var oldSr = li.querySelector( '.maestro-modified-sr' );
+			if ( oldSr ) { oldSr.remove(); }
+		}
+	}
+
 	/* ---------- folded-mode override -------------------------------------- */
 
 	// The menu must edit in its expanded form. Strip folded/auto-fold on init,
@@ -142,6 +193,13 @@
 		buildToolbar();
 		bindMenuSelection();
 		initSortables();
+
+		// Refresh indicators for any pre-existing (already-saved) overrides so
+		// they show the modified badge immediately on page load, not just after
+		// the first mutation.
+		Object.keys( model ).forEach( function ( slug ) {
+			refreshModifiedIndicator( slug );
+		} );
 	}
 
 	/* ---------- click-to-select ------------------------------------------- */
@@ -397,6 +455,12 @@
 
 		// Icon picker is top-level only; submenu items have no icon column.
 		panel.iconBtn.style.display = m.isSub ? 'none' : '';
+
+		// Reflect modified state on the reset button so it is discoverable in
+		// context: emphasised when the item is actually modified, subdued otherwise.
+		var def = m.isSub ? pristineSub( slug ) : pristineTop( slug );
+		var isModified = window.maestroLogic.diffItem( m, def ).modified;
+		panel.resetBtn.classList.toggle( 'is-modified', isModified );
 	}
 
 	/* ---------- rename (single, idempotent) -------------------------------- */
@@ -413,6 +477,7 @@
 		m.title = next;
 		updateMenuLabel( selectedSlug );
 		populatePanel( selectedSlug ); // refresh breadcrumb for renamed parents
+		refreshModifiedIndicator( selectedSlug );
 		scheduleAutosave();
 	}
 
@@ -447,6 +512,7 @@
 			if ( li ) { applyIconPreview( li, iconId || 'none' ); }
 			closePopovers();
 			anchorBtn.focus();
+			refreshModifiedIndicator( slug );
 			scheduleAutosave();
 		}
 
@@ -711,6 +777,7 @@
 				if ( li ) {
 					li.classList.toggle( 'maestro-has-hidden', model[ slug ].hiddenRoles.length > 0 );
 				}
+				refreshModifiedIndicator( slug );
 				scheduleAutosave();
 			} );
 			row.appendChild( cb );
@@ -769,6 +836,7 @@
 		}
 		updateMenuLabel( selectedSlug );
 		populatePanel( selectedSlug );
+		refreshModifiedIndicator( selectedSlug );
 		scheduleAutosave();
 	}
 

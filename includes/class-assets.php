@@ -119,6 +119,8 @@ class Assets {
 					'moveAtBottom' => esc_html__( '%s is already last', 'maestro-menu-editor' ),
 					'dirUp'        => esc_html__( 'up', 'maestro-menu-editor' ),
 					'dirDown'      => esc_html__( 'down', 'maestro-menu-editor' ),
+					/* translators: Short label appended to modified menu items for screen readers. */
+					'modified'     => esc_html__( '(modified)', 'maestro-menu-editor' ),
 				),
 			)
 		);
