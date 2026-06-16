@@ -40,7 +40,10 @@ Full phase details, success criteria, and outcomes are archived in
   2. The keyboard reordering implementation holds at 0 regressions: unit 44/44, integration 29/29, e2e 9/9 green, Plugin Check 0 errors
   3. Each menu item that differs from the default shows a visible "modified" indicator in edit mode — confirmed by before/after screenshot
   4. Per-item reset is a discoverable affordance (visible or keyboard-reachable without prior knowledge), not buried or hidden
-**Plans**: TBD
+**Plans**: 3 plans
+  - [ ] 06-01-PLAN.md — TDD seam (node:test) + pure reorderMove/diffItem/resetItem helpers [A11Y-06, UX-01]
+  - [ ] 06-02-PLAN.md — Alt+Arrow keyboard reorder + wp.a11y.speak() move announcements + e2e [A11Y-06]
+  - [ ] 06-03-PLAN.md — modified indicator (non-color, AA) + discoverable per-item reset + docs + e2e [UX-01]
 
 ### Phase 7: Visual Polish & Icons
 **Goal**: The bundled icon picker reads at a weight that mixes naturally with WordPress's solid dashicons, and the overall edit-mode UI is visually polished and responsive
@@ -76,6 +79,6 @@ v1.0 complete (Phases 1–5, archived). v1.1 executes: 6 → 7 → 8
 | 3. Verification | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 4. Release Assets | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 5. Submit | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
-| 6. Accessibility & Interaction | v1.1 | 0/TBD | Not started | - |
+| 6. Accessibility & Interaction | v1.1 | 0/3 | Not started | - |
 | 7. Visual Polish & Icons | v1.1 | 0/TBD | Not started | - |
 | 8. Docs & Brand Assets | v1.1 | 0/TBD | Not started | - |
