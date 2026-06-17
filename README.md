@@ -5,13 +5,13 @@
 [![WordPress 6.4+](https://img.shields.io/badge/WordPress-6.4%2B-21759b.svg?logo=wordpress&logoColor=white)](https://wordpress.org/)
 [![Tested up to WP 7.0](https://img.shields.io/badge/tested%20up%20to-WP%207.0-21759b.svg?logo=wordpress&logoColor=white)](https://wordpress.org/)
 [![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777bb4.svg?logo=php&logoColor=white)](https://www.php.net/)
-[![Live demo in WordPress Playground](https://img.shields.io/badge/▶_Playground-Live_demo-3858e9.svg?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)
+[![▶ Playground (latest release)](https://img.shields.io/badge/▶_Playground-Latest_release-3858e9.svg?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-stable.json) [![▶ Playground (main)](https://img.shields.io/badge/▶_Playground-main_branch-6e40c9.svg?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)
 
 ![Maestro banner](.wordpress-org/banner-1544x500.png)
 
 In-place editing of the WordPress admin menu — rename items, reorder them, swap top-level icons, and hide items per role. Global configuration, no separate settings screen: the editor is toggled from the admin bar and operates on the menu itself.
 
-**▶ [Try it live in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)** — boots a throwaway site with the plugin active, User Switching, and test users (editor / author / contributor / subscriber, password `password`) so you can try per-role visibility by switching users.
+**▶ [Try it live in WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-stable.json)** — boots a throwaway site with the plugin active, User Switching, and test users (editor / author / contributor / subscriber, password `password`) so you can try per-role visibility by switching users. This demo installs the **latest released version**. ([Development build (main)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json) also available.)
 
 ## Screenshots
 
@@ -111,11 +111,12 @@ This builds the runtime-only plugin, mounts it into Playground, runs the
 blueprint, and serves at `http://127.0.0.1:9400`. Hide a menu item from a role
 in the editor, then use **Switch To** (admin bar) to view the menu as that user.
 
-> **Hosted Playground:** the [Live demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)
-> runs the same setup in the browser with no install. It uses
-> [`playground/blueprint-hosted.json`](playground/blueprint-hosted.json), which installs the plugin straight from
-> this public repo via a `git:directory` resource (the local `blueprint.json`
-> mounts it instead).
+> **Hosted Playground:** two hosted blueprints are available, both served from `main` so their URLs are stable:
+>
+> - **[Latest release demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-stable.json)** — [`playground/blueprint-stable.json`](playground/blueprint-stable.json) installs the plugin from the latest release tag. This matches what users actually install from WordPress.org and is the primary "Try it live" link.
+> - **[Development build (main)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)** — [`playground/blueprint-hosted.json`](playground/blueprint-hosted.json) tracks the `main` branch (bleeding edge). Use this to preview unreleased changes.
+>
+> Both use a `git:directory` resource; the local [`playground/blueprint.json`](playground/blueprint.json) mounts the working tree instead.
 
 ## License
 
