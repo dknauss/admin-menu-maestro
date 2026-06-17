@@ -3,7 +3,8 @@
 ## Milestones
 
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; submitted to .org, awaiting review) → [archive](milestones/v1.0-ROADMAP.md)
-- 🚧 **v1.1 Polish & Accessibility** — Phases 6–8 (in progress)
+- ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17)
+- 🚧 **v1.2 Editor UX Polish** — Phase 9 (in progress)
 
 ## Phases
 
@@ -21,13 +22,16 @@ Full phase details, success criteria, and outcomes are archived in
 
 </details>
 
-### 🚧 v1.1 Polish & Accessibility (In Progress)
+<details>
+<summary>✅ v1.1 Polish & Accessibility (Phases 6–8) — SHIPPED 2026-06-17</summary>
 
 **Milestone Goal:** Refine the shipped editor and finish the accessibility story. No new architecture — keyboard reordering, modified-state indicators, visual polish, heavier icons, documentation link hygiene, and a repeatable banner pipeline.
 
 - [x] **Phase 6: Accessibility & Interaction** — Keyboard-accessible reordering + modified indicator with per-item reset affordance (completed 2026-06-16)
 - [x] **Phase 7: Visual Polish & Icons** — Heavier bundled icon set mixed with dashicons + edit-mode UI polish (completed 2026-06-17; includes plan 07-04 defect fixes BUG-01..05 + idle-icon refinement)
 - [x] **Phase 8: Docs & Brand Assets** — Documentation link hygiene (test-first checker) + verify/reconcile the shipped banner pipeline + listing polish (readme copy, Playground link, banner, screenshots). Executable scope (DOC-01, REL-06, DOC-02, DOC-03) complete 2026-06-17. REL-07/REL-08 (image work) deferred.
+
+</details>
 
 ## Phase Details (v1.1)
 
@@ -41,9 +45,9 @@ Full phase details, success criteria, and outcomes are archived in
   3. Each menu item that differs from the default shows a visible "modified" indicator in edit mode — confirmed by before/after screenshot
   4. Per-item reset is a discoverable affordance (visible or keyboard-reachable without prior knowledge), not buried or hidden
 **Plans**: 3 plans
-  - [ ] 06-01-PLAN.md — TDD seam (node:test) + pure reorderMove/diffItem/resetItem helpers [A11Y-06, UX-01]
-  - [ ] 06-02-PLAN.md — Alt+Arrow keyboard reorder + wp.a11y.speak() move announcements + e2e [A11Y-06]
-  - [ ] 06-03-PLAN.md — modified indicator (non-color, AA) + discoverable per-item reset + docs + e2e [UX-01]
+  - [x] 06-01-PLAN.md — TDD seam (node:test) + pure reorderMove/diffItem/resetItem helpers [A11Y-06, UX-01]
+  - [x] 06-02-PLAN.md — Alt+Arrow keyboard reorder + wp.a11y.speak() move announcements + e2e [A11Y-06]
+  - [x] 06-03-PLAN.md — modified indicator (non-color, AA) + discoverable per-item reset + docs + e2e [UX-01]
 
 ### Phase 7: Visual Polish & Icons
 **Goal**: The bundled icon picker reads at a weight that mixes naturally with WordPress's solid dashicons, and the overall edit-mode UI is visually polished and responsive
@@ -76,13 +80,27 @@ Full phase details, success criteria, and outcomes are archived in
   - [x] 08-02-PLAN.md — convert flagged refs to markdown links + fix 3 stale paths (GREEN: 0 offenders) [DOC-01]
   - [x] 08-03-PLAN.md — verify `npm run assets:banners` regen + reconcile REL-06 mechanism wording (in-code SVG master + Inkscape + Pillow) [REL-06]
   - [x] 08-04-PLAN.md — zero-regression suite + flip DOC-01 Complete + mark Phase 8 done [DOC-01, REL-06]
-  - [ ] 08-05-PLAN.md — readme.txt copy rewrite (wp-readme-optimizer) + Playground "Try it first" demo link in readme + GitHub README [DOC-02, DOC-03] — **done in PR #28 (1.1.0 release); deferred to next release**
+  - [x] 08-05-PLAN.md — readme.txt copy rewrite (wp-readme-optimizer) + Playground "Try it first" demo link in readme + GitHub README [DOC-02, DOC-03] — **done in PR #28 (1.1.0 release)**
   - [ ] 08-06-PLAN.md — refreshed banner graphic (REL-06 pipeline) + gallery-optimized screenshots & captions; replace public assets after visual review [REL-07, REL-08] — **deferred (image work)**
+
+## Phase Details (v1.2)
+
+### Phase 9: Editor UX Polish
+**Goal**: The edit-mode toolbar is immediately clear on its own purpose, efficiently compact on small and mobile screens, and every behavioral change carries its accessibility guardrail
+**Depends on**: Phase 8
+**Requirements**: UX-03, UX-04, UX-07
+**Success Criteria** (what must be TRUE):
+  1. The idle status reads "Menu Edit Mode" (short, glanceable) and signals mode by icon or label as well as colour (WCAG 1.4.1 — not colour alone); on first run only, an attention cue draws the user's eye to the menu — the cue is localStorage-gated, keyboard-operable, dismissible, screen-reader-announced, and any motion within it respects `prefers-reduced-motion`
+  2. The rename field shows a descriptive placeholder ("Rename" or "Menu label") that clears on focus; a programmatic label (`<label>` or `aria-label`) still names the control for screen-reader and voice-control users; placeholder text meets WCAG AA contrast
+  3. At narrow/mobile widths the toolbar controls (buttons + rename input) use denser padding and font sizing so the toolbar fits without overflow; real interactive touch targets remain at or above 44 × 44 px
+  4. Every behavioral JS change — mode-indicator state transitions, first-run cue localStorage gate, placeholder clear-on-focus wiring — is covered by a red-first node:test unit test before implementation lands
+  5. The full zero-regression bar holds: PHP unit, integration, and e2e suites green; phpcs clean
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-v1.0 complete (Phases 1–5, archived). v1.1 executes: 6 → 7 → 8
+v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 executes: 9
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -91,6 +109,7 @@ v1.0 complete (Phases 1–5, archived). v1.1 executes: 6 → 7 → 8
 | 3. Verification | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 4. Release Assets | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 5. Submit | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
-| 6. Accessibility & Interaction | 3/3 | Complete    | 2026-06-16 | - |
-| 7. Visual Polish & Icons | 4/4 | Complete | 2026-06-17 | - |
-| 8. Docs & Brand Assets | 4/4 (executable scope; REL-07/08 deferred) | Complete | 2026-06-17 |
+| 6. Accessibility & Interaction | v1.1 | 3/3 | Complete | 2026-06-16 |
+| 7. Visual Polish & Icons | v1.1 | 4/4 | Complete | 2026-06-17 |
+| 8. Docs & Brand Assets | v1.1 | 4/4 (executable scope; REL-07/08 deferred) | Complete | 2026-06-17 |
+| 9. Editor UX Polish | v1.2 | 0/TBD | Not started | - |

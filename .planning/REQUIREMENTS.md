@@ -1,7 +1,7 @@
 # Requirements: Maestro
 
 **Defined:** 2026-06-13
-**Last updated:** 2026-06-14 — v1.0 archived; v1.1 is the active milestone
+**Last updated:** 2026-06-17 — v1.2 traceability added (UX-03, UX-04, UX-07 → Phase 9)
 **Core Value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
 
 ## v1.0 Requirements — ✅ shipped & archived
@@ -119,11 +119,24 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | DOC-01 | Phase 8: Docs & Brand Assets | Complete |
 | REL-06 | Phase 8: Docs & Brand Assets | Complete (shipped during wp.org rename) |
 
-**Coverage:**
-- v1.1 requirements: 6 + 5 defects (BUG-01..05) — all mapped to phases 6–8 (REL-06 Complete; UX-02 reopened; 10 Pending)
+**Coverage (v1.1):**
+- v1.1 requirements: 6 + 5 defects (BUG-01..05) — all mapped to phases 6–8 — Complete
 - Unmapped: 0 ✓
 - v1.0 (20 reqs) archived → [milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md)
 
+## Traceability (v1.2)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| UX-03 | Phase 9: Editor UX Polish | Pending |
+| UX-04 | Phase 9: Editor UX Polish | Pending |
+| UX-07 | Phase 9: Editor UX Polish | Pending |
+
+**Coverage (v1.2):**
+- v1.2 active requirements: 3 (UX-03, UX-04, UX-07) — all mapped to Phase 9
+- Unmapped: 0 ✓
+- UX-05 and UX-06: shipped in v1.1.1 — not included in v1.2 scope
+
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-14 — v1.0 archived at milestone completion; v1.1 traceability retained*
+*Last updated: 2026-06-17 — v1.2 traceability added; UX-03/UX-04/UX-07 → Phase 9*
