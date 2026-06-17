@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Polish & Accessibility
-status: planning
-stopped_at: Checkpoint 08-docs-brand-assets/08-02-PLAN.md — awaiting human-verify of converted links
-last_updated: "2026-06-17T00:15:00.000Z"
-last_activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
+status: complete
+stopped_at: Phase 8 complete — v1.1 milestone (DOC-01, REL-06, DOC-02, DOC-03) done; REL-07/REL-08 deferred
+last_updated: "2026-06-17T12:00:00.000Z"
+last_activity: 2026-06-17 — Phase 8 capstone complete; zero-regression bar held; v1.1 milestone ready to audit/close; v1.0.0 and v1.1.0 both live on wordpress.org
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 10
-  completed_plans: 7
-  percent: 54
+  completed_phases: 3
+  total_plans: 11
+  completed_plans: 11
+  percent: 100
 ---
 
 # Project State
@@ -21,22 +21,22 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-14)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** v1.1 "Polish & Accessibility" — milestone scoped and roadmapped (phases 6–8); Phases 6 & 7 complete; Phase 8 next
+**Current focus:** v1.1 "Polish & Accessibility" — COMPLETE. Phases 6–8 done. v1.1.0 released to wordpress.org. Executable scope closed; REL-07/REL-08 (image work) deferred to a future cycle.
 
 ## Current Position
 
-Milestone: v1.1 Polish & Accessibility (phases 6–8; v1.0 phases 1–5 complete & archived)
-Phase: Phase 8 (Docs & Brand Assets) in progress — 08-01, 08-02, 08-03 complete
-Plan: 08-02 task 1 complete (DOC-01 GREEN — 21 offenders → 0); at checkpoint:human-verify before proceeding to 08-04
-Status: v1.0 milestone archived → `.planning/milestones/v1.0-*` + `.planning/MILESTONES.md` + `.planning/RETROSPECTIVE.md`. v1.1 scoped + roadmapped — 6 requirements promoted from the v2 backlog (ICON-01, A11Y-06, UX-01, UX-02, DOC-01; REL-06 already done). **v1.0.0 published to wordpress.org 2026-06-17** (GitHub Actions -> SVN). **Phase 7 (Visual Polish & Icons) signed off 2026-06-17** (UX-02 + BUG-01..05; full regression gate green). Phase 8 (Docs & Brand Assets) is next.
-Last activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
+Milestone: v1.1 Polish & Accessibility — COMPLETE (phases 6–8 all done)
+Phase: Phase 8 (Docs & Brand Assets) — COMPLETE 2026-06-17
+Plan: 08-04 complete — zero-regression bar held; DOC-01 verified GREEN; Phase 8 signed off
+Status: v1.0 milestone archived. v1.1 executable scope closed: all 4 core plans (08-01 through 08-04) done; DOC-02/DOC-03 in 1.1.0 release (PR #28 merged); REL-07/REL-08 deferred (image work, not blocking). **v1.0.0 published to wordpress.org 2026-06-17**. **v1.1.0 released 2026-06-17** (PR #29 merged). Both versions live at https://wordpress.org/plugins/maestro-menu-editor/.
+Last activity: 2026-06-17 — Phase 8 capstone complete; zero-regression bar held; DOC-01 checker GREEN (0 offenders); v1.1 milestone ready to audit/close
 
 Progress: [#####-----] 54%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10
+- Total plans completed: 11
 - Average duration: —
 - Total execution time: 0 hours
 
@@ -49,6 +49,9 @@ Progress: [#####-----] 54%
 | Verification | 2 | TBD | — |
 | Release Assets | 4 | TBD | — |
 | Submit | 1 | TBD | — |
+| Phase 06-accessibility-interaction | 3 | TBD | — |
+| Phase 07-visual-polish-icons | 4 | TBD | — |
+| Phase 08-docs-brand-assets | 4 | TBD | — |
 
 **Recent Trend:**
 - Last 5 plans: —
@@ -96,6 +99,7 @@ Recent decisions affecting current work:
 - [Phase 08-docs-brand-assets]: test:js uses 'node --test tests/js/*.mjs' glob pattern — Node 24.14 rejects the directory form (node --test tests/js/) with MODULE_NOT_FOUND; glob is the correct alternative
 - [Phase 08-docs-brand-assets]: DOC-01 linkification (08-02): stale-path link text uses the original display token (global-setup.ts, icon.svg) while href points to the corrected real path — preserves prose without rewriting it
 - [Phase 08-docs-brand-assets]: REL-06 reconcile (08-03): recorded the shipped banner mechanism — in-code SVG master in build_final.py (not a standalone .svg), rasterized via Inkscape then Pillow LANCZOS downscale; npm run assets:banners reproduces both banners byte-identically at exact dimensions. — Roadmap literal criteria expected a standalone editable .svg; reality is an in-code SVG master that meets the intent (editable source + one-command regen + leader line removed). Chose option-a (annotate wording) over option-b (extract a standalone .svg) — option-b is out of scope per CONTEXT and risks deferred REL-07 banner churn. No banner pixels changed.
+- [Phase 08-docs-brand-assets]: Capstone (08-04): zero-regression bar held on docs/asset-only changes — PHP unit 44/44, integration 29/29, e2e 16/16, JS logic 44/44, composer lint clean, doc-link checker 0 offenders (all automated). Plugin Check run against dev tree (not build zip) showed pre-existing dev-tree artifacts; build-zip-clean result from Phase 5 still holds (no PHP/JS/CSS changed in Phase 8). DOC-01 verified Complete (checker GREEN before flip). REL-07/REL-08 (image work) noted as deferred; Phase 8 executable scope closed. v1.0.0 and v1.1.0 both live on wordpress.org.
 
 ### Pending Todos
 
@@ -113,6 +117,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-17T00:15:00.000Z
-Stopped at: Checkpoint 08-docs-brand-assets/08-02-PLAN.md (human-verify gate)
+Last session: 2026-06-17T12:00:00.000Z
+Stopped at: Completed 08-docs-brand-assets/08-04-PLAN.md — Phase 8 capstone done; v1.1 milestone closed
 Resume file: None
