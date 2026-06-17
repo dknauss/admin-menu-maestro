@@ -1,6 +1,6 @@
 === Maestro: The Inline Admin Menu Editor ===
 Contributors: dpknauss
-Donate link: https://www.paypal.com/paypalme/DanKnauss
+Donate link: https://github.com/sponsors/dknauss
 Tags: admin menu, admin menu editor, menu editor, hide menu items, menu icons
 Requires at least: 6.4
 Tested up to: 7.0
@@ -172,6 +172,11 @@ their current parent.
 Bundled [Bootstrap Icons](https://icons.getbootstrap.com/) are © The Bootstrap
 Authors, licensed under the MIT License. They are recoloured to the WordPress
 menu grey and embedded as data-URIs; see `bin/generate-bootstrap-icons.mjs`.
+
+== Support This Plugin ==
+
+If Maestro saves you time, you can support its ongoing maintenance through
+[GitHub Sponsors](https://github.com/sponsors/dknauss).
 
 == Changelog ==
 
