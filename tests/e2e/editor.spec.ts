@@ -618,3 +618,33 @@ test.describe( 'Phase 7 — first-run cue appears once only (localStorage-gated)
 	} );
 
 } );
+
+test.describe( 'Phase 7 — status icon: none when idle, dashicon for save states', () => {
+
+	test( 'idle status shows no ::before glyph; the saved state keeps its dashicon', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		const status = page.locator( '.maestro-toolbar .maestro-status' );
+		await expect( status ).toBeVisible();
+
+		// Idle: the leading icon is unnecessary (the toolbar + text already signal
+		// edit mode), so there must be no ::before glyph.
+		const idleContent = await status.evaluate(
+			( el ) => getComputedStyle( el, '::before' ).content
+		);
+		expect( idleContent ).toBe( 'none' );
+
+		// Save states still carry their non-color dashicon (autosave feedback +
+		// WCAG 1.4.1 shape cue) — guard against removing the icon outright.
+		const savedContent = await status.evaluate( ( el ) => {
+			el.classList.remove( 'maestro-status-idle' );
+			el.classList.add( 'maestro-status-saved' );
+			const c = getComputedStyle( el, '::before' ).content;
+			el.classList.remove( 'maestro-status-saved' );
+			el.classList.add( 'maestro-status-idle' );
+			return c;
+		} );
+		expect( savedContent ).not.toBe( 'none' );
+		expect( savedContent ).not.toBe( 'normal' );
+	} );
+
+} );
