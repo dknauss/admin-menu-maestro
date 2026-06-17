@@ -276,11 +276,15 @@ body.maestro-editing #collapse-menu {
 	gap: 5px;
 }
 
-/* Non-color leading glyph: a dashicon per state so status is distinguishable by
- * shape as well as colour (WCAG 1.4.1). Dashicons (always present in wp-admin,
- * and declared as a style dependency) render consistently, unlike the previous
- * Unicode dingbats which some platforms substituted with colour-emoji or dropped
- * entirely when emoji were disabled. */
+/* Per-state leading dashicon for the transient save states, so status is
+ * distinguishable by shape as well as colour (WCAG 1.4.1). Dashicons (always
+ * present in wp-admin, and declared as a style dependency) render consistently,
+ * unlike the previous Unicode dingbats which some platforms substituted with
+ * colour-emoji or dropped when emoji were disabled.
+ *
+ * Idle has NO icon: the visible toolbar and "Editor active" text already signal
+ * edit mode, and a leading idle dot read as a fake control. The icon appears
+ * only while saving / saved / error. */
 .maestro-status::before {
 	font-family: dashicons;
 	font-size: 16px;
@@ -290,8 +294,7 @@ body.maestro-editing #collapse-menu {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	speak: never; /* presentational; screen reader hears the text label */
-	content: '\f227'; /* idle: a quiet filled dot (dashicons-marker), NOT an interactive ring */
-	opacity: 0.65; /* de-emphasise the idle dot so it doesn't read as a control */
+	content: none; /* idle: no glyph; save states below supply one */
 }
 @keyframes maestro-spin {
 	to { transform: rotate( 360deg ); }
