@@ -2,6 +2,11 @@ name: Deploy to WordPress.org
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Git tag to deploy (e.g. v1.0.0). Leave blank when triggered by a release."
+        required: false
+        default: ""
   release:
     types: [published]
 
@@ -14,8 +19,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # Resolve which ref/version to ship. On a release event the tag comes from
+      # github.ref_name; on manual dispatch it comes from the `tag` input. This
+      # lets us deploy a tag whose commit predates these workflows (e.g. 1.0.0),
+      # since the workflow file itself is read from the dispatched ref (main).
+      - name: Resolve ref + version
+        id: meta
+        run: |
+          REF="${{ github.event.inputs.tag }}"
+          [ -z "$REF" ] && REF="${{ github.ref_name }}"
+          echo "ref=$REF" >> "$GITHUB_OUTPUT"
+          echo "version=${REF#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout ${{ steps.meta.outputs.ref }}
         uses: actions/checkout@v5
+        with:
+          ref: ${{ steps.meta.outputs.ref }}
 
       # No build toolchain: the runtime is plain PHP/JS/CSS. bin/build.sh
       # assembles the exact shippable tree under build/maestro-menu-editor.
@@ -35,5 +54,6 @@ jobs:
           SVN_USERNAME: ${{ secrets.WP_ORG_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.WP_ORG_SVN_PASSWORD }}
           SLUG: maestro-menu-editor
+          VERSION: ${{ steps.meta.outputs.version }}
           BUILD_DIR: build/maestro-menu-editor
           ASSETS_DIR: build/wporg-assets
