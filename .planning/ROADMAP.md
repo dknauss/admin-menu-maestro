@@ -26,8 +26,8 @@ Full phase details, success criteria, and outcomes are archived in
 **Milestone Goal:** Refine the shipped editor and finish the accessibility story. No new architecture — keyboard reordering, modified-state indicators, visual polish, heavier icons, documentation link hygiene, and a repeatable banner pipeline.
 
 - [x] **Phase 6: Accessibility & Interaction** — Keyboard-accessible reordering + modified indicator with per-item reset affordance (completed 2026-06-16)
-- [ ] **Phase 7: Visual Polish & Icons** — Heavier bundled icon set mixed with dashicons + edit-mode UI polish
-- [ ] **Phase 8: Docs & Brand Assets** — Documentation link hygiene (test-first checker) + verify/reconcile the shipped banner pipeline
+- [x] **Phase 7: Visual Polish & Icons** — Heavier bundled icon set mixed with dashicons + edit-mode UI polish (completed 2026-06-17; includes plan 07-04 defect fixes BUG-01..05 + idle-icon refinement)
+- [ ] **Phase 8: Docs & Brand Assets** — Documentation link hygiene (test-first checker) + verify/reconcile the shipped banner pipeline + listing polish (readme copy, Playground link, banner, screenshots)
 
 ## Phase Details (v1.1)
 
@@ -48,21 +48,24 @@ Full phase details, success criteria, and outcomes are archived in
 ### Phase 7: Visual Polish & Icons
 **Goal**: The bundled icon picker reads at a weight that mixes naturally with WordPress's solid dashicons, and the overall edit-mode UI is visually polished and responsive
 **Depends on**: Phase 6
-**Requirements**: ICON-01, UX-02
+**Requirements**: ICON-01, UX-02, BUG-01, BUG-02, BUG-03, BUG-04, BUG-05
+**Reopened 2026-06-16**: UX-02 sign-off is blocked by five edit-mode defects triaged from the wp-sudo thread (see REQUIREMENTS.md → Defects). BUG-01 (double "Saved" check) and BUG-03 (responsive button overlap) directly contradict success criterion 2; BUG-05 swaps the emoji status glyphs for dashicons.
 **Success Criteria** (what must be TRUE):
   1. The bundled icon set uses solid/filled variants (Bootstrap `*-fill` or Heroicons Mini fallback) that sit visually alongside dashicons without appearing noticeably lighter — confirmed by side-by-side screenshot of the two tabs
   2. Edit-mode control hierarchy, spacing, and status clarity are improved with no text-overlap or control-resize regressions — confirmed by before/after screenshots and keyboard/mouse walkthrough notes
   3. Icon picker grid is visually scannable at the dashicons grid size (20px glyphs)
   4. UI changes hold at 0 regressions: unit 44/44, integration 29/29, e2e 9/9 green, Plugin Check 0 errors
-**Plans**: 3 plans
-  - [ ] 07-01-PLAN.md — TDD fill-resolution policy + regenerate solid icon bundle [ICON-01]
-  - [ ] 07-02-PLAN.md — edit-mode polish: toolbar hierarchy, non-color status, ~20px grid, first-run cue [UX-02]
-  - [ ] 07-03-PLAN.md — e2e regression + side-by-side/before-after screenshots + walkthrough notes [UX-02, ICON-01]
+**Plans**: 4 plans
+  - [x] 07-01-PLAN.md — TDD fill-resolution policy + regenerate solid icon bundle [ICON-01]
+  - [x] 07-02-PLAN.md — edit-mode polish: toolbar hierarchy, non-color status, ~20px grid, first-run cue [UX-02]
+  - [x] 07-03-PLAN.md — e2e regression + side-by-side/before-after screenshots + walkthrough notes [UX-02, ICON-01]
+  - [x] 07-04-PLAN.md — edit-mode defect fixes: BUG-01 (drop ✓ from i18n string), BUG-02 (move breadcrumb right of input so it can't shift + relabel "Title"), BUG-03 (toolbar wrap/stack at narrow widths), BUG-04+BUG-05 (replace emoji status glyphs ○⏳✓⚠ with dashicons; idle dot de-emphasised) + regression screenshots at narrow viewport [BUG-01, BUG-02, BUG-03, BUG-04, BUG-05, UX-02]
 
 ### Phase 8: Docs & Brand Assets
-**Goal**: In-prose file references across all project docs are live markdown links, and the wp.org/GitHub banner is rebuilt from an editable SVG master with a repeatable generation pipeline
+**Goal**: In-prose file references are live markdown links; the wp.org/GitHub banner is rebuilt from an editable SVG master with a repeatable pipeline; and the live directory listing is polished for the next release (readme copy, Playground demo link, refreshed banner + screenshots)
 **Depends on**: Phase 7
-**Requirements**: DOC-01, REL-06
+**Requirements**: DOC-01, REL-06, DOC-02, DOC-03, REL-07, REL-08
+**Listing polish added 2026-06-17** after the 1.0.0 page went live (see REQUIREMENTS.md → Docs & Assets). DOC-03 (Playground demo link) is a quick win and may ship as a standalone 1.0.1.
 **Success Criteria** (what must be TRUE):
   1. Bare file-path references in README, readme.txt, user guide, SPEC, TESTING, and planning docs are converted to markdown links — confirmed by a grep for common bare-path patterns returning no results
   2. An editable SVG master for the banner exists under `.wordpress-org/source/` with the decorative leader line before "ADMIN MENU" removed
@@ -73,6 +76,8 @@ Full phase details, success criteria, and outcomes are archived in
   - [ ] 08-02-PLAN.md — convert flagged refs to markdown links + fix 3 stale paths (GREEN: 0 offenders) [DOC-01]
   - [ ] 08-03-PLAN.md — verify `npm run assets:banners` regen + reconcile REL-06 mechanism wording (in-code SVG master + Inkscape + Pillow) [REL-06]
   - [ ] 08-04-PLAN.md — zero-regression suite + flip DOC-01 Complete + mark Phase 8 done [DOC-01, REL-06]
+  - [ ] 08-05-PLAN.md — readme.txt copy rewrite (wp-readme-optimizer) + Playground "Try it first" demo link in readme + GitHub README [DOC-02, DOC-03]
+  - [ ] 08-06-PLAN.md — refreshed banner graphic (REL-06 pipeline) + gallery-optimized screenshots & captions; replace public assets after visual review [REL-07, REL-08]
 
 ## Progress
 
@@ -87,5 +92,5 @@ v1.0 complete (Phases 1–5, archived). v1.1 executes: 6 → 7 → 8
 | 4. Release Assets | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 5. Submit | v1.0 | ✓ | Complete (archived) | 2026-06-14 |
 | 6. Accessibility & Interaction | 3/3 | Complete    | 2026-06-16 | - |
-| 7. Visual Polish & Icons | v1.1 | 0/3 | Not started | - |
+| 7. Visual Polish & Icons | 4/4 | Complete | 2026-06-17 | - |
 | 8. Docs & Brand Assets | v1.1 | 0/TBD | Not started | - |

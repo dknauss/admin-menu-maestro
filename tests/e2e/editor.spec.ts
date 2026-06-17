@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import * as fs from 'fs';
 
 /**
  * End-to-end coverage of the in-place editor against a live WordPress.
@@ -409,6 +410,241 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		await page.locator( '.maestro-reset-all' ).click();
 		await resetNav;
 		await expect.poll( order ).toEqual( baseline );
+	} );
+
+} );
+
+/**
+ * Phase 7 — Visual Polish & Icons regression suite
+ *
+ * Three areas covered:
+ *   1. ICON-01: solid (Bootstrap -fill) grid scanability + side-by-side screenshots
+ *   2. UX-02: no text-overlap, no control-resize at 1200px and 700px breakpoints
+ *   3. First-run cue: shown once per session, suppressed after dismissal
+ *
+ * Screenshots are written to .planning/phases/07-visual-polish-icons/screenshots/
+ * as deliverable PNGs for human review (not pixel-diff baselines).
+ */
+
+const SCREENSHOTS_DIR = '.planning/phases/07-visual-polish-icons/screenshots';
+
+test.describe( 'Phase 7 — ICON-01 solid grid scanability and side-by-side screenshots', () => {
+
+	test.beforeAll( () => {
+		fs.mkdirSync( SCREENSHOTS_DIR, { recursive: true } );
+	} );
+
+	test( 'Bootstrap tab renders >50 visible cells each with a 20px img, search narrows them', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// Select Posts to reveal the panel with the icon button.
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+		const panel = page.locator( '.maestro-toolbar .maestro-panel' );
+		await expect( panel ).toBeVisible();
+		await panel.locator( '.maestro-icon-btn' ).click();
+
+		const picker = page.locator( '.maestro-icon-popover' );
+		await expect( picker ).toBeVisible();
+
+		// The default tab is Dashicons (index 0). Switch to Bootstrap (index 1).
+		await picker.getByRole( 'tab', { name: 'Bootstrap' } ).click();
+		await expect( picker.locator( '#maestro-panel-dashicons' ) ).toBeHidden();
+		const btPanel = picker.locator( '#maestro-panel-bootstrap' );
+		await expect( btPanel ).toBeVisible();
+
+		// Assert: > 50 visible cells (87-icon solid bundle).
+		const visibleCells = await btPanel.locator( '.maestro-icon-cell:visible' ).count();
+		expect( visibleCells ).toBeGreaterThan( 50 );
+
+		// Assert: each cell's img has natural dimensions — the src (base64 data-URI)
+		// is set correctly. Spot-check the first img.
+		const firstImg = btPanel.locator( '.maestro-icon-cell img' ).first();
+		await expect( firstImg ).toBeVisible();
+		const imgSrc = await firstImg.getAttribute( 'src' );
+		expect( imgSrc ).toMatch( /^data:image\/svg\+xml;base64,/ );
+
+		// Search regression: 'gear' must narrow the visible set (same guard as the
+		// Phase 6 filter regression that caught CSS display overriding [hidden]).
+		const countBefore = await btPanel.locator( '.maestro-icon-cell:visible' ).count();
+		await picker.locator( '.maestro-icon-search' ).fill( 'gear' );
+		await expect
+			.poll( () => btPanel.locator( '.maestro-icon-cell:visible' ).count() )
+			.toBeLessThan( countBefore );
+
+		// Clear the filter.
+		await picker.locator( '.maestro-icon-search' ).fill( '' );
+		await expect
+			.poll( () => btPanel.locator( '.maestro-icon-cell:visible' ).count() )
+			.toBeGreaterThan( 50 );
+
+		// Screenshot the Bootstrap (solid) tab as an ICON-01 deliverable.
+		await page.screenshot( {
+			path: `${ SCREENSHOTS_DIR }/icons-bootstrap-tab.png`,
+		} );
+
+		// Switch to Dashicons for the comparison screenshot.
+		await picker.getByRole( 'tab', { name: 'Dashicons' } ).click();
+		await expect( picker.locator( '#maestro-panel-bootstrap' ) ).toBeHidden();
+		await expect( picker.locator( '#maestro-panel-dashicons' ) ).toBeVisible();
+
+		await page.screenshot( {
+			path: `${ SCREENSHOTS_DIR }/icons-dashicons-tab.png`,
+		} );
+
+		// Capture the picker open with Bootstrap tab active as the "side-by-side"
+		// deliverable (shows tab strip and solid grid side by side the tab list).
+		await picker.getByRole( 'tab', { name: 'Bootstrap' } ).click();
+		await expect( picker.locator( '#maestro-panel-bootstrap' ) ).toBeVisible();
+		await page.screenshot( {
+			path: `${ SCREENSHOTS_DIR }/icons-side-by-side.png`,
+		} );
+
+		// Clean up by pressing Escape to close the picker.
+		await page.keyboard.press( 'Escape' );
+	} );
+
+} );
+
+test.describe( 'Phase 7 — UX-02 no-overlap / no-resize at 1200px and 700px', () => {
+
+	// 700px is the narrowest the editor exercises: below 782px wp-admin drops to
+	// the mobile off-canvas menu, where a menu item can't be selected at all.
+	for ( const viewport of [
+		{ width: 1200, height: 800, label: '1200' },
+		{ width: 700,  height: 800, label: '700'  },
+	] ) {
+		test( `toolbar has no overflow and rename input fits its container at ${ viewport.width }px`, async ( { page } ) => {
+			await page.setViewportSize( { width: viewport.width, height: viewport.height } );
+			await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+			// Select Posts to show the panel and rename input.
+			await page.locator( '#menu-posts > a.menu-top' ).click();
+			const panel = page.locator( '.maestro-toolbar .maestro-panel' );
+			await expect( panel ).toBeVisible();
+
+			// The toolbar and status element must be visible.
+			const toolbar = page.locator( '.maestro-toolbar' );
+			const statusEl = toolbar.locator( '.maestro-status' );
+			await expect( toolbar ).toBeVisible();
+			await expect( statusEl ).toBeVisible();
+
+			// No horizontal overflow: toolbar width must fit within the viewport.
+			const toolbarBox = await toolbar.boundingBox();
+			expect( toolbarBox ).not.toBeNull();
+			expect( toolbarBox!.width ).toBeLessThanOrEqual( viewport.width );
+			// Right edge must not exceed viewport width (1px tolerance for subpixel rounding).
+			expect( toolbarBox!.x + toolbarBox!.width ).toBeLessThanOrEqual( viewport.width + 1 );
+
+			// Rename input must not exceed the panel container width.
+			const renameInput = panel.locator( '.maestro-rename-input' );
+			await expect( renameInput ).toBeVisible();
+			const renameBox = await renameInput.boundingBox();
+			const panelBox  = await panel.boundingBox();
+			expect( renameBox ).not.toBeNull();
+			expect( panelBox ).not.toBeNull();
+			// The input right edge must not exceed the panel right edge (2px tolerance).
+			expect( renameBox!.x + renameBox!.width ).toBeLessThanOrEqual( panelBox!.x + panelBox!.width + 2 );
+
+			// BUG-03: no two toolbar controls may visually overlap at any width.
+			// (Overlapping flex items don't widen the toolbar, so the width checks
+			// above can't catch this — assert it directly. >1px in BOTH axes counts
+			// as a real overlap, ignoring subpixel touching.)
+			const buttons = await toolbar.locator( '.button' ).all();
+			const boxes = [];
+			for ( const b of buttons ) {
+				const box = await b.boundingBox();
+				if ( box ) {
+					boxes.push( box );
+				}
+			}
+			expect( boxes.length ).toBeGreaterThan( 0 );
+			for ( let i = 0; i < boxes.length; i++ ) {
+				for ( let j = i + 1; j < boxes.length; j++ ) {
+					const a = boxes[ i ];
+					const c = boxes[ j ];
+					const overlaps =
+						a.x < c.x + c.width - 1 &&
+						c.x < a.x + a.width - 1 &&
+						a.y < c.y + c.height - 1 &&
+						c.y < a.y + a.height - 1;
+					expect(
+						overlaps,
+						`toolbar controls ${ i } and ${ j } overlap at ${ viewport.label }px`
+					).toBe( false );
+				}
+			}
+
+			// Capture the toolbar deliverable screenshot.
+			await page.screenshot( {
+				path: `${ SCREENSHOTS_DIR }/toolbar-${ viewport.label }.png`,
+			} );
+		} );
+	}
+
+} );
+
+test.describe( 'Phase 7 — first-run cue appears once only (localStorage-gated)', () => {
+
+	test( 'first-run cue is visible fresh, hidden after dismiss, and absent after reload', async ( { page } ) => {
+		// Pre-clear the localStorage flag on the test origin so the first navigation
+		// sees a truly fresh session. We navigate to any wp-admin page first, then
+		// use page.evaluate() to clear the flag — this runs once, not on every load.
+		await page.goto( '/wp-admin/index.php' );
+		await page.evaluate( () => {
+			try {
+				localStorage.removeItem( 'maestroFirstRunDone' );
+			} catch ( e ) {
+				// Private browsing — ignore.
+			}
+		} );
+
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// 1. First-run cue must be visible on a fresh session.
+		const cue = page.locator( '.maestro-firstrun' );
+		await expect( cue ).toBeVisible();
+
+		// 2. Dismiss the cue via the "Got it" button.
+		const dismissBtn = page.locator( '.maestro-firstrun-dismiss' );
+		await expect( dismissBtn ).toBeVisible();
+		await dismissBtn.click();
+
+		// 3. After dismissal the cue must be gone from the DOM immediately.
+		await expect( cue ).toHaveCount( 0 );
+
+		// 4. After a full page reload the cue must NOT reappear (localStorage gate).
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		await expect( page.locator( '.maestro-firstrun' ) ).toHaveCount( 0 );
+	} );
+
+} );
+
+test.describe( 'Phase 7 — status icon: none when idle, dashicon for save states', () => {
+
+	test( 'idle status shows no ::before glyph; the saved state keeps its dashicon', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		const status = page.locator( '.maestro-toolbar .maestro-status' );
+		await expect( status ).toBeVisible();
+
+		// Idle: the leading icon is unnecessary (the toolbar + text already signal
+		// edit mode), so there must be no ::before glyph.
+		const idleContent = await status.evaluate(
+			( el ) => getComputedStyle( el, '::before' ).content
+		);
+		expect( idleContent ).toBe( 'none' );
+
+		// Save states still carry their non-color dashicon (autosave feedback +
+		// WCAG 1.4.1 shape cue) — guard against removing the icon outright.
+		const savedContent = await status.evaluate( ( el ) => {
+			el.classList.remove( 'maestro-status-idle' );
+			el.classList.add( 'maestro-status-saved' );
+			const c = getComputedStyle( el, '::before' ).content;
+			el.classList.remove( 'maestro-status-saved' );
+			el.classList.add( 'maestro-status-idle' );
+			return c;
+		} );
+		expect( savedContent ).not.toBe( 'none' );
+		expect( savedContent ).not.toBe( 'normal' );
 	} );
 
 } );
