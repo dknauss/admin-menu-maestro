@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Polish & Accessibility
 status: planning
-stopped_at: Completed 08-docs-brand-assets/08-03-PLAN.md
-last_updated: "2026-06-17T16:16:29.088Z"
+stopped_at: Checkpoint 08-docs-brand-assets/08-02-PLAN.md — awaiting human-verify of converted links
+last_updated: "2026-06-17T00:15:00.000Z"
 last_activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
 progress:
   total_phases: 3
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 
 Milestone: v1.1 Polish & Accessibility (phases 6–8; v1.0 phases 1–5 complete & archived)
 Phase: Phase 8 (Docs & Brand Assets) in progress — 08-01, 08-02, 08-03 complete
-Plan: 08-03 complete (REL-06 verify + mechanism reconcile); next is 08-04
+Plan: 08-02 task 1 complete (DOC-01 GREEN — 21 offenders → 0); at checkpoint:human-verify before proceeding to 08-04
 Status: v1.0 milestone archived → `.planning/milestones/v1.0-*` + `.planning/MILESTONES.md` + `.planning/RETROSPECTIVE.md`. v1.1 scoped + roadmapped — 6 requirements promoted from the v2 backlog (ICON-01, A11Y-06, UX-01, UX-02, DOC-01; REL-06 already done). **v1.0.0 published to wordpress.org 2026-06-17** (GitHub Actions -> SVN). **Phase 7 (Visual Polish & Icons) signed off 2026-06-17** (UX-02 + BUG-01..05; full regression gate green). Phase 8 (Docs & Brand Assets) is next.
 Last activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
 
@@ -61,6 +61,7 @@ Progress: [#####-----] 54%
 | Phase 07-visual-polish-icons P01 | 15 | 3 tasks | 3 files |
 | Phase 07-visual-polish-icons P02 | 7 | 2 tasks | 3 files |
 | Phase 08-docs-brand-assets P01 | 15 | 2 tasks | 3 files |
+| Phase 08-docs-brand-assets P02 | 10min | 1 task | 3 files |
 | Phase 08-docs-brand-assets P03 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
@@ -93,6 +94,7 @@ Recent decisions affecting current work:
 - [Phase 07-visual-polish-icons]: Non-color status via ::before glyphs (○ ⏳ ✓ ⚠); icon grid cell 40px for precise 20px centering; first-run cue as fixed bar above toolbar, localStorage-gated
 - [Phase 08-docs-brand-assets]: readme.txt added to CORE_EXCLUDE in doc-link checker: appears as a bare token in README.md prose but is excluded per DOC-01 scope (wp.org convention file, not a linkable repo doc)
 - [Phase 08-docs-brand-assets]: test:js uses 'node --test tests/js/*.mjs' glob pattern — Node 24.14 rejects the directory form (node --test tests/js/) with MODULE_NOT_FOUND; glob is the correct alternative
+- [Phase 08-docs-brand-assets]: DOC-01 linkification (08-02): stale-path link text uses the original display token (global-setup.ts, icon.svg) while href points to the corrected real path — preserves prose without rewriting it
 - [Phase 08-docs-brand-assets]: REL-06 reconcile (08-03): recorded the shipped banner mechanism — in-code SVG master in build_final.py (not a standalone .svg), rasterized via Inkscape then Pillow LANCZOS downscale; npm run assets:banners reproduces both banners byte-identically at exact dimensions. — Roadmap literal criteria expected a standalone editable .svg; reality is an in-code SVG master that meets the intent (editable source + one-command regen + leader line removed). Chose option-a (annotate wording) over option-b (extract a standalone .svg) — option-b is out of scope per CONTEXT and risks deferred REL-07 banner churn. No banner pixels changed.
 
 ### Pending Todos
@@ -111,6 +113,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-17T16:16:19.313Z
-Stopped at: Completed 08-docs-brand-assets/08-03-PLAN.md
+Last session: 2026-06-17T00:15:00.000Z
+Stopped at: Checkpoint 08-docs-brand-assets/08-02-PLAN.md (human-verify gate)
 Resume file: None
