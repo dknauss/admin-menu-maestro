@@ -59,7 +59,7 @@ class Assets {
 		wp_enqueue_style(
 			'maestro',
 			MAESTRO_URL . 'assets/maestro.css',
-			array(),
+			array( 'dashicons' ),
 			MAESTRO_VERSION
 		);
 
@@ -96,9 +96,9 @@ class Assets {
 				'i18n'     => array(
 					'idle'            => __( 'Editor active — click an item to edit.', 'maestro-menu-editor' ),
 					'saving'          => __( 'Saving…', 'maestro-menu-editor' ),
-					'saved'           => __( 'Saved ✓', 'maestro-menu-editor' ),
+					'saved'           => __( 'Saved', 'maestro-menu-editor' ),
 					'saveError'       => __( 'Save failed. Retrying on next change.', 'maestro-menu-editor' ),
-					'rename'          => __( 'Title', 'maestro-menu-editor' ),
+					'rename'          => __( 'Rename', 'maestro-menu-editor' ),
 					'icon'            => __( 'Icon', 'maestro-menu-editor' ),
 					'iconDialog'      => __( 'Choose an icon', 'maestro-menu-editor' ),
 					'iconSearch'      => __( 'Search icons', 'maestro-menu-editor' ),

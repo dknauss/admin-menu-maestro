@@ -255,8 +255,9 @@ body.maestro-editing #collapse-menu {
 	right: 0;
 	z-index: 99999;
 	display: flex;
+	flex-wrap: wrap; /* BUG-03: wrap zones onto extra rows when narrow, never overlap */
 	align-items: center;
-	gap: 16px; /* deliberate inter-zone gap: status | panel | right-actions */
+	gap: 8px 16px; /* row-gap when wrapped | inter-zone gap: status | panel | right-actions */
 	padding: 10px 16px;
 	background: #1d2327;
 	border-top: 2px solid #2271b1;
@@ -275,21 +276,30 @@ body.maestro-editing #collapse-menu {
 	gap: 5px;
 }
 
-/* Non-color leading glyph: changes per state so status is distinguishable
- * by shape as well as colour (WCAG 1.4.1). */
+/* Non-color leading glyph: a dashicon per state so status is distinguishable by
+ * shape as well as colour (WCAG 1.4.1). Dashicons (always present in wp-admin,
+ * and declared as a style dependency) render consistently, unlike the previous
+ * Unicode dingbats which some platforms substituted with colour-emoji or dropped
+ * entirely when emoji were disabled. */
 .maestro-status::before {
-	content: '○'; /* idle: open circle */
-	font-size: 10px;
+	font-family: dashicons;
+	font-size: 16px;
 	line-height: 1;
+	width: 16px;
+	height: 16px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	speak: never; /* presentational; screen reader hears the text label */
+	content: '\f227'; /* idle: a quiet filled dot (dashicons-marker), NOT an interactive ring */
+	opacity: 0.65; /* de-emphasise the idle dot so it doesn't read as a control */
 }
-@keyframes maestro-pulse {
-	0%, 100% { opacity: 1; }
-	50%       { opacity: 0.35; }
+@keyframes maestro-spin {
+	to { transform: rotate( 360deg ); }
 }
 .maestro-status-saving::before {
-	content: '⏳'; /* hourglass glyph for "in progress" */
-	animation: maestro-pulse 1.4s ease-in-out infinite;
+	content: '\f463'; /* dashicons-update: rotating arrows = "in progress" */
+	opacity: 1;
+	animation: maestro-spin 1.2s linear infinite;
 }
 @media ( prefers-reduced-motion: reduce ) {
 	.maestro-status-saving::before {
@@ -297,10 +307,12 @@ body.maestro-editing #collapse-menu {
 	}
 }
 .maestro-status-saved::before {
-	content: '✓'; /* check mark: success */
+	content: '\f147'; /* dashicons-yes: success */
+	opacity: 1;
 }
 .maestro-status-error::before {
-	content: '⚠'; /* warning triangle: failure */
+	content: '\f534'; /* dashicons-warning: failure */
+	opacity: 1;
 }
 
 .maestro-status-saving { color: #f0b849; }
@@ -309,6 +321,7 @@ body.maestro-editing #collapse-menu {
 
 .maestro-panel {
 	display: flex;
+	flex-wrap: wrap; /* BUG-03: panel controls stack onto rows when narrow, never overlap */
 	align-items: center;
 	gap: 8px;
 	flex: 1;

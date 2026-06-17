@@ -409,8 +409,11 @@
 		resetItemBtn.textContent = I.resetItem;
 		resetItemBtn.addEventListener( 'click', resetSelected );
 
-		p.appendChild( label );
+		// BUG-02: the rename input comes first so its left edge is fixed and never
+		// shifts as the selected item's name length changes; the breadcrumb label
+		// (kept for "what is targeted" context) sits to its right.
 		p.appendChild( renameField );
+		p.appendChild( label );
 		p.appendChild( iconBtn );
 		p.appendChild( visBtn );
 		p.appendChild( resetItemBtn );

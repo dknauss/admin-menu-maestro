@@ -505,11 +505,12 @@ test.describe( 'Phase 7 — ICON-01 solid grid scanability and side-by-side scre
 
 } );
 
-test.describe( 'Phase 7 — UX-02 no-overlap / no-resize at 1200px and 700px', () => {
+test.describe( 'Phase 7 — UX-02 no-overlap / no-resize at 1200px, 700px, 480px', () => {
 
 	for ( const viewport of [
 		{ width: 1200, height: 800, label: '1200' },
 		{ width: 700,  height: 800, label: '700'  },
+		{ width: 480,  height: 800, label: '480'  },
 	] ) {
 		test( `toolbar has no overflow and rename input fits its container at ${ viewport.width }px`, async ( { page } ) => {
 			await page.setViewportSize( { width: viewport.width, height: viewport.height } );
@@ -542,6 +543,35 @@ test.describe( 'Phase 7 — UX-02 no-overlap / no-resize at 1200px and 700px', (
 			expect( panelBox ).not.toBeNull();
 			// The input right edge must not exceed the panel right edge (2px tolerance).
 			expect( renameBox!.x + renameBox!.width ).toBeLessThanOrEqual( panelBox!.x + panelBox!.width + 2 );
+
+			// BUG-03: no two toolbar controls may visually overlap at any width.
+			// (Overlapping flex items don't widen the toolbar, so the width checks
+			// above can't catch this — assert it directly. >1px in BOTH axes counts
+			// as a real overlap, ignoring subpixel touching.)
+			const buttons = await toolbar.locator( '.button' ).all();
+			const boxes = [];
+			for ( const b of buttons ) {
+				const box = await b.boundingBox();
+				if ( box ) {
+					boxes.push( box );
+				}
+			}
+			expect( boxes.length ).toBeGreaterThan( 0 );
+			for ( let i = 0; i < boxes.length; i++ ) {
+				for ( let j = i + 1; j < boxes.length; j++ ) {
+					const a = boxes[ i ];
+					const c = boxes[ j ];
+					const overlaps =
+						a.x < c.x + c.width - 1 &&
+						c.x < a.x + a.width - 1 &&
+						a.y < c.y + c.height - 1 &&
+						c.y < a.y + a.height - 1;
+					expect(
+						overlaps,
+						`toolbar controls ${ i } and ${ j } overlap at ${ viewport.label }px`
+					).toBe( false );
+				}
+			}
 
 			// Capture the toolbar deliverable screenshot.
 			await page.screenshot( {
