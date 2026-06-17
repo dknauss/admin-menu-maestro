@@ -648,3 +648,24 @@ test.describe( 'Phase 7 — status icon: none when idle, dashicon for save state
 	} );
 
 } );
+
+test.describe( 'UX-05 — selected-item name is screen-reader-only (no visible breadcrumb)', () => {
+
+	test( 'panel item-name label is present for screen readers but visually hidden', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+		const label = page.locator( '.maestro-toolbar .maestro-panel-label' );
+
+		// Still in the DOM (carries the selected item / submenu context for SR users).
+		await expect( label ).toHaveCount( 1 );
+		await expect( label ).toHaveText( /Posts/ );
+
+		// But visually hidden (screen-reader-text clips to ~1px) — it must not take
+		// up visible space in the panel.
+		const box = await label.boundingBox();
+		expect( box ).not.toBeNull();
+		expect( box!.width ).toBeLessThanOrEqual( 1 );
+		expect( box!.height ).toBeLessThanOrEqual( 1 );
+	} );
+
+} );

@@ -4,7 +4,7 @@ Donate link: https://github.com/sponsors/dknauss
 Tags: admin menu, admin menu editor, menu editor, hide menu items, menu icons
 Requires at least: 6.4
 Tested up to: 7.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -180,6 +180,13 @@ If Maestro saves you time, you can support its ongoing maintenance through
 
 == Changelog ==
 
+= 1.1.1 =
+* Editor: the selected item's name is now screen-reader-only — the visible
+  breadcrumb duplicated the rename field and ate horizontal space, and the
+  controls are self-explanatory. Screen-reader users still get the item /
+  submenu context.
+* Editor: shorter reset button labels — "Reset Item" and "Reset All".
+
 = 1.1.0 =
 * Keyboard reordering: select a menu item then press `Alt+ArrowUp` /
   `Alt+ArrowDown` to move it. Each move is announced to screen readers (politely
@@ -212,6 +219,10 @@ If Maestro saves you time, you can support its ongoing maintenance through
   and folded-mode neutralization.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Minor editor UI tidy: the item-name label is now screen-reader-only and the
+reset buttons are "Reset Item" / "Reset All". No configuration changes.
 
 = 1.1.0 =
 Keyboard-accessible reordering, a live "modified" indicator, solid bundled
