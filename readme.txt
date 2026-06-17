@@ -1,7 +1,7 @@
 === Maestro: The Inline Admin Menu Editor ===
 Contributors: dpknauss
 Donate link: https://www.paypal.com/paypalme/DanKnauss
-Tags: admin menu, menu editor, admin, dashboard, icons
+Tags: admin menu, admin menu editor, menu editor, hide menu items, menu icons
 Requires at least: 6.4
 Tested up to: 7.0
 Stable tag: 1.0.0
@@ -9,112 +9,135 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-In-place editing of the WordPress admin menu: rename, reorder, swap icons, and hide items per role — edited on the menu itself.
+Rename, reorder, re-icon, and hide WordPress admin menu items per role — an inline admin menu editor you drive right on the menu itself.
 
 == Description ==
 
-Toggle "Edit Menu" from the admin bar and the admin menu becomes editable in
-place:
+**Maestro is an inline admin menu editor.** Instead of a separate settings
+screen, it turns the WordPress admin menu into something you edit *in place* —
+right where it lives. Toggle **Edit Menu** from the admin bar and the menu
+becomes editable: click a label to rename it, drag rows to reorder, swap a
+top-level icon, or hide items from chosen roles.
 
-* **Rename** any top-level or submenu item (click the label).
-* **Reorder** items by dragging (top-level and within each submenu).
-* **Swap icons** on top-level items (submenus carry no icon). The picker offers
-  dashicons and bundled Bootstrap Icons, with search; any of WordPress's four
-  native icon forms is accepted (dashicon, "none", base64 image data-URI, or an
-  image URL).
-* **Hide** items from chosen roles. Custom roles registered by other plugins
+**Try it first.** Launch a throwaway demo in
+[WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)
+— it boots a site with Maestro active, User Switching, and test users (editor,
+author, contributor, subscriber; password `password`) so you can try per-role
+visibility by switching users before you install anything.
+
+= What you can do =
+
+* **Rename** any top-level or submenu item — just click the label.
+* **Reorder** items by dragging (top-level items among themselves, submenu items
+  within their parent), or with the keyboard (`Alt`+`Arrow`).
+* **Swap icons** on top-level items. The picker offers dashicons and bundled
+  Bootstrap Icons with search, and accepts any of WordPress's four native icon
+  forms (dashicon, "none", base64 image data-URI, or an image URL).
+* **Hide** items from chosen roles — including administrators. Custom roles
+  registered by other plugins
   ([User Role Editor](https://wordpress.org/plugins/user-role-editor/),
   [Members](https://wordpress.org/plugins/members/), etc.) appear automatically.
-* **Reset** a single item to its default, or reset everything at once.
+* **Reset** a single item to its WordPress default, or reset everything at once.
 
 Changes are **global** — one configuration applies to everyone — and are stored
-as a sparse delta layered over the menu WordPress builds each load.
+as a sparse delta layered over the menu WordPress builds on each load. Nothing
+is rebuilt or duplicated, so a reset simply removes the delta and the original
+menu returns.
 
 = Important: visibility is cosmetic, not access control =
 
 Hiding a menu item only declutters the menu. The underlying admin page still
 loads for anyone who knows or types its URL, because a page's own registered
-**capability** is the true lock. This plugin operates on the menu (presentation),
+**capability** is the true lock. Maestro operates on the menu (presentation),
 which is a different plane from authorization.
 
-If you need to actually *prevent* access, pair this with a capability manager:
+If you need to actually *prevent* access, pair Maestro with a capability manager:
 
-* **[User Role Editor](https://wordpress.org/plugins/user-role-editor/)** —
+* **[User Role Editor](https://wordpress.org/plugins/user-role-editor/)** — the
   simplest way to edit what a role can do.
 * **[PublishPress Capabilities](https://wordpress.org/plugins/capability-manager-enhanced/)** —
   menu-aware; its Pro tier can block admin pages by URL.
 
-The `maestro_capability` filter lets such a plugin hand editing rights to a custom
-capability instead of the default `manage_options`.
+The `maestro_capability` filter lets such a plugin hand editing rights to a
+custom capability instead of the default `manage_options`.
 
-= Localization =
+= Accessibility and localization =
 
-Maestro uses the `maestro-menu-editor` text domain. PHP strings use
-WordPress translation helpers, and editor labels are passed to JavaScript in a
-localized payload so the UI can be translated. The plugin ships a translation
+The editor is keyboard-operable end to end — select with `Enter`/`Space`,
+reorder with `Alt`+`Arrow`, and every move and save is announced to screen
+readers. Modified items carry a non-color indicator with screen-reader text, so
+state never depends on color alone.
+
+Maestro uses the `maestro-menu-editor` text domain and ships a translation
 template plus starter language packs for Spanish (`es_ES`), German (`de_DE`),
-Japanese (`ja`), French (`fr_FR`), Portuguese (Brazil) (`pt_BR`), and Italian
-(`it_IT`). WordPress.org language packs can still override and extend the
-bundled catalogs; native-speaker and WordPress Polyglots review is welcome.
+Japanese (`ja`), French (`fr_FR`), Portuguese – Brazil (`pt_BR`), and Italian
+(`it_IT`). WordPress.org language packs override and extend these; native-speaker
+and WordPress Polyglots review is welcome.
 
-== How to use ==
+== Installation ==
 
-= Enter edit mode =
+1. In your dashboard go to **Plugins → Add New**, search for "Maestro: The
+   Inline Admin Menu Editor", and click **Install Now**, then **Activate**.
+2. Or upload the plugin zip via **Plugins → Add New → Upload Plugin**, then
+   activate it.
+3. Or, manually: unzip into `wp-content/plugins/maestro-menu-editor` and
+   activate from **Plugins**.
+4. After activating, click **Edit Menu** in the admin bar to start editing the
+   admin menu in place.
 
-After activation, choose **Edit Menu** from the admin bar. The admin menu stays
-expanded while editing so items are visible and stable. Choose **Exit Menu
-Editing** when done; any pending autosave is completed before the page reloads.
+== Frequently Asked Questions ==
 
-= Select an item =
+= Does hiding a menu item block access to that page? =
 
-Click a top-level or submenu item to select it. Keyboard users can focus a menu
-item and press Enter or Space. The shared controls panel opens for the selected
-item.
+No — and this is important. Hiding an item is **cosmetic**: it removes the link
+from the admin menu but does not stop anyone from reaching the page by typing or
+bookmarking its URL. Real access is governed by each page's registered
+capability. To actually block a page, use a capability manager such as
+[User Role Editor](https://wordpress.org/plugins/user-role-editor/) or
+[PublishPress Capabilities](https://wordpress.org/plugins/capability-manager-enhanced/).
 
-= Rename =
+= Do my changes affect everyone, or just me? =
 
-Edit the selected item's label in the controls panel. Press Enter to commit the
-label or Escape to restore the previous label. Changes autosave after a short
-pause.
+Everyone. Maestro stores one global configuration that applies to all users; it
+is not per-user. Per-role *visibility* lets you hide items from specific roles,
+but the rename/reorder/icon changes themselves are global.
 
-= Reorder =
+= Can I hide items from administrators too? =
 
-Drag menu rows to reorder them. Top-level items reorder among top-level items;
-submenu items reorder within their current parent. Moving items between
-top-level and submenu positions is deferred to a later version.
+Yes. Role visibility includes the administrator role, so you can declutter an
+admin's menu — remembering that this is cosmetic, not a permission change.
 
-Keyboard users can also reorder without a mouse: select an item with `Enter`
-or `Space`, bring focus to the menu row, then press `Alt+ArrowUp` or
-`Alt+ArrowDown` to move it. Each move is announced by the screen reader
-(politely for successful moves, assertively when already at the boundary).
+= Does it work with custom roles from other plugins? =
 
-= Icons =
+Yes. Any role registered on the site — including custom roles from User Role
+Editor, Members, and similar plugins — appears automatically in the visibility
+control.
 
-Select a top-level item and open the icon picker. Choose a Dashicon, bundled
-Bootstrap Icon, "No icon", or a valid WordPress icon value. Submenu items do not
-have separate WordPress admin menu icons, so the icon control appears only for
-top-level items.
+= Is the editor keyboard accessible? =
 
-= Role visibility =
+Yes. You can select, rename, reorder (`Alt`+`Arrow`), open the icon and
+visibility controls, and reset items without a mouse. Saves and moves are
+announced to screen readers.
 
-Open the visibility control and check the roles that should not see the selected
-item in the admin menu. These settings are global for each role and are cosmetic
-only; they do not block the underlying page URL.
+= What happens when I deactivate or reset the plugin? =
 
-= Modified indicator and per-item reset =
+The admin menu returns to exactly what WordPress and your active plugins
+generate. Your customizations live in a single option as a sparse delta;
+**Reset all** deletes that option, and deactivating the plugin stops it from
+being applied.
 
-When an item differs from its WordPress default, a small indicator (•) appears
-on the row in edit mode. The indicator uses a visible glyph plus screen-reader
-text ("(modified)") so it is perceivable without relying on color alone. It
-refreshes live as you change and reset items.
+= Can I move an item between a top-level position and a submenu? =
 
-Use **Reset this item** — visible in the shared controls panel whenever an item
-is selected — to remove one item's customizations. The button is keyboard-
-reachable: focus it with `Tab` and press `Enter` or `Space`. The indicator
-clears and the item's delta is removed from the saved configuration.
+Not yet. Reparenting is deliberately deferred (see "Known limits" below).
+Top-level items reorder among top-level items, and submenu items reorder within
+their current parent.
 
-Use **Reset all** to delete the saved configuration entirely and return to the
-menu generated by WordPress and active plugins.
+== Screenshots ==
+
+1. Editing the admin menu in place — the Posts item selected, with the shared controls panel (rename, icon, visibility, reset) open.
+2. The icon picker: searchable Dashicons and bundled Bootstrap Icons tabs for swapping a top-level admin menu icon.
+3. Per-role visibility — hiding an admin menu item from selected roles (a cosmetic declutter, not access control).
+4. A renamed admin menu item, saved automatically by debounced autosave.
 
 == Architecture (for developers) ==
 
@@ -129,30 +152,18 @@ menu generated by WordPress and active plugins.
   and diffs against captured pristine defaults so the stored config stays sparse.
 * Localized editor labels are passed from PHP to JavaScript in `maestroData.i18n`;
   the runtime zip includes the bundled POT template and starter catalogs.
-* WordPress.org listing graphics live in the repository's `.wordpress-org/`
-  directory: `icon.svg`, `icon-128x128.png`, `icon-256x256.png`,
-  `banner-772x250.png`, `banner-1544x500.png`, and `screenshot-1.png` through
-  `screenshot-4.png`.
-
-== Screenshots ==
-
-1. Edit mode with the Posts menu item selected and the shared controls panel open.
-2. Searchable icon picker with Dashicons and Bootstrap Icons tabs.
-3. Per-role visibility picker for hiding a menu item from selected roles.
-4. A renamed menu item saved through debounced autosave.
 
 == Known limits / deferred to v2 ==
 
-* **Reparenting** (moving an item between top-level and submenu) is not included.
-  It requires hand-splicing the globals plus `parent_file`/`submenu_file`
-  highlighting fixes — a known minefield, parked deliberately.
+* **Reparenting** (moving an item between a top-level position and a submenu) is
+  not included. Top-level items reorder among top-level items and submenu items
+  reorder within their current parent. Reparenting needs hand-splicing of the
+  globals plus `parent_file`/`submenu_file` highlighting fixes — a known
+  minefield, parked deliberately.
 * **Separators** are preserved in place but not yet add/move/delete-able; their
   generated slugs (`separator1`…) have no stable identity to key against.
 * **Renaming** an item drops any core-appended count badge (e.g. pending
   comments) from that label, since the badge lives inside the title string.
-* **Reparenting** (moving items between top-level and submenu) is not
-  included. Top-level items reorder among top-level; submenu items reorder
-  within their current parent.
 * Submenu sort relies on items registering by the late `admin_menu` pass; a
   plugin that registers submenus on an unusually late hook may not be captured.
 
@@ -182,3 +193,9 @@ menu grey and embedded as data-URIs; see `bin/generate-bootstrap-icons.mjs`.
   search, keyboard accessibility, and mobile-sized touch targets.
 * Editor: click-to-select with a shared panel, debounced single-flight autosave,
   and folded-mode neutralization.
+
+== Upgrade Notice ==
+
+= 1.1.0 =
+Keyboard-accessible reordering, a live "modified" indicator, and a discoverable
+per-item reset. No configuration changes required.
