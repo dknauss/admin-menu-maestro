@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 Milestone: v1.1 Polish & Accessibility (phases 6–8; v1.0 phases 1–5 complete & archived)
 Phase: Not started (roadmap complete; Phase 6 next to plan)
 Plan: —
-Status: v1.0 milestone archived → `.planning/milestones/v1.0-*` + `.planning/MILESTONES.md` + `.planning/RETROSPECTIVE.md`. v1.1 scoped + roadmapped — 6 requirements promoted from the v2 backlog (ICON-01, A11Y-06, UX-01, UX-02, DOC-01; REL-06 already done). v1.0.0 remains submitted to WordPress.org, awaiting review (external; on approval → SVN commit to trunk, tag 1.0.0, upload .wordpress-org/ to SVN assets/).
+Status: v1.0 milestone archived → `.planning/milestones/v1.0-*` + `.planning/MILESTONES.md` + `.planning/RETROSPECTIVE.md`. v1.1 scoped + roadmapped — 6 requirements promoted from the v2 backlog (ICON-01, A11Y-06, UX-01, UX-02, DOC-01; REL-06 already done). **v1.0.0 ACCEPTED by WordPress.org 2026-06-16** — next external action is the SVN deploy (commit runtime files to trunk, `svn cp` tag 1.0.0, upload `.wordpress-org/` to the SVN `assets/` dir).
 Last activity: 2026-06-14 — Completed & archived the v1.0 milestone; v1.1 roadmap (phases 6–8) in place
 
 Progress: [█░░░░░░░░░] 10%
@@ -94,7 +94,8 @@ Recent decisions affecting current work:
 
 - **Edit-mode defects (triaged 2026-06-16, wp-sudo thread; BUG-01..04 visually confirmed via screenshots)** — BUG-01..05 in REQUIREMENTS.md → Defects, mapped to Phase 7 / plan 07-04. UX-02 reopened (BUG-01 + BUG-03 contradict its "no text-overlap / control-resize" criterion). No code changed yet — fixes deferred to 07-04 execution. Root causes / fixes: BUG-01 double ✓ = i18n string `'Saved ✓'` + glyph both render → drop ✓ from string; BUG-02 = breadcrumb name label sits left of rename input in a flex row → **keep the breadcrumb (user values it) but move it right of the input** so the input can't shift, + relabel "Title"; BUG-03 = `.maestro-toolbar` has no `flex-wrap` → wrap/stack at narrow widths; BUG-04 = idle status glyph `○` misreads as a control → de-emphasise (folds into BUG-05); BUG-05 = status states use emoji glyphs `○⏳✓⚠` (`⏳`/`⚠` go color-emoji / can be disabled) → replace with dashicons (already loaded; `dashicons-update` spin / `-yes` / `-warning` / dot), preserving the WCAG 1.4.1 shape distinction.
 - **V2-15 (backlog)** — role cloning for per-user menu hiding: feasibility note to compare static snapshot vs dynamic `user_has_cap` inheritance vs per-user visibility before any build.
-- Await WordPress.org review verdict. On approval: SVN commit to `trunk`, tag `1.0.0`, upload `.wordpress-org/` to the SVN `assets/` dir.
+- **✅ ACCEPTED by WordPress.org 2026-06-16.** Deploy to SVN (authenticated, off-sandbox — user runs the `svn ci`): (1) `svn co https://plugins.svn.wordpress.org/<slug>/`; (2) copy the runtime files (same set `bin/build.sh` ships) into `trunk/`; (3) copy `.wordpress-org/*.png` + `icon.svg` into `assets/` (banner, icon, screenshot-1..4 — these live in SVN `assets/`, NOT the zip/trunk); (4) `svn cp trunk tags/1.0.0`; (5) `svn ci`. Confirm the granted **slug** first (requested `maestro-menu-editor`) — it sets the SVN repo URL.
+- **Screenshot gallery (new .org behavior, 2026-06-10 meta post):** directory now renders screenshots via core Gallery/Image blocks + lightbox; uniform sets → grid, mixed → masonry; captions emphasised. Our four shots are uniform 1440×980 → clean grid, no change required. Optional Phase 8 polish: punch up the four `== Screenshots ==` captions to better "explain the interface or workflow."
 
 (Done: git tag `v1.0.0` + GitHub Release "Admin Menu Maestro 1.0.0" published, anchored at the finalize-1.0.0 commit `c5f31b8`.)
 

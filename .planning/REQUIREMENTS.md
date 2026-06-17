@@ -9,7 +9,7 @@
 The 20 v1.0 "WordPress.org release readiness" requirements (SEC, A11Y, TEST,
 PERF, REL — all Complete) are archived in
 [milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md). v1.0.0 was
-submitted to WordPress.org on 2026-06-14 and is awaiting .org review.
+submitted to WordPress.org on 2026-06-14 and **accepted 2026-06-16** (pending SVN deploy to trunk + assets).
 
 ## v1.1 Requirements
 
