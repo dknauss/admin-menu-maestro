@@ -87,6 +87,25 @@ function diffItem( current, pristine ) {
 }
 
 /**
+ * Pure save-state label: map a transient save-state to display text.
+ *
+ * Returns the matching string from the injected strings object, or ''
+ * for 'idle' (and any unrecognised state) so the save-status element
+ * renders nothing. The persistent "Edit Mode" mode label is built
+ * separately in the DOM — this function does NOT produce it.
+ *
+ * @param {string} state   One of 'idle'|'saving'|'saved'|'error'.
+ * @param {{ saving: string, saved: string, saveError: string }} strings i18n strings.
+ * @return {string} Display text, or '' when idle/unknown.
+ */
+function modeStatusLabel( state, strings ) {
+	if ( state === 'saving' ) { return strings.saving; }
+	if ( state === 'saved' )  { return strings.saved; }
+	if ( state === 'error' )  { return strings.saveError; }
+	return '';
+}
+
+/**
  * Pure reset: recompute an item to its pristine state.
  *
  * Returns a NEW object with title, hiddenRoles, and (for top-level items) icon
@@ -114,9 +133,10 @@ function resetItem( item, pristine, isSub ) {
 /* ---------- dual-export guard ----------------------------------------- */
 
 var api = {
-	reorderMove: reorderMove,
-	diffItem:    diffItem,
-	resetItem:   resetItem,
+	reorderMove:     reorderMove,
+	diffItem:        diffItem,
+	resetItem:       resetItem,
+	modeStatusLabel: modeStatusLabel,
 };
 
 if ( typeof module !== 'undefined' && module.exports ) {
