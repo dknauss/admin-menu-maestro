@@ -649,6 +649,55 @@ test.describe( 'Phase 7 — status icon: none when idle, dashicon for save state
 
 } );
 
+test.describe( 'UX-03 — split mode indicator: persistent mode label + transient save-status', () => {
+
+	test( 'persistent .maestro-mode-label is visible with dashicon child and "Edit Mode" text', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// The persistent mode label must be visible in the toolbar at all times.
+		const modeLabel = page.locator( '.maestro-toolbar .maestro-mode-label' );
+		await expect( modeLabel ).toBeVisible();
+
+		// It must contain a .dashicons child (the aria-hidden mode icon).
+		const modeIcon = modeLabel.locator( '.dashicons' );
+		await expect( modeIcon ).toHaveCount( 1 );
+
+		// Its text content must include "Edit Mode".
+		await expect( modeLabel ).toContainText( 'Edit Mode' );
+	} );
+
+	test( 'save-status element is separate from mode label and empty at idle', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// The transient save-status element must be present as a SEPARATE element.
+		const saveStatus = page.locator( '.maestro-toolbar .maestro-status' );
+		await expect( saveStatus ).toHaveCount( 1 );
+
+		// At idle, the save-status element must be empty (textContent is '' or whitespace).
+		const idleText = await saveStatus.textContent();
+		expect( ( idleText ?? '' ).trim() ).toBe( '' );
+
+		// The mode label and save-status must be distinct, independent elements.
+		const modeLabel = page.locator( '.maestro-toolbar .maestro-mode-label' );
+		await expect( modeLabel ).toHaveCount( 1 );
+	} );
+
+	test( 'idle .maestro-status::before content is none (save-status has no glyph at idle)', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		const status = page.locator( '.maestro-toolbar .maestro-status' );
+		await expect( status ).toBeVisible();
+
+		// PRESERVED GUARD (Phase 7): the save-status ::before must have content:none at idle.
+		// The idle edit icon is now a real DOM <span> child of .maestro-mode-label,
+		// NOT a ::before on .maestro-status — so this assertion still holds.
+		const idleContent = await status.evaluate(
+			( el ) => getComputedStyle( el, '::before' ).content
+		);
+		expect( idleContent ).toBe( 'none' );
+	} );
+
+} );
+
 test.describe( 'UX-05 — selected-item name is screen-reader-only (no visible breadcrumb)', () => {
 
 	test( 'panel item-name label is present for screen readers but visually hidden', async ( { page } ) => {
