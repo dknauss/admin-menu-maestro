@@ -1,7 +1,7 @@
 # Requirements: Maestro
 
 **Defined:** 2026-06-13
-**Last updated:** 2026-06-14 — v1.0 archived; v1.1 is the active milestone
+**Last updated:** 2026-06-17 — v1.2 traceability added (UX-03, UX-04, UX-07 → Phase 9)
 **Core Value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
 
 ## v1.0 Requirements — ✅ shipped & archived
@@ -64,8 +64,8 @@ Post-1.1 editor UI/UX refinements raised 2026-06-17 from hands-on use of the liv
 
 - [ ] **UX-03**: Replace the verbose idle status text "Editor active — click an item to edit." with a short, glanceable **"Menu Edit Mode"** indicator (green / highlighted). On **first run only**, draw attention to the menu — a brief flash/outline of a menu group, or a short tooltip tour. *a11y:* don't signal mode by colour alone — pair the green with an icon and/or keep the text label (WCAG 1.4.1); any flash/animation must respect `prefers-reduced-motion`; a tooltip tour must be keyboard-operable, focus-managed, dismissible, and screen-reader-announced; gate the first-run cue via localStorage like the existing first-run hint.
 - [ ] **UX-04**: Move the rename field's label **inside the input as a placeholder** that clears on focus. *a11y:* a placeholder is NOT an accessible name — keep a programmatic label (visually-hidden `<label>` or `aria-label`) so screen-reader and voice-control users still get "Rename"; ensure placeholder text meets contrast.
-- [ ] **UX-05**: Remove the visible **"Appearance"** group label — the buttons are self-explanatory and it eats horizontal space. *a11y:* replace the visible label with `aria-label`/`aria-labelledby` (or screen-reader-text) on the control group so the grouping is still announced; don't drop the accessible name, only the visible text.
-- [ ] **UX-06**: Tighten button labels to Title Case + shorter — **"Reset this item" → "Reset Item"** and **"Reset all" → "Reset All"**. Update the i18n strings and any e2e selectors that match on the old text.
+- [x] **UX-05**: ~~Remove the visible "Appearance" group label~~ — clarified: this was the **selected-item breadcrumb** (showed the item's name). **Shipped in 1.1.1** — made `screen-reader-text` (SR keeps item/submenu context; visible space reclaimed).
+- [x] **UX-06**: Tighten reset button labels — **"Reset Item"** / **"Reset All"**. **Shipped in 1.1.1** (i18n only; e2e selectors are class-based).
 - [ ] **UX-07**: Small-screen sizing — the wrap fix (BUG-03) is in, but on small/mobile the **buttons and rename field are still too large**. Reduce control + input sizing at narrow widths (denser padding/font), keeping a ≥44px touch-target floor only where a real tap target is needed, so the toolbar fits and reads well on mobile. Still needs a focused mobile pass.
 
 ## v2 Requirements
@@ -94,6 +94,7 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
   - **(b) Dynamic inheritance** — register the clone with no stored caps and a `user_has_cap` / `map_meta_cap` filter that resolves the clone to its source role at request time. Always in sync, negligible per-check cost, and keeps the autoloaded `wp_user_roles` option lean (favour few, slim roles over many fat ones).
   - **Alternative that may obviate roles entirely: per-user visibility** — store hidden items keyed by user ID instead of cloning a role. More direct for "hide from one admin," but adds a new dimension to the delta model (today: global + per-role) and new storage/merge logic.
   *Constraint:* must stay inside the "visibility is cosmetic" principle (see Out of Scope) — privileges are untouched; this only widens *who* a cosmetic rule can target. *Deliverable first:* a short feasibility note (snapshot vs dynamic vs per-user), not a build commitment. Relates to V2-07 (enforcement bridge), V2-08 (multisite defaults).
+- **V2-16**: *Research* — compatibility with popular plugins that build their admin menu in non-standard ways. Many high-install plugins manipulate the admin menu outside the normal `add_menu_page`/`add_submenu_page` flow: custom positions, dynamically/conditionally injected items, late or re-registered menus, count/notification badges baked into the title string, custom separators, or direct surgery on the `$menu`/`$submenu` globals. Maestro's sparse-delta replay keys on stable slugs and applies on a late `admin_menu` pass, so these patterns may not rename/reorder/hide/re-icon cleanly (cf. the existing "submenu sort relies on the late `admin_menu` pass" known limit). Survey the most-installed likely offenders — **WooCommerce first** (it reorders/injects heavily and adds its own top-level + submenus), plus e.g. Jetpack, Yoast SEO / Rank Math, Elementor and other page builders, WPForms, and LMS/membership plugins. For each: document how it registers its menu, what breaks under Maestro's rename/reorder/hide/icon, and whether the fix is a slug-resolution tweak, a later/again hook, special-casing, or a documented limitation. *Deliverable:* a compatibility research note + a prioritized fix/limitation list, **not** a build commitment. Relates to V2-01 (reparenting), V2-02 (separators).
 
 ## Out of Scope
 
@@ -119,11 +120,24 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | DOC-01 | Phase 8: Docs & Brand Assets | Complete |
 | REL-06 | Phase 8: Docs & Brand Assets | Complete (shipped during wp.org rename) |
 
-**Coverage:**
-- v1.1 requirements: 6 + 5 defects (BUG-01..05) — all mapped to phases 6–8 (REL-06 Complete; UX-02 reopened; 10 Pending)
+**Coverage (v1.1):**
+- v1.1 requirements: 6 + 5 defects (BUG-01..05) — all mapped to phases 6–8 — Complete
 - Unmapped: 0 ✓
 - v1.0 (20 reqs) archived → [milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md)
 
+## Traceability (v1.2)
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| UX-03 | Phase 9: Editor UX Polish | Pending |
+| UX-04 | Phase 9: Editor UX Polish | Pending |
+| UX-07 | Phase 9: Editor UX Polish | Pending |
+
+**Coverage (v1.2):**
+- v1.2 active requirements: 3 (UX-03, UX-04, UX-07) — all mapped to Phase 9
+- Unmapped: 0 ✓
+- UX-05 and UX-06: shipped in v1.1.1 — not included in v1.2 scope
+
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-14 — v1.0 archived at milestone completion; v1.1 traceability retained*
+*Last updated: 2026-06-17 — v1.2 traceability added; UX-03/UX-04/UX-07 → Phase 9*
