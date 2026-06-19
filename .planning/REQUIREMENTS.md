@@ -1,7 +1,7 @@
 # Requirements: Maestro
 
 **Defined:** 2026-06-13
-**Last updated:** 2026-06-17 — v1.2 traceability added (UX-03, UX-04, UX-07 → Phase 9)
+**Last updated:** 2026-06-19 — V2-16 pulled forward to Phase 10 (v1.2 research spike); V2-17 (single-site privileged editor tier) added to v2 backlog
 **Core Value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
 
 ## v1.0 Requirements — ✅ shipped & archived
@@ -94,7 +94,8 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
   - **(b) Dynamic inheritance** — register the clone with no stored caps and a `user_has_cap` / `map_meta_cap` filter that resolves the clone to its source role at request time. Always in sync, negligible per-check cost, and keeps the autoloaded `wp_user_roles` option lean (favour few, slim roles over many fat ones).
   - **Alternative that may obviate roles entirely: per-user visibility** — store hidden items keyed by user ID instead of cloning a role. More direct for "hide from one admin," but adds a new dimension to the delta model (today: global + per-role) and new storage/merge logic.
   *Constraint:* must stay inside the "visibility is cosmetic" principle (see Out of Scope) — privileges are untouched; this only widens *who* a cosmetic rule can target. *Deliverable first:* a short feasibility note (snapshot vs dynamic vs per-user), not a build commitment. Relates to V2-07 (enforcement bridge), V2-08 (multisite defaults).
-- **V2-16**: *Research* — compatibility with popular plugins that build their admin menu in non-standard ways. Many high-install plugins manipulate the admin menu outside the normal `add_menu_page`/`add_submenu_page` flow: custom positions, dynamically/conditionally injected items, late or re-registered menus, count/notification badges baked into the title string, custom separators, or direct surgery on the `$menu`/`$submenu` globals. Maestro's sparse-delta replay keys on stable slugs and applies on a late `admin_menu` pass, so these patterns may not rename/reorder/hide/re-icon cleanly (cf. the existing "submenu sort relies on the late `admin_menu` pass" known limit). Survey the most-installed likely offenders — **WooCommerce first** (it reorders/injects heavily and adds its own top-level + submenus), plus e.g. Jetpack, Yoast SEO / Rank Math, Elementor and other page builders, WPForms, and LMS/membership plugins. For each: document how it registers its menu, what breaks under Maestro's rename/reorder/hide/icon, and whether the fix is a slug-resolution tweak, a later/again hook, special-casing, or a documented limitation. *Deliverable:* a compatibility research note + a prioritized fix/limitation list, **not** a build commitment. Relates to V2-01 (reparenting), V2-02 (separators).
+- **V2-16**: *Research* — compatibility with popular plugins that build their admin menu in non-standard ways. Many high-install plugins manipulate the admin menu outside the normal `add_menu_page`/`add_submenu_page` flow: custom positions, dynamically/conditionally injected items, late or re-registered menus, count/notification badges baked into the title string, custom separators, or direct surgery on the `$menu`/`$submenu` globals. Maestro's sparse-delta replay keys on stable slugs and applies on a late `admin_menu` pass, so these patterns may not rename/reorder/hide/re-icon cleanly (cf. the existing "submenu sort relies on the late `admin_menu` pass" known limit). Survey the most-installed likely offenders — **WooCommerce first** (it reorders/injects heavily and adds its own top-level + submenus), plus e.g. Jetpack, Yoast SEO / Rank Math, Elementor and other page builders, WPForms, and LMS/membership plugins. For each: document how it registers its menu, what breaks under Maestro's rename/reorder/hide/icon, and whether the fix is a slug-resolution tweak, a later/again hook, special-casing, or a documented limitation. *Deliverable:* a compatibility research note + a prioritized fix/limitation list, **not** a build commitment. Relates to V2-01 (reparenting), V2-02 (separators). **→ Promoted to a concrete phase 2026-06-19: Phase 10 (v1.2) research spike.**
+- **V2-17**: *Research* — single-site **"super-admin equivalent" / privileged editor tier**. On a non-multisite install every administrator shares `manage_options`, so any admin can open the editor and *undo* another admin's cosmetic hide/rename/reorder — there is no notion of a higher tier. This item asks whether a **designated** admin (a single-site analogue of the network super admin) could configure the menu for *other* admins in a way regular admins cannot change — i.e. gating **who may edit/lock the configuration**, a different axis from the existing per-role visibility (which only governs *who a cosmetic rule targets*, via [`maestro_capability`](../maestro-menu-editor.php#L42), default `manage_options`). **Principle tension (resolve up front):** "lock what other admins see so they can't undo it" crosses from *cosmetic visibility* into *enforcement / page locking*, which is explicitly **Out of Scope** below ("Real access control / page locking"). Any design must either **(a)** stay strictly cosmetic — a privileged *editor/config-owner* tier (e.g. a custom `maestro_manage` cap gating who may *enter edit mode*), while each hidden page's own capability remains the real gate and a regular admin can still reach a page they hold the cap for — or **(b)** be an explicit, clearly-labelled *enforcement* opt-in, in which case it likely does **not** belong in core Maestro. **wp-sudo angle:** a "sudo for admins" / privilege-tier concept is precisely the sibling **wp-sudo** project's domain (cf. the wp-sudo thread already referenced in this roadmap); the natural home for an *enforced* privileged tier is wp-sudo, or a documented Maestro↔wp-sudo bridge, not Maestro core. *Deliverable:* a feasibility note — capability-model options (custom cap via the `maestro_capability` filter vs. a wp-sudo bridge), the cosmetic-vs-enforcement boundary, and a recommendation on whether/where to build — **not** a build commitment. Relates to V2-07 (enforcement bridge), V2-15 (role cloning / per-user hiding), V2-08 (multisite defaults), and the Out-of-Scope "Real access control / page locking" row.
 
 ## Out of Scope
 
@@ -132,12 +133,15 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | UX-03 | Phase 9: Editor UX Polish | Pending |
 | UX-04 | Phase 9: Editor UX Polish | Pending |
 | UX-07 | Phase 9: Editor UX Polish | Pending |
+| V2-16 | Phase 10: Third-Party Menu Compatibility Research | Pending (research spike) |
 
 **Coverage (v1.2):**
-- v1.2 active requirements: 3 (UX-03, UX-04, UX-07) — all mapped to Phase 9
+- v1.2 build requirements: 3 (UX-03, UX-04, UX-07) — all mapped to Phase 9
+- v1.2 research spike: V2-16 (WooCommerce-first third-party menu compatibility) — pulled forward 2026-06-19, mapped to Phase 10
 - Unmapped: 0 ✓
 - UX-05 and UX-06: shipped in v1.1.1 — not included in v1.2 scope
+- V2-17 (single-site privileged editor tier) added to the v2 backlog 2026-06-19 — research, not yet scheduled
 
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-17 — v1.2 traceability added; UX-03/UX-04/UX-07 → Phase 9*
+*Last updated: 2026-06-19 — V2-16 → Phase 10 (research spike); V2-17 added to v2 backlog*

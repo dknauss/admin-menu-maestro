@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; submitted to .org, awaiting review) → [archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17)
-- 🚧 **v1.2 Editor UX Polish** — Phase 9 (in progress)
+- 🚧 **v1.2 Editor UX Polish** — Phases 9–10 (Phase 9 editor polish in progress; Phase 10 a WooCommerce-first third-party menu compatibility **research spike**, pulled forward from V2-16 on 2026-06-19)
 
 ## Phases
 
@@ -97,10 +97,23 @@ Full phase details, success criteria, and outcomes are archived in
   5. The full zero-regression bar holds: PHP unit, integration, and e2e suites green; phpcs clean
 **Plans**: TBD
 
+### Phase 10: Third-Party Menu Compatibility Research
+**Goal**: A documented, evidence-based picture of how Maestro's sparse-delta replay behaves against the highest-install plugins that build their admin menu in non-standard ways — with a prioritized fix/limitation list, not a build commitment
+**Depends on**: Phase 9
+**Requirements**: V2-16
+**Type**: **Research spike** — pulled forward from the v2 backlog 2026-06-19. Deliverable is a compatibility note + prioritized fix/limitation list; no production menu-handling code is committed in this phase (optional test-harness scaffolding only).
+**Success Criteria** (what must be TRUE):
+  1. **WooCommerce (priority #1)** plus a surveyed set (e.g. Jetpack, Yoast SEO / Rank Math, Elementor or another page builder, WPForms, and an LMS/membership plugin) are each documented: how they register or manipulate the admin menu (custom positions, conditional/late injection, re-registered menus, count/notification badges baked into title strings, custom separators, direct `$menu`/`$submenu` surgery)
+  2. For each surveyed plugin, what breaks under Maestro's rename / reorder / hide / re-icon is recorded with concrete reproduction notes
+  3. Each breakage is classified by fix type — slug-resolution tweak, later/again `admin_menu` hook, special-casing, or documented limitation — and prioritized
+  4. A reproducible test environment is specified — e.g. a `.wp-env.json` (or equivalent) variant that loads WooCommerce and the other offenders, since the current env loads `"plugins": []` and exercises Maestro alone — delivered as a committed harness and/or a clear recommendation
+  5. The research note lands in the repo (e.g. `docs/` or `.planning/`) and feeds the prioritized backlog (relates to V2-01 reparenting, V2-02 separators); no change to the zero-regression bar
+**Plans**: TBD
+
 ## Progress
 
 **Execution Order:**
-v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 executes: 9
+v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 executes: 9 → 10 (10 is a research spike; may run independently of 9)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -113,3 +126,4 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 7. Visual Polish & Icons | v1.1 | 4/4 | Complete | 2026-06-17 |
 | 8. Docs & Brand Assets | v1.1 | 4/4 (executable scope; REL-07/08 deferred) | Complete | 2026-06-17 |
 | 9. Editor UX Polish | v1.2 | 0/TBD | Not started | - |
+| 10. Third-Party Menu Compatibility Research | v1.2 | 0/TBD | Not started (research spike) | - |
