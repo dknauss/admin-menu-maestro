@@ -62,8 +62,8 @@ screenshots 2026-06-16.**
 
 Post-1.1 editor UI/UX refinements raised 2026-06-17 from hands-on use of the live editor. Several carry real **accessibility tradeoffs** — flagged inline so the implementation honours them rather than regressing a11y for visual tidiness. Candidate grouping for a small v1.2 "editor polish" milestone.
 
-- [ ] **UX-03**: Replace the verbose idle status text "Editor active — click an item to edit." with a short, glanceable **"Menu Edit Mode"** indicator (green / highlighted). On **first run only**, draw attention to the menu — a brief flash/outline of a menu group, or a short tooltip tour. *a11y:* don't signal mode by colour alone — pair the green with an icon and/or keep the text label (WCAG 1.4.1); any flash/animation must respect `prefers-reduced-motion`; a tooltip tour must be keyboard-operable, focus-managed, dismissible, and screen-reader-announced; gate the first-run cue via localStorage like the existing first-run hint.
-- [ ] **UX-04**: Move the rename field's label **inside the input as a placeholder** that clears on focus. *a11y:* a placeholder is NOT an accessible name — keep a programmatic label (visually-hidden `<label>` or `aria-label`) so screen-reader and voice-control users still get "Rename"; ensure placeholder text meets contrast.
+- [x] **UX-03**: Replace the verbose idle status text "Editor active — click an item to edit." with a short, glanceable **"Menu Edit Mode"** indicator (green / highlighted). On **first run only**, draw attention to the menu — a brief flash/outline of a menu group, or a short tooltip tour. *a11y:* don't signal mode by colour alone — pair the green with an icon and/or keep the text label (WCAG 1.4.1); any flash/animation must respect `prefers-reduced-motion`; a tooltip tour must be keyboard-operable, focus-managed, dismissible, and screen-reader-announced; gate the first-run cue via localStorage like the existing first-run hint.
+- [x] **UX-04**: Move the rename field's label **inside the input as a placeholder** that clears on focus. *a11y:* a placeholder is NOT an accessible name — keep a programmatic label (visually-hidden `<label>` or `aria-label`) so screen-reader and voice-control users still get "Rename"; ensure placeholder text meets contrast.
 - [x] **UX-05**: ~~Remove the visible "Appearance" group label~~ — clarified: this was the **selected-item breadcrumb** (showed the item's name). **Shipped in 1.1.1** — made `screen-reader-text` (SR keeps item/submenu context; visible space reclaimed).
 - [x] **UX-06**: Tighten reset button labels — **"Reset Item"** / **"Reset All"**. **Shipped in 1.1.1** (i18n only; e2e selectors are class-based).
 - [ ] **UX-07**: Small-screen sizing — the wrap fix (BUG-03) is in, but on small/mobile the **buttons and rename field are still too large**. Reduce control + input sizing at narrow widths (denser padding/font), keeping a ≥44px touch-target floor only where a real tap target is needed, so the toolbar fits and reads well on mobile. Still needs a focused mobile pass.
@@ -138,8 +138,8 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| UX-03 | Phase 9: Editor UX Polish | Pending |
-| UX-04 | Phase 9: Editor UX Polish | Pending |
+| UX-03 | Phase 9: Editor UX Polish | Complete |
+| UX-04 | Phase 9: Editor UX Polish | Complete |
 | UX-07 | Phase 9: Editor UX Polish | Pending |
 | V2-16 | Phase 10: Third-Party Menu Compatibility Research | Pending (research spike) |
 | UX-08 | Phase 11: Editor Entry & Reorder Fixes | Pending (scaffolded — needs discuss) |
