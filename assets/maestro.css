@@ -276,15 +276,39 @@ body.maestro-editing #collapse-menu {
 	gap: 5px;
 }
 
+/* Persistent mode indicator — always visible, text never changes (UX-03).
+ * Idle icon is a real aria-hidden <span class="dashicons dashicons-edit"> child
+ * of .maestro-mode-label (NOT a ::before pseudo-element on .maestro-status).
+ * This avoids BUG-04 (idle glyph reading as a fake interactive control) while
+ * still providing a non-colour shape cue beside the green label (WCAG 1.4.1). */
+.maestro-mode-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	color: #6bc187; /* same green as .maestro-status-saved — signals active/success state */
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+.maestro-mode-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
 /* Per-state leading dashicon for the transient save states, so status is
  * distinguishable by shape as well as colour (WCAG 1.4.1). Dashicons (always
  * present in wp-admin, and declared as a style dependency) render consistently,
  * unlike the previous Unicode dingbats which some platforms substituted with
  * colour-emoji or dropped when emoji were disabled.
  *
- * Idle has NO icon: the visible toolbar and "Editor active" text already signal
- * edit mode, and a leading idle dot read as a fake control. The icon appears
- * only while saving / saved / error. */
+ * The idle state has no ::before glyph on .maestro-status — the persistent
+ * .maestro-mode-label element above carries the edit icon. The ::before
+ * pseudo-element is used only for saving/saved/error save-state feedback. */
 .maestro-status::before {
 	font-family: dashicons;
 	font-size: 16px;

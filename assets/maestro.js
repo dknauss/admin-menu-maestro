@@ -359,11 +359,21 @@
 	function buildToolbar() {
 		var bar = el( 'div', 'maestro-toolbar' );
 
+		// Persistent mode label — NOT a live region, text never changes (UX-03).
+		// The aria-hidden dashicon supplies a non-colour shape cue (WCAG 1.4.1).
+		var modeEl = el( 'div', 'maestro-mode-label' );
+		var modeIcon = el( 'span', 'dashicons dashicons-edit maestro-mode-icon' );
+		modeIcon.setAttribute( 'aria-hidden', 'true' );
+		modeEl.appendChild( modeIcon );
+		modeEl.appendChild( document.createTextNode( I.modeLabel ) );
+		bar.appendChild( modeEl );
+
+		// Transient save-status — aria-live, empty at idle so no announcement fires.
 		statusEl = el( 'span', 'maestro-status maestro-status-idle' );
 		statusEl.setAttribute( 'role', 'status' );
 		statusEl.setAttribute( 'aria-live', 'polite' );
 		statusEl.setAttribute( 'aria-atomic', 'true' );
-		statusEl.textContent = I.idle;
+		statusEl.textContent = '';   // empty at idle (do NOT set I.idle here)
 		bar.appendChild( statusEl );
 
 		// Shared panel — empty/hidden until something is selected.
@@ -955,11 +965,7 @@
 	function setStatus( state ) {
 		if ( ! statusEl ) { return; }
 		statusEl.className = 'maestro-status maestro-status-' + state;
-		statusEl.textContent =
-			state === 'saving' ? I.saving :
-			state === 'saved'  ? I.saved  :
-			state === 'error'  ? I.saveError :
-			I.idle;
+		statusEl.textContent = window.maestroLogic.modeStatusLabel( state, I );
 		if ( state === 'saved' || state === 'error' ) {
 			speak( statusEl.textContent );
 		}
