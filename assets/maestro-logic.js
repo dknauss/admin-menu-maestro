@@ -130,13 +130,47 @@ function resetItem( item, pristine, isSub ) {
 	return result;
 }
 
+/**
+ * Pure localStorage gate: has the first-run cue already been seen?
+ *
+ * Accepts an injected storage stub (e.g. window.localStorage) so the
+ * function remains pure and testable without a DOM. Returns true when
+ * storage is unavailable (throws) so a blocked storage safely suppresses
+ * the cue rather than re-showing it on every load.
+ *
+ * @param {{ getItem: function(string): string|null }} storage localStorage-like object.
+ * @return {boolean} true if the cue has been seen or storage is blocked.
+ */
+function firstRunSeen( storage ) {
+	try {
+		return storage.getItem( 'maestroFirstRunDone' ) === '1';
+	} catch ( e ) {
+		return true;
+	}
+}
+
+/**
+ * Pure placeholder visibility: should the rename placeholder be shown?
+ *
+ * Mirrors the commitRename raw.trim() === '' rule — whitespace-only counts
+ * as empty, so the placeholder is visible whenever the field is blank.
+ *
+ * @param {string} value The current rename input value.
+ * @return {boolean} true when the placeholder should be visible.
+ */
+function placeholderVisible( value ) {
+	return value.trim() === '';
+}
+
 /* ---------- dual-export guard ----------------------------------------- */
 
 var api = {
-	reorderMove:     reorderMove,
-	diffItem:        diffItem,
-	resetItem:       resetItem,
-	modeStatusLabel: modeStatusLabel,
+	reorderMove:      reorderMove,
+	diffItem:         diffItem,
+	resetItem:        resetItem,
+	modeStatusLabel:  modeStatusLabel,
+	firstRunSeen:     firstRunSeen,
+	placeholderVisible: placeholderVisible,
 };
 
 if ( typeof module !== 'undefined' && module.exports ) {
