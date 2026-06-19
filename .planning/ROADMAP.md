@@ -95,7 +95,13 @@ Full phase details, success criteria, and outcomes are archived in
   3. At narrow/mobile widths the toolbar controls (buttons + rename input) use denser padding and font sizing so the toolbar fits without overflow; real interactive touch targets remain at or above 44 × 44 px
   4. Every behavioral JS change — mode-indicator state transitions, first-run cue localStorage gate, placeholder clear-on-focus wiring — is covered by a red-first node:test unit test before implementation lands
   5. The full zero-regression bar holds: PHP unit, integration, and e2e suites green; phpcs clean
-**Plans**: TBD
+**Plans**: 6 plans
+  - [ ] 09-01-PLAN.md — TDD seams: modeStatusLabel, firstRunSeen, placeholderVisible (red-first node:test) [UX-03, UX-04]
+  - [ ] 09-02-PLAN.md — UX-03 status split: short "Edit Mode" indicator (dashicon + text), separate transient save-status; modeLabel i18n + LocalizationTest [UX-03]
+  - [ ] 09-03-PLAN.md — UX-03 first-run one-shot pulse on first editable item (localStorage-gated, reduced-motion fallback, dual cleanup) [UX-03]
+  - [ ] 09-04-PLAN.md — UX-04 rename placeholder ("Menu label") + visually-hidden accessible label; renamePlaceholder i18n + LocalizationTest [UX-04]
+  - [ ] 09-05-PLAN.md — UX-07 mobile density + 44px tap-target floor at <=782px; 700px screenshot-review checkpoint (restructure only if needed) [UX-07]
+  - [ ] 09-06-PLAN.md — zero-regression gate (full suite + Plugin Check) + flip UX-03/04/07 traceability to Complete [UX-03, UX-04, UX-07]
 
 ### Phase 10: Third-Party Menu Compatibility Research
 **Goal**: A documented, evidence-based picture of how Maestro's sparse-delta replay behaves against the highest-install plugins that build their admin menu in non-standard ways — with a prioritized fix/limitation list, not a build commitment
