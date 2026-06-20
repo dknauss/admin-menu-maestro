@@ -751,3 +751,50 @@ test.describe( 'UX-05 — selected-item name is screen-reader-only (no visible b
 	} );
 
 } );
+
+test.describe( 'UX-04 — rename placeholder + accessible name', () => {
+
+	test( 'no visible "Rename " text node; input has accessible name via SR label and correct placeholder', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// 1. The old visible "Rename " text-node wrapper label must be gone.
+		//    Confirm by checking no visible element contains exactly "Rename " text
+		//    adjacent to the rename input — the only "Rename" text in the panel
+		//    must be in the screen-reader-text label (visually hidden).
+		const panelField = page.locator( '.maestro-toolbar .maestro-panel-field' );
+		await expect( panelField ).toHaveCount( 0 );  // renameField wrapper <label> removed
+
+		// 2. The rename input exists with id="maestro-rename-field".
+		const renameInput = page.locator( 'input#maestro-rename-field' );
+		await expect( renameInput ).toHaveCount( 1 );
+
+		// 3. The input's placeholder attribute is "Menu label".
+		//    (Visible only when the field is empty; browser handles this natively.)
+		await expect( renameInput ).toHaveAttribute( 'placeholder', 'Menu label' );
+
+		// 4. The visually-hidden accessible label is present with text "Rename"
+		//    and wired to the input via for/id — Playwright's getByLabel resolves
+		//    the input via this for/id binding, proving the accessible name is present.
+		const labelledInput = page.getByLabel( 'Rename' );
+		await expect( labelledInput ).toHaveAttribute( 'id', 'maestro-rename-field' );
+	} );
+
+	test( 'rename input is pre-filled with the selected item title; placeholder shows only when empty', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// Select a menu item (Posts).
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+
+		// The panel must be visible after selection.
+		await expect( page.locator( '.maestro-toolbar .maestro-panel' ) ).toBeVisible();
+
+		// The rename input must be pre-filled with the item's title ("Posts"),
+		// not empty — placeholder only shows when value is empty.
+		const renameInput = page.locator( 'input#maestro-rename-field' );
+		await expect( renameInput ).toBeVisible();
+		const value = await renameInput.inputValue();
+		expect( value ).toBeTruthy();  // non-empty: title was set by populatePanel()
+		expect( value ).toMatch( /Posts/i );  // specifically the Posts menu item title
+	} );
+
+} );
