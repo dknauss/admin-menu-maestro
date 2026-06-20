@@ -276,15 +276,39 @@ body.maestro-editing #collapse-menu {
 	gap: 5px;
 }
 
+/* Persistent mode indicator — always visible, text never changes (UX-03).
+ * Idle icon is a real aria-hidden <span class="dashicons dashicons-edit"> child
+ * of .maestro-mode-label (NOT a ::before pseudo-element on .maestro-status).
+ * This avoids BUG-04 (idle glyph reading as a fake interactive control) while
+ * still providing a non-colour shape cue beside the green label (WCAG 1.4.1). */
+.maestro-mode-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	color: #6bc187; /* same green as .maestro-status-saved — signals active/success state */
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+.maestro-mode-icon {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
 /* Per-state leading dashicon for the transient save states, so status is
  * distinguishable by shape as well as colour (WCAG 1.4.1). Dashicons (always
  * present in wp-admin, and declared as a style dependency) render consistently,
  * unlike the previous Unicode dingbats which some platforms substituted with
  * colour-emoji or dropped when emoji were disabled.
  *
- * Idle has NO icon: the visible toolbar and "Editor active" text already signal
- * edit mode, and a leading idle dot read as a fake control. The icon appears
- * only while saving / saved / error. */
+ * The idle state has no ::before glyph on .maestro-status — the persistent
+ * .maestro-mode-label element above carries the edit icon. The ::before
+ * pseudo-element is used only for saving/saved/error save-state feedback. */
 .maestro-status::before {
 	font-family: dashicons;
 	font-size: 16px;
@@ -360,6 +384,14 @@ body.maestro-editing #collapse-menu {
 	background: #fff;
 	color: #1d2327;
 }
+/* Placeholder contrast: when the field is empty the placeholder is the only
+ * visible hint, so it counts as TEXT (WCAG 1.4.3 → 4.5:1), not the 3:1 non-text
+ * threshold. #8c8f94 (~3.3:1) fails that; #50575e is WP admin's secondary-text
+ * token at ~7:1 on #fff. opacity:1 overrides Firefox's default 0.54. */
+.maestro-rename-input::placeholder {
+	color: #50575e;
+	opacity: 1;
+}
 
 .maestro-toolbar-right {
 	display: flex;
@@ -414,12 +446,54 @@ body.maestro-editing #collapse-menu {
 	outline-offset: 2px;
 }
 
+/* One-shot attention cue on the first editable menu item during first run.
+ * Teaches the "click an item to edit" gesture by drawing the eye to the menu.
+ * Single animation (iteration-count 1), then stops. Never loops (WCAG 2.3.3 spirit).
+ * Removed by animationend (motion path) OR by dismiss() (reduced-motion / early path). */
+@keyframes maestro-pulse-item {
+	0%   { outline: 2px solid transparent; outline-offset: 2px; }
+	40%  { outline: 2px solid #2271b1;     outline-offset: 2px; }
+	60%  { outline: 2px solid #2271b1;     outline-offset: 2px; }
+	100% { outline: 2px solid transparent; outline-offset: 2px; }
+}
+#adminmenu li.maestro-firstrun-pulse {
+	animation: maestro-pulse-item 1.5s ease-in-out 1 forwards;
+}
+@media ( prefers-reduced-motion: reduce ) {
+	#adminmenu li.maestro-firstrun-pulse {
+		animation: none;
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
+	}
+}
+
 /* Inherit the WP admin column collapse breakpoint. */
 @media screen and ( max-width: 782px ) {
 	.maestro-toolbar { left: 0; }
 	.maestro-firstrun { left: 0; } /* matches toolbar at collapsed width */
 	.maestro-panel-label { max-width: 120px; }
 	.maestro-rename-input { width: 120px; }
+
+	/* UX-07: denser controls at narrow widths so the toolbar fits without overflow.
+	 * The toolbar already flex-wraps (BUG-03); density shrinks each row so fewer rows
+	 * form. min-height (not height) keeps each tap target >= 44px while letting the
+	 * browser use more height if content demands it. */
+	.maestro-toolbar {
+		gap: 6px 10px;
+		padding: 8px 10px;
+	}
+	.maestro-toolbar .button {
+		padding: 4px 8px;
+		font-size: 12px;
+		min-height: 44px; /* tap-target floor — WCAG 2.5.5 AAA */
+	}
+	/* Scope under .maestro-toolbar (specificity 0,2,0) so the 44px floor beats
+	 * WP core's own ≤782px input rule (input[type="text"], 0,1,1 → min-height:40px). */
+	.maestro-toolbar .maestro-rename-input {
+		padding: 0 6px;
+		font-size: 12px;
+		min-height: 44px; /* tap-target floor — WCAG 2.5.5 AAA */
+	}
 
 	/* Comfortable touch targets and a viewport-fitting picker on small screens.
 	 * The 44px min-height here OVERRIDES the 40px desktop rule — touch law wins. */

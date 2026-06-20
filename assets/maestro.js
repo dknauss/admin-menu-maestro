@@ -359,11 +359,21 @@
 	function buildToolbar() {
 		var bar = el( 'div', 'maestro-toolbar' );
 
+		// Persistent mode label — NOT a live region, text never changes (UX-03).
+		// The aria-hidden dashicon supplies a non-colour shape cue (WCAG 1.4.1).
+		var modeEl = el( 'div', 'maestro-mode-label' );
+		var modeIcon = el( 'span', 'dashicons dashicons-edit maestro-mode-icon' );
+		modeIcon.setAttribute( 'aria-hidden', 'true' );
+		modeEl.appendChild( modeIcon );
+		modeEl.appendChild( document.createTextNode( I.modeLabel ) );
+		bar.appendChild( modeEl );
+
+		// Transient save-status — aria-live, empty at idle so no announcement fires.
 		statusEl = el( 'span', 'maestro-status maestro-status-idle' );
 		statusEl.setAttribute( 'role', 'status' );
 		statusEl.setAttribute( 'aria-live', 'polite' );
 		statusEl.setAttribute( 'aria-atomic', 'true' );
-		statusEl.textContent = I.idle;
+		statusEl.textContent = '';   // empty at idle (do NOT set I.idle here)
 		bar.appendChild( statusEl );
 
 		// Shared panel — empty/hidden until something is selected.
@@ -376,10 +386,19 @@
 		// context; `screen-reader-text` is WordPress admin's always-present SR class.
 		var label = el( 'span', 'maestro-panel-label screen-reader-text' );
 
-		var renameField = el( 'label', 'maestro-panel-field' );
-		renameField.appendChild( document.createTextNode( I.rename + ' ' ) );
+		// Accessible name for the rename input. WCAG 2.5.3 (Label in Name): the
+		// accessible name must contain the VISIBLE label text — which here is the
+		// placeholder "Menu label" (the only visible hint when the field is empty) —
+		// so speech-control users who say "Menu label" reach this control. A
+		// placeholder alone is NOT an accessible name, so the visually-hidden <label>
+		// carries the same string.
+		var renameLabel = el( 'label', 'screen-reader-text' );
+		renameLabel.setAttribute( 'for', 'maestro-rename-field' );
+		renameLabel.textContent = I.renamePlaceholder;
 		var rename = el( 'input', 'maestro-rename-input' );
 		rename.type = 'text';
+		rename.id = 'maestro-rename-field';
+		rename.placeholder = I.renamePlaceholder;
 		rename.addEventListener( 'keydown', function ( e ) {
 			if ( e.key === 'Enter' ) {
 				e.preventDefault();
@@ -390,7 +409,6 @@
 			}
 		} );
 		rename.addEventListener( 'blur', commitRename );
-		renameField.appendChild( rename );
 
 		var iconBtn = el( 'button', 'button maestro-icon-btn' );
 		iconBtn.type = 'button';
@@ -416,7 +434,8 @@
 		// BUG-02: the rename input comes first so its left edge is fixed and never
 		// shifts as the selected item's name length changes; the breadcrumb label
 		// (kept for "what is targeted" context) sits to its right.
-		p.appendChild( renameField );
+		p.appendChild( renameLabel );
+		p.appendChild( rename );
 		p.appendChild( label );
 		p.appendChild( iconBtn );
 		p.appendChild( visBtn );
@@ -955,11 +974,7 @@
 	function setStatus( state ) {
 		if ( ! statusEl ) { return; }
 		statusEl.className = 'maestro-status maestro-status-' + state;
-		statusEl.textContent =
-			state === 'saving' ? I.saving :
-			state === 'saved'  ? I.saved  :
-			state === 'error'  ? I.saveError :
-			I.idle;
+		statusEl.textContent = window.maestroLogic.modeStatusLabel( state, I );
 		if ( state === 'saved' || state === 'error' ) {
 			speak( statusEl.textContent );
 		}
@@ -1058,14 +1073,18 @@
 	 * Uses i18n strings I.firstRun / I.firstRunDismiss from the localized payload.
 	 */
 	function buildFirstRunCue() {
-		var seen = false;
+		// Gate on the Plan-01 seam. Access window.localStorage INSIDE try/catch:
+		// in blocked/partitioned-storage browsers the getter itself throws a
+		// SecurityError (before firstRunSeen's own guard can run), which would
+		// otherwise escape and abort edit-mode init. Treat any throw as "seen" so
+		// the cue is simply skipped for those users.
+		var firstRunCueSeen;
 		try {
-			seen = window.localStorage.getItem( 'maestroFirstRunDone' ) === '1';
+			firstRunCueSeen = window.maestroLogic.firstRunSeen( window.localStorage );
 		} catch ( storageErr ) {
-			// Private-browsing or blocked localStorage — skip the cue silently.
-			return;
+			firstRunCueSeen = true;
 		}
-		if ( seen ) { return; }
+		if ( firstRunCueSeen ) { return; }
 
 		var cue = el( 'div', 'maestro-firstrun' );
 		cue.setAttribute( 'role', 'note' );
@@ -1075,6 +1094,18 @@
 		var dismissBtn = el( 'button', 'maestro-firstrun-dismiss', I.firstRunDismiss );
 		dismissBtn.type = 'button';
 
+		// Pulse the first editable top-level menu item to teach the core gesture.
+		// querySelector is called after init() has stamped .maestro-item on all items.
+		var firstItem = document.querySelector( '#adminmenu > li.menu-top.maestro-item' );
+		if ( firstItem ) {
+			firstItem.classList.add( 'maestro-firstrun-pulse' );
+			// Motion case: remove the class once the one-shot animation completes.
+			firstItem.addEventListener( 'animationend', function onEnd() {
+				firstItem.classList.remove( 'maestro-firstrun-pulse' );
+				firstItem.removeEventListener( 'animationend', onEnd );
+			} );
+		}
+
 		function dismiss() {
 			try {
 				window.localStorage.setItem( 'maestroFirstRunDone', '1' );
@@ -1082,6 +1113,9 @@
 				// Storage unavailable — still remove the element; just won't persist.
 			}
 			cue.remove();
+			// CRITICAL: under prefers-reduced-motion, animationend never fires, so
+			// the pulse class must also be removed here (Pitfall 1 / Plan-03 spec).
+			if ( firstItem ) { firstItem.classList.remove( 'maestro-firstrun-pulse' ); }
 		}
 
 		dismissBtn.addEventListener( 'click', dismiss );
@@ -1094,6 +1128,14 @@
 
 		cue.appendChild( text );
 		cue.appendChild( dismissBtn );
+
+		// Sit the cue flush above the toolbar regardless of the toolbar's height.
+		// UX-07's 44px tap targets make the ≤782px toolbar taller than the CSS
+		// default offset (and it can wrap), so measure the real height rather than
+		// trusting a fixed value — keeps the cue from being covered by the toolbar.
+		var toolbarEl = document.querySelector( '.maestro-toolbar' );
+		if ( toolbarEl ) { cue.style.bottom = toolbarEl.offsetHeight + 'px'; }
+
 		document.body.appendChild( cue );
 	}
 

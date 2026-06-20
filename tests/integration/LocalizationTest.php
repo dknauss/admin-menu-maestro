@@ -56,11 +56,11 @@ class LocalizationTest extends WP_UnitTestCase {
 
 	private function expected_i18n_keys() {
 		return array(
-			'idle',
 			'saving',
 			'saved',
 			'saveError',
-			'rename',
+			'modeLabel',
+			'renamePlaceholder',
 			'icon',
 			'iconDialog',
 			'iconSearch',

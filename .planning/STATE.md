@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.2
-milestone_name: Editor UX polish
-status: ready_to_plan
-stopped_at: v1.2 roadmap created — Phase 9 ready to plan
-last_updated: "2026-06-17T15:30:00.000Z"
-last_activity: 2026-06-17 — v1.2 roadmap created (Phase 9: Editor UX Polish, UX-03/UX-04/UX-07)
+milestone_name: Editor UX Polish
+status: planning
+stopped_at: Completed 09-06-PLAN.md — Phase 9 zero-regression gate signed off; Phase 9 (UX-03/04/07) complete; next = Phase 11 (Editor Entry & Reorder Fixes) on the 1.2.0 release path
+last_updated: "2026-06-20T03:00:00.000Z"
+last_activity: 2026-06-19 — Phase 9 complete (UX-03/04/07); full suite green; next = Phase 11 (release path 9 → 11 → 12); Phase 10 is independent research
 progress:
-  total_phases: 9
-  completed_phases: 8
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_phases: 7
+  completed_phases: 3
+  total_plans: 16
+  completed_plans: 14
+  percent: 93
 ---
 
 # Project State
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 9 (Editor UX Polish) — next to plan
-Plan: none yet (0/TBD)
-Status: Ready to plan
-Last activity: 2026-06-17 — v1.2 roadmap written; v1.1 milestone archived; Phase 9 is the single phase for UX-03, UX-04, UX-07
+Phase: Phase 11 (Editor Entry & Reorder Fixes) — needs `/gsd:discuss-phase 11` before planning
+Plan: N/A — Phase 9 complete; Phase 10 is independent research (can run in parallel); Phase 11 is next on the 1.2.0 release path
+Status: Phase 9 complete; Phase 11 is next
+Last activity: 2026-06-19 — Phase 9 Plan 06 complete; zero-regression gate signed off; UX-03/04/07 all Complete; full suite JS 53/53, PHP 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors
 
 Progress: [#########-] 90%
 
@@ -59,6 +59,12 @@ Progress: [#########-] 90%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 09-editor-ux-polish P01 | 525594m | 2 tasks | 4 files |
+| Phase 09-editor-ux-polish P02 | 21m | 3 tasks | 5 files |
+| Phase 09-editor-ux-polish P03 | 15 | 2 tasks | 3 files |
+| Phase 09-editor-ux-polish P04 | 18 | 3 tasks | 5 files |
+| Phase 09-editor-ux-polish P05 | ~60m | 3 tasks (2 auto + 1 checkpoint) + regression fixes | 2 files |
+| Phase 09-editor-ux-polish P06 | ~15m | 2 tasks (gate + traceability) | 3 files |
 
 ## Accumulated Context
 
@@ -72,6 +78,21 @@ Recent decisions affecting current work:
 - [Phase 07]: BUG-03 toolbar wrap/stack at narrow widths landed — UX-07 continues from this base for denser mobile sizing
 - [Phase 09]: Single phase for all three v1.2 requirements — UX-03/UX-04/UX-07 are independent CSS/JS changes to one surface (assets/maestro.js, assets/maestro.css, includes/class-assets.php); no split needed at coarse granularity
 - [Phase 09]: Behavioral JS (first-run cue gate, indicator state transitions) is test-eligible via node:test; CSS-only sizing is TDD-exempt per project CLAUDE.md
+- [Phase 09-editor-ux-polish]: modeStatusLabel returns '' for idle; 'Edit Mode' label is DOM-built in Plan 02
+- [Phase 09-editor-ux-polish]: firstRunSeen returns true on storage.getItem throws to safely suppress cue
+- [Phase 09-editor-ux-polish]: modeLabel key + LocalizationTest update shipped in one commit (never red mid-plan)
+- [Phase 09-editor-ux-polish]: idle dashicon is real DOM span (aria-hidden), not ::before, avoiding BUG-04 regression
+- [Phase 09-editor-ux-polish]: setStatus uses textContent='' at idle (not hidden attr); live region always present, only content varies
+- [Phase 09-editor-ux-polish]: Dual-path pulse cleanup: animationend (motion) + dismiss() (reduced-motion/early-dismiss) — animationend never fires under prefers-reduced-motion:reduce
+- [Phase 09-editor-ux-polish]: firstRunSeen gate seam now consumed by buildFirstRunCue() — inline try/catch replaced by window.maestroLogic.firstRunSeen()
+- [Phase 09-editor-ux-polish]: renamePlaceholder key + LocalizationTest in same commit — integration never red between commits
+- [Phase 09-editor-ux-polish]: rename key retained in payload as SR label textContent; visually-hidden label provides accessible name; placeholder is NOT an accessible name
+- [Phase 09-editor-ux-polish]: placeholder colour #8c8f94 (WP muted-text token, AA non-text contrast); opacity:1 overrides Firefox default 0.54
+- [Phase 09-editor-ux-polish]: 700px density screenshot approved (no restructure) — flex-wrap (BUG-03) + denser padding/font is sufficient; 44px min-height floor fixed at WCAG 2.5.5 AAA
+- [Phase 09-editor-ux-polish]: specificity rule for media-query overrides — use parent scoping (.maestro-toolbar .child) not !important
+- [Phase 09-editor-ux-polish]: wave-boundary e2e gate pattern — when Docker/sandbox blocks per-task e2e, run full Playwright suite once at wave boundary before the regression-gate plan
+- [Phase 09-editor-ux-polish P06 sign-off]: "Edit Mode" (not the literal "Menu Edit Mode") is the LOCKED idle indicator text — user's refinement; satisfies UX-03's intent (short, glanceable, non-colour-signalled); reconciliation recorded in ROADMAP Phase 9 success criteria. Same pattern as Phase 8 / REL-06.
+- [Phase 09-editor-ux-polish P06 sign-off]: Full suite green at sign-off — JS logic 53/53, PHP unit 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors on shippable source. 3 e2e regressions caught and fixed by the orchestrator's full-suite gate (commits 38323c4, 927b682); 2 dead-surface items removed in code review (commit 1ef7fae).
 
 ### Pending Todos
 
@@ -84,6 +105,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-17T15:30:00.000Z
-Stopped at: v1.2 roadmap created — Phase 9 defined, files written, ready to run /gsd:plan-phase 9
+Last session: 2026-06-20T03:00:00.000Z
+Stopped at: Completed 09-06-PLAN.md — Phase 9 zero-regression gate signed off; UX-03/04/07 Complete; Phase 9 done; next = Phase 11 (needs /gsd:discuss-phase 11 before planning)
 Resume file: None

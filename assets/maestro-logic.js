@@ -87,6 +87,25 @@ function diffItem( current, pristine ) {
 }
 
 /**
+ * Pure save-state label: map a transient save-state to display text.
+ *
+ * Returns the matching string from the injected strings object, or ''
+ * for 'idle' (and any unrecognised state) so the save-status element
+ * renders nothing. The persistent "Edit Mode" mode label is built
+ * separately in the DOM — this function does NOT produce it.
+ *
+ * @param {string} state   One of 'idle'|'saving'|'saved'|'error'.
+ * @param {{ saving: string, saved: string, saveError: string }} strings i18n strings.
+ * @return {string} Display text, or '' when idle/unknown.
+ */
+function modeStatusLabel( state, strings ) {
+	if ( state === 'saving' ) { return strings.saving; }
+	if ( state === 'saved' )  { return strings.saved; }
+	if ( state === 'error' )  { return strings.saveError; }
+	return '';
+}
+
+/**
  * Pure reset: recompute an item to its pristine state.
  *
  * Returns a NEW object with title, hiddenRoles, and (for top-level items) icon
@@ -111,12 +130,33 @@ function resetItem( item, pristine, isSub ) {
 	return result;
 }
 
+/**
+ * Pure localStorage gate: has the first-run cue already been seen?
+ *
+ * Accepts an injected storage stub (e.g. window.localStorage) so the
+ * function remains pure and testable without a DOM. Returns true when
+ * storage is unavailable (throws) so a blocked storage safely suppresses
+ * the cue rather than re-showing it on every load.
+ *
+ * @param {{ getItem: function(string): string|null }} storage localStorage-like object.
+ * @return {boolean} true if the cue has been seen or storage is blocked.
+ */
+function firstRunSeen( storage ) {
+	try {
+		return storage.getItem( 'maestroFirstRunDone' ) === '1';
+	} catch ( e ) {
+		return true;
+	}
+}
+
 /* ---------- dual-export guard ----------------------------------------- */
 
 var api = {
-	reorderMove: reorderMove,
-	diffItem:    diffItem,
-	resetItem:   resetItem,
+	reorderMove:     reorderMove,
+	diffItem:        diffItem,
+	resetItem:       resetItem,
+	modeStatusLabel: modeStatusLabel,
+	firstRunSeen:    firstRunSeen,
 };
 
 if ( typeof module !== 'undefined' && module.exports ) {

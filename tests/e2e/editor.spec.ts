@@ -522,11 +522,13 @@ test.describe( 'Phase 7 — UX-02 no-overlap / no-resize at 1200px and 700px', (
 			const panel = page.locator( '.maestro-toolbar .maestro-panel' );
 			await expect( panel ).toBeVisible();
 
-			// The toolbar and status element must be visible.
+			// The toolbar and its persistent mode indicator must be visible.
+			// (Post-09-02 the persistent indicator is `.maestro-mode-label`;
+			// `.maestro-status` is now the transient save-status, empty/hidden at idle.)
 			const toolbar = page.locator( '.maestro-toolbar' );
-			const statusEl = toolbar.locator( '.maestro-status' );
+			const modeLabel = toolbar.locator( '.maestro-mode-label' );
 			await expect( toolbar ).toBeVisible();
-			await expect( statusEl ).toBeVisible();
+			await expect( modeLabel ).toBeVisible();
 
 			// No horizontal overflow: toolbar width must fit within the viewport.
 			const toolbarBox = await toolbar.boundingBox();
@@ -619,12 +621,83 @@ test.describe( 'Phase 7 — first-run cue appears once only (localStorage-gated)
 
 } );
 
+test.describe( 'UX-03 — first-run pulse on first editable menu item', () => {
+
+	test( 'maestro-firstrun-pulse class is present on first editable item when cue shows, and absent after dismiss', async ( { page } ) => {
+		// Run under reduced-motion: the one-shot pulse animation is disabled, so the
+		// class is NOT removed by animationend (which fires after only 1.5s and would
+		// race the test on slow CI). The class then persists until dismiss() — which
+		// makes the assertion deterministic AND exercises the critical reduced-motion
+		// cleanup path (dismiss() must remove the class since animationend never fires).
+		await page.emulateMedia( { reducedMotion: 'reduce' } );
+
+		// Clear the first-run flag so the cue (and pulse) will appear.
+		await page.goto( '/wp-admin/index.php' );
+		await page.evaluate( () => {
+			try {
+				localStorage.removeItem( 'maestroFirstRunDone' );
+			} catch ( e ) {
+				// Private browsing — ignore.
+			}
+		} );
+
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// 1. The first-run cue must be visible.
+		await expect( page.locator( '.maestro-firstrun' ) ).toBeVisible();
+
+		// 2. The pulse class must be present on the first editable top-level item
+		//    immediately after the cue shows (before any user interaction).
+		const firstItem = page.locator( '#adminmenu > li.menu-top.maestro-item' ).first();
+		await expect( firstItem ).toHaveClass( /maestro-firstrun-pulse/ );
+
+		// 3. After dismissing the banner, the dismiss() path must remove the pulse class
+		//    (CRITICAL: this is the cleanup path under prefers-reduced-motion, where
+		//    animationend never fires and the class would otherwise stick forever).
+		await page.locator( '.maestro-firstrun-dismiss' ).click();
+		await expect( page.locator( '.maestro-firstrun' ) ).toHaveCount( 0 );
+		await expect( firstItem ).not.toHaveClass( /maestro-firstrun-pulse/ );
+	} );
+
+} );
+
+test.describe( 'UX-07 — first-run cue clears the toolbar at narrow widths', () => {
+
+	// Regression guard (Codex PR #35): UX-07's 44px tap targets make the <=782px
+	// toolbar taller than the old fixed `bottom:53px` cue offset, so the cue was
+	// covered by the toolbar. The cue now measures the toolbar height in JS.
+	test( 'first-run cue is not covered by the taller toolbar at 700px', async ( { page } ) => {
+		await page.setViewportSize( { width: 700, height: 800 } );
+		await page.goto( '/wp-admin/index.php' );
+		await page.evaluate( () => {
+			try { localStorage.removeItem( 'maestroFirstRunDone' ); } catch ( e ) { /* private browsing */ }
+		} );
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		const cue = page.locator( '.maestro-firstrun' );
+		const toolbar = page.locator( '.maestro-toolbar' );
+		await expect( cue ).toBeVisible();
+		await expect( toolbar ).toBeVisible();
+
+		const cueBox = await cue.boundingBox();
+		const tbBox = await toolbar.boundingBox();
+		expect( cueBox ).not.toBeNull();
+		expect( tbBox ).not.toBeNull();
+		// The cue's bottom edge must not extend past the toolbar's top edge (1px
+		// tolerance) — i.e. the cue sits fully above the toolbar, not under it.
+		expect( cueBox!.y + cueBox!.height ).toBeLessThanOrEqual( tbBox!.y + 1 );
+	} );
+
+} );
+
 test.describe( 'Phase 7 — status icon: none when idle, dashicon for save states', () => {
 
 	test( 'idle status shows no ::before glyph; the saved state keeps its dashicon', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
 		const status = page.locator( '.maestro-toolbar .maestro-status' );
-		await expect( status ).toBeVisible();
+		// The save-status element is intentionally empty (zero-size) at idle, so
+		// assert it is PRESENT rather than visible; ::before is queryable regardless.
+		await expect( status ).toHaveCount( 1 );
 
 		// Idle: the leading icon is unnecessary (the toolbar + text already signal
 		// edit mode), so there must be no ::before glyph.
@@ -649,6 +722,56 @@ test.describe( 'Phase 7 — status icon: none when idle, dashicon for save state
 
 } );
 
+test.describe( 'UX-03 — split mode indicator: persistent mode label + transient save-status', () => {
+
+	test( 'persistent .maestro-mode-label is visible with dashicon child and "Edit Mode" text', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// The persistent mode label must be visible in the toolbar at all times.
+		const modeLabel = page.locator( '.maestro-toolbar .maestro-mode-label' );
+		await expect( modeLabel ).toBeVisible();
+
+		// It must contain a .dashicons child (the aria-hidden mode icon).
+		const modeIcon = modeLabel.locator( '.dashicons' );
+		await expect( modeIcon ).toHaveCount( 1 );
+
+		// Its text content must include "Edit Mode".
+		await expect( modeLabel ).toContainText( 'Edit Mode' );
+	} );
+
+	test( 'save-status element is separate from mode label and empty at idle', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// The transient save-status element must be present as a SEPARATE element.
+		const saveStatus = page.locator( '.maestro-toolbar .maestro-status' );
+		await expect( saveStatus ).toHaveCount( 1 );
+
+		// At idle, the save-status element must be empty (textContent is '' or whitespace).
+		const idleText = await saveStatus.textContent();
+		expect( ( idleText ?? '' ).trim() ).toBe( '' );
+
+		// The mode label and save-status must be distinct, independent elements.
+		const modeLabel = page.locator( '.maestro-toolbar .maestro-mode-label' );
+		await expect( modeLabel ).toHaveCount( 1 );
+	} );
+
+	test( 'idle .maestro-status::before content is none (save-status has no glyph at idle)', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+		const status = page.locator( '.maestro-toolbar .maestro-status' );
+		// Save-status is empty/zero-size at idle by design — assert presence, not visibility.
+		await expect( status ).toHaveCount( 1 );
+
+		// PRESERVED GUARD (Phase 7): the save-status ::before must have content:none at idle.
+		// The idle edit icon is now a real DOM <span> child of .maestro-mode-label,
+		// NOT a ::before on .maestro-status — so this assertion still holds.
+		const idleContent = await status.evaluate(
+			( el ) => getComputedStyle( el, '::before' ).content
+		);
+		expect( idleContent ).toBe( 'none' );
+	} );
+
+} );
+
 test.describe( 'UX-05 — selected-item name is screen-reader-only (no visible breadcrumb)', () => {
 
 	test( 'panel item-name label is present for screen readers but visually hidden', async ( { page } ) => {
@@ -666,6 +789,93 @@ test.describe( 'UX-05 — selected-item name is screen-reader-only (no visible b
 		expect( box ).not.toBeNull();
 		expect( box!.width ).toBeLessThanOrEqual( 1 );
 		expect( box!.height ).toBeLessThanOrEqual( 1 );
+	} );
+
+} );
+
+test.describe( 'UX-04 — rename placeholder + accessible name', () => {
+
+	test( 'no visible "Rename " text node; input has accessible name via SR label and correct placeholder', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// 1. The old visible "Rename " text-node wrapper label must be gone.
+		const panelField = page.locator( '.maestro-toolbar .maestro-panel-field' );
+		await expect( panelField ).toHaveCount( 0 );  // renameField wrapper <label> removed
+
+		// 2. The rename input exists with id="maestro-rename-field".
+		const renameInput = page.locator( 'input#maestro-rename-field' );
+		await expect( renameInput ).toHaveCount( 1 );
+
+		// 3. The input's placeholder attribute is "Menu label".
+		//    (Visible only when the field is empty; browser handles this natively.)
+		await expect( renameInput ).toHaveAttribute( 'placeholder', 'Menu label' );
+
+		// 4. WCAG 2.5.3 (Label in Name): the accessible name must MATCH the visible
+		//    placeholder text "Menu label", so speech-control users saying "Menu label"
+		//    reach the control. getByLabel resolves the input via the visually-hidden
+		//    <label for> — proving the accessible name equals the visible placeholder.
+		const labelledInput = page.getByLabel( 'Menu label' );
+		await expect( labelledInput ).toHaveAttribute( 'id', 'maestro-rename-field' );
+	} );
+
+	test( 'rename input is pre-filled with the selected item title; placeholder shows only when empty', async ( { page } ) => {
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// Select a menu item (Posts).
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+
+		// The panel must be visible after selection.
+		await expect( page.locator( '.maestro-toolbar .maestro-panel' ) ).toBeVisible();
+
+		// The rename input must be pre-filled with the item's title ("Posts"),
+		// not empty — placeholder only shows when value is empty.
+		const renameInput = page.locator( 'input#maestro-rename-field' );
+		await expect( renameInput ).toBeVisible();
+		const value = await renameInput.inputValue();
+		expect( value ).toBeTruthy();  // non-empty: title was set by populatePanel()
+		expect( value ).toMatch( /Posts/i );  // specifically the Posts menu item title
+	} );
+
+} );
+
+test.describe( 'UX-07 — tap-target floor: every button and rename input >=44px tall at <=782px', () => {
+
+	// At 700px (the tightest viewport the existing e2e suite exercises, below the 782px
+	// WP admin mobile breakpoint) every real tap target must have a bounding-box height
+	// of at least 44px. This guards the min-height:44px rules added to the <=782px media
+	// query and proves they are not accidentally overridden by anything more specific.
+	test( 'all toolbar buttons and the rename input have boundingBox height >= 44 at 700px', async ( { page } ) => {
+		await page.setViewportSize( { width: 700, height: 800 } );
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// Select Posts to show the panel (and therefore the rename input).
+		await page.locator( '#menu-posts > a.menu-top' ).click();
+		const panel = page.locator( '.maestro-toolbar .maestro-panel' );
+		await expect( panel ).toBeVisible();
+
+		// Check every .maestro-toolbar .button element.
+		const toolbar = page.locator( '.maestro-toolbar' );
+		const buttons = await toolbar.locator( '.button' ).all();
+		expect( buttons.length ).toBeGreaterThan( 0 );
+
+		for ( const btn of buttons ) {
+			const box = await btn.boundingBox();
+			expect( box, 'boundingBox must not be null for toolbar button' ).not.toBeNull();
+			expect(
+				box!.height,
+				`toolbar button must be >= 44px tall (got ${ box!.height }px)`
+			).toBeGreaterThanOrEqual( 44 );
+		}
+
+		// Check the rename input specifically.
+		const renameInput = page.locator( '.maestro-rename-input' );
+		await expect( renameInput ).toBeVisible();
+		const renameBox = await renameInput.boundingBox();
+		expect( renameBox, 'boundingBox must not be null for rename input' ).not.toBeNull();
+		expect(
+			renameBox!.height,
+			`rename input must be >= 44px tall (got ${ renameBox!.height }px)`
+		).toBeGreaterThanOrEqual( 44 );
 	} );
 
 } );
