@@ -105,7 +105,7 @@ class Rest {
 	 * Full-replace save.
 	 *
 	 * @param \WP_REST_Request $request Request.
-	 * @return \WP_REST_Response
+	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public function save_config( \WP_REST_Request $request ) {
 		$incoming = $request->get_param( 'config' );

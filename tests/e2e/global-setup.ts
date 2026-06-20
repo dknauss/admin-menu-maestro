@@ -45,11 +45,14 @@ async function globalSetup( config: FullConfig ) {
 	const browser = await chromium.launch();
 	const page = await browser.newPage();
 
-	await page.goto( 'http://localhost:8889/wp-login.php' );
+	await page.goto( 'http://localhost:8889/wp-login.php', { waitUntil: 'domcontentloaded' } );
+	await page.waitForSelector( '#user_login', { state: 'visible' } );
 	await page.fill( '#user_login', 'admin' );
 	await page.fill( '#user_pass', 'password' );
-	await page.click( '#wp-submit' );
-	await page.waitForURL( /wp-admin/ );
+	await Promise.all( [
+		page.waitForURL( /wp-admin/, { waitUntil: 'domcontentloaded' } ),
+		page.click( '#wp-submit' ),
+	] );
 
 	await page.context().storageState( { path: statePath } );
 	await browser.close();

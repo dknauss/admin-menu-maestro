@@ -7,7 +7,10 @@ on:
 
 permissions:
   contents: write
-  actions: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -16,7 +19,15 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
+
+      - name: Verify tag matches plugin versions
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          HEADER_VERSION="$(grep -m1 -E '^ \* Version:' maestro-menu-editor.php | sed -E 's/.*Version:[[:space:]]*//')"
+          STABLE_TAG="$(grep -m1 -E '^Stable tag:' readme.txt | sed -E 's/^Stable tag:[[:space:]]*//')"
+          test "$VERSION" = "$HEADER_VERSION"
+          test "$VERSION" = "$STABLE_TAG"
 
       - name: Build release zip
         run: bash bin/build.sh
@@ -27,9 +38,3 @@ jobs:
           files: build/maestro-menu-editor.zip
           generate_release_notes: true
           fail_on_unmatched_files: true
-
-      # Hand off to the SVN deploy workflow for the same tag.
-      - name: Dispatch WordPress.org deploy
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run wp-deploy.yml --ref "$GITHUB_REF_NAME"

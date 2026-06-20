@@ -1,0 +1,30 @@
+# Runtime package is built by bin/build.sh; this file documents the intended
+# WordPress.org exclusions for any tooling that packages from the repo root.
+/.claude
+/.distignore
+/.git
+/.github
+/.gitignore
+/.planning
+/.wordpress-org/source
+/.wp-env.json
+/build
+/docs
+/node_modules
+/test-results
+/tests
+/vendor
+
+*.cache
+.DS_Store
+composer.json
+composer.lock
+package.json
+package-lock.json
+phpcs.xml.dist
+phpstan.neon.dist
+phpunit-*.xml.dist
+playwright.config.ts
+SPEC.md
+TESTING.md
+bin

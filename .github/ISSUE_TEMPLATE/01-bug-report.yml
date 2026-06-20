@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a reproducible Maestro bug
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Do not include security vulnerabilities here; use SECURITY.md instead.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Activate Maestro.
+        2. Click Edit Menu.
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: WordPress version, PHP version, browser, active plugins/themes if relevant.
+      placeholder: |
+        WordPress:
+        PHP:
+        Browser:
+        Maestro:
+        Other admin-menu/capability plugins:
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submit checks
+      options:
+        - label: I confirmed this is not a security report.
+          required: true
+        - label: I tested with Maestro's latest release or current main branch.
+          required: false
