@@ -1,7 +1,7 @@
 # Requirements: Maestro
 
 **Defined:** 2026-06-13
-**Last updated:** 2026-06-19 — V2-16 → Phase 10 (research spike); V2-17 added to v2 backlog; UX-08 (admin-bar mobile entry) + BUG-06/BUG-07 (bot-review audit) added to v1.2 backlog
+**Last updated:** 2026-06-19 — V2-16 → Phase 10; V2-17 added; UX-08 + BUG-06/07 → Phase 11; REL-07/08 folded into v1.2 as Phase 12 (release assets). 1.2.0 cuts after Phases 9 → 11 → 12
 **Core Value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
 
 ## v1.0 Requirements — ✅ shipped & archived
@@ -39,8 +39,8 @@ backlog (origin IDs noted).
 
 - [x] **DOC-02**: Rewrite the `readme.txt` copy for clarity and discoverability — short description, full description, FAQ, and tags — via the `wp-readme-optimizer` skill. The current copy is functional but flat; the live page reads dry. — **Drafted in PR #28** (awaiting review/merge; ships with next release, Stable tag unchanged).
 - [x] **DOC-03**: Add the **WordPress Playground demo link** to `readme.txt` (a "Try it first" line in the intro) and the GitHub README, so visitors can trial Maestro before installing. The hosted blueprint already exists (`playground/blueprint-hosted.json`); mirror the Borges pattern (`playground.wordpress.net/?blueprint-url=…`). — **Done in PR #28** (GitHub README already had the link; readme.txt line added).
-- [ ] **REL-07**: New/refreshed **banner graphic** — a stronger design iteration on the brand-first banner, regenerated through the existing REL-06 pipeline (`npm run assets:banners`); replace `.wordpress-org/banner-*.png` after visual review. **Primary design goal (2026-06-17):** get the stacked rows of text — the MAESTRO wordmark, the "THE INLINE ADMIN MENU EDITOR" subtitle, and the tagline — **and the gold underline rule to occupy approximately the same horizontal width** (balanced/justified to a common measure), rather than the current mismatched line widths. (Image work deferred — note only.)
-- [ ] **REL-08**: **Refreshed screenshots** for the new core-block directory gallery (per the 2026-06-10 meta update) — higher-quality captures with captions that "explain the interface or workflow." Keep the set visually uniform (→ clean grid) or go deliberately mixed (→ masonry); update the `== Screenshots ==` captions to match.
+- [ ] **REL-07**: New/refreshed **banner graphic** — a stronger design iteration on the brand-first banner, regenerated through the existing REL-06 pipeline (`npm run assets:banners`); replace `.wordpress-org/banner-*.png` after visual review. **Primary design goal (2026-06-17):** get the stacked rows of text — the MAESTRO wordmark, the "THE INLINE ADMIN MENU EDITOR" subtitle, and the tagline — **and the gold underline rule to occupy approximately the same horizontal width** (balanced/justified to a common measure), rather than the current mismatched line widths. **→ Folded into v1.2 2026-06-19: Phase 12 (Release Assets Refresh)** — was deferred from Phase 8.
+- [ ] **REL-08**: **Refreshed screenshots** for the new core-block directory gallery (per the 2026-06-10 meta update) — higher-quality captures with captions that "explain the interface or workflow." Keep the set visually uniform (→ clean grid) or go deliberately mixed (→ masonry); update the `== Screenshots ==` captions to match. **→ Folded into v1.2 2026-06-19: Phase 12**, sequenced after Phases 9 + 11 so captures show the final v1.2 editor UI.
 
 ### Defects (triaged 2026-06-16 — wp-sudo thread screenshots)
 
@@ -145,15 +145,18 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | UX-08 | Phase 11: Editor Entry & Reorder Fixes | Pending (scaffolded — needs discuss) |
 | BUG-06 | Phase 11: Editor Entry & Reorder Fixes | Pending (scaffolded) |
 | BUG-07 | Phase 11: Editor Entry & Reorder Fixes | Pending (scaffolded) |
+| REL-07 | Phase 12: Release Assets Refresh | Pending (folded in from Phase 8) |
+| REL-08 | Phase 12: Release Assets Refresh | Pending (folded in from Phase 8) |
 
 **Coverage (v1.2):**
 - v1.2 build requirements: 3 (UX-03, UX-04, UX-07) — all mapped to Phase 9
 - v1.2 research spike: V2-16 (WooCommerce-first third-party menu compatibility) — pulled forward 2026-06-19, mapped to Phase 10
 - v1.2 follow-up fixes: UX-08 + BUG-06 + BUG-07 — scaffolded 2026-06-19 into Phase 11 (from the bot-review audit + mobile use); Phase 11 needs `/gsd:discuss-phase 11` before planning (UX-08 fix approach is an open decision)
+- v1.2 release assets: REL-07 + REL-08 — folded in 2026-06-19 (from Phase 8 deferral) as Phase 12; sequenced after Phases 9 + 11 so screenshots reflect the final UI. **1.2.0 release path: Phases 9 → 11 → 12; Phase 10 research does not gate the cut.**
 - Unmapped: 0 ✓
 - UX-05 and UX-06: shipped in v1.1.1 — not included in v1.2 scope
 - V2-17 (single-site privileged editor tier) added to the v2 backlog 2026-06-19 — research, not yet scheduled
 
 ---
 *Requirements defined: 2026-06-13*
-*Last updated: 2026-06-19 — V2-16 → Phase 10; V2-17 added; UX-08 + BUG-06/BUG-07 added to v1.2 backlog (bot-review audit)*
+*Last updated: 2026-06-19 — V2-16 → Phase 10; V2-17 added; UX-08 + BUG-06/07 → Phase 11; REL-07/08 → Phase 12 (folded into v1.2)*

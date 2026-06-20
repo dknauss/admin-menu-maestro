@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; submitted to .org, awaiting review) → [archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17)
-- 🚧 **v1.2 Editor UX Polish** — Phases 9–11 (Phase 9 editor polish in progress; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit)
+- 🚧 **v1.2 Editor UX Polish** — Phases 9–12 (Phase 9 editor polish in progress; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 12; Phase 10 is independent research and does not gate the release.**
 
 ## Phases
 
@@ -129,10 +129,22 @@ Full phase details, success criteria, and outcomes are archived in
   5. Behavioral JS changes are red-first node:test where a logic seam exists; the full zero-regression bar holds (PHP unit, integration, e2e green; Plugin Check 0 errors; phpcs clean)
 **Plans**: TBD
 
+### Phase 12: Release Assets Refresh
+**Goal**: The WordPress.org/GitHub banner is refreshed to the REL-07 design target and the directory screenshots are recaptured against the FINAL v1.2 editor UI, so the live listing reflects what 1.2.0 actually ships
+**Depends on**: Phase 9, Phase 11
+**Requirements**: REL-07, REL-08
+**Folded into v1.2 2026-06-19** (previously deferred from Phase 8 / plan 08-06). **Sequenced last** so REL-08 screenshots capture the shipped Phase 9 (Edit Mode label, first-run pulse, rename placeholder) + Phase 11 (mobile entry, fixed reorder/badge) UI rather than the pre-1.2 surface. Starting point: the deferred [`08-06-PLAN.md`](08-docs-brand-assets/08-06-PLAN.md). Includes human visual review of image work.
+**Success Criteria** (what must be TRUE):
+  1. The banner is regenerated through the REL-06 pipeline (`npm run assets:banners`) with the REL-07 design goal met — the MAESTRO wordmark, the "THE INLINE ADMIN MENU EDITOR" subtitle, the tagline, and the gold underline rule occupy approximately the same horizontal measure (balanced widths, not the current mismatched lines); `.wordpress-org/banner-*.png` replaced only after visual review
+  2. Screenshots are recaptured against the **final v1.2 editor UI** (post Phase 9 + 11), higher quality, with captions that explain the interface/workflow; the `== Screenshots ==` captions are updated to match
+  3. The screenshot set is visually consistent (uniform grid or deliberately mixed — decided at plan time)
+  4. Assets-only — no code regressions; the build zip and Stable tag are unaffected until the release cut
+**Plans**: TBD (start from the deferred 08-06-PLAN.md)
+
 ## Progress
 
 **Execution Order:**
-v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 executes: 9 → 11 (build); 10 is an independent research spike (may run anytime). Phase 11 depends on Phase 9.
+v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 release path: 9 → 11 → 12, then cut 1.2.0. Phase 10 is an independent research spike (may run anytime, does not gate the release). Phase 11 depends on 9; Phase 12 (release assets) depends on 9 + 11 so screenshots reflect the final UI.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -144,6 +156,7 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 6. Accessibility & Interaction | v1.1 | 3/3 | Complete | 2026-06-16 |
 | 7. Visual Polish & Icons | v1.1 | 4/4 | Complete | 2026-06-17 |
 | 8. Docs & Brand Assets | v1.1 | 4/4 (executable scope; REL-07/08 deferred) | Complete | 2026-06-17 |
-| 9. Editor UX Polish | 2/6 | In Progress|  | - |
+| 9. Editor UX Polish | v1.2 | 2/6 | In Progress | - |
 | 10. Third-Party Menu Compatibility Research | v1.2 | 0/TBD | Not started (research spike) | - |
 | 11. Editor Entry & Reorder Fixes | v1.2 | 0/TBD | Scaffolded (needs discuss) | - |
+| 12. Release Assets Refresh | v1.2 | 0/TBD | Scaffolded (REL-07/08 folded in) | - |
