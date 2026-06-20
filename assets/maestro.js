@@ -386,10 +386,16 @@
 		// context; `screen-reader-text` is WordPress admin's always-present SR class.
 		var label = el( 'span', 'maestro-panel-label screen-reader-text' );
 
-		var renameField = el( 'label', 'maestro-panel-field' );
-		renameField.appendChild( document.createTextNode( I.rename + ' ' ) );
+		// I.rename: used as screen-reader-only accessible name for the rename input.
+		// A placeholder is NOT an accessible name — the visually-hidden label is required
+		// so screen-reader and voice-control users can still target the field.
+		var renameLabel = el( 'label', 'screen-reader-text' );
+		renameLabel.setAttribute( 'for', 'maestro-rename-field' );
+		renameLabel.textContent = I.rename;
 		var rename = el( 'input', 'maestro-rename-input' );
 		rename.type = 'text';
+		rename.id = 'maestro-rename-field';
+		rename.placeholder = I.renamePlaceholder;
 		rename.addEventListener( 'keydown', function ( e ) {
 			if ( e.key === 'Enter' ) {
 				e.preventDefault();
@@ -400,7 +406,6 @@
 			}
 		} );
 		rename.addEventListener( 'blur', commitRename );
-		renameField.appendChild( rename );
 
 		var iconBtn = el( 'button', 'button maestro-icon-btn' );
 		iconBtn.type = 'button';
@@ -426,7 +431,8 @@
 		// BUG-02: the rename input comes first so its left edge is fixed and never
 		// shifts as the selected item's name length changes; the breadcrumb label
 		// (kept for "what is targeted" context) sits to its right.
-		p.appendChild( renameField );
+		p.appendChild( renameLabel );
+		p.appendChild( rename );
 		p.appendChild( label );
 		p.appendChild( iconBtn );
 		p.appendChild( visBtn );
