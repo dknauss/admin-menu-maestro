@@ -20,7 +20,7 @@ provides:
   - "Phase 9 zero-regression sign-off: JS logic 53/53, PHP unit 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors"
   - "UX-03/UX-04/UX-07 flipped to Complete in v1.2 traceability"
   - "Edit Mode reconciliation note recorded in ROADMAP Phase 9 success criteria"
-  - "Phase 9 marked Complete (2026-06-20) in ROADMAP Progress table"
+  - "Phase 9 marked Complete (2026-06-19) in ROADMAP Progress table"
 affects: [phase-11, phase-12]
 
 # Tech tracking
@@ -49,7 +49,7 @@ requirements-completed: [UX-03, UX-04, UX-07]
 
 # Metrics
 duration: ~15min (doc-only + state updates)
-completed: 2026-06-20
+completed: 2026-06-19
 ---
 
 # Phase 9 Plan 06: Zero-Regression Gate + Phase Sign-Off Summary
@@ -59,8 +59,8 @@ completed: 2026-06-20
 ## Performance
 
 - **Duration:** ~15 min (doc-only execution; verification pre-run by orchestrator)
-- **Started:** 2026-06-20
-- **Completed:** 2026-06-20
+- **Started:** 2026-06-19
+- **Completed:** 2026-06-19
 - **Tasks:** 2 (verification gate [pre-run] + traceability flip)
 - **Files modified:** 3 (.planning only — no source changes)
 
@@ -82,7 +82,7 @@ completed: 2026-06-20
 
 ## Files Created/Modified
 
-- `.planning/ROADMAP.md` — Ticked 09-06 plan checkbox; Phase 9 Progress row updated (6/6, Complete, 2026-06-20); v1.2 Milestone blurb updated; Phase 9 success criteria annotated with the Edit Mode reconciliation note and per-criterion VERIFIED marks
+- `.planning/ROADMAP.md` — Ticked 09-06 plan checkbox; Phase 9 Progress row updated (6/6, Complete, 2026-06-19); v1.2 Milestone blurb updated; Phase 9 success criteria annotated with the Edit Mode reconciliation note and per-criterion VERIFIED marks
 - `.planning/REQUIREMENTS.md` — UX-03, UX-04, UX-07 already flipped to Complete by the orchestrator's traceability update prior to this plan (verified present; no further edit needed)
 - `.planning/STATE.md` — Position advanced to Phase 11 (next on release path); Phase 9 metrics row added; two sign-off decisions recorded; session continuity updated
 
@@ -145,11 +145,11 @@ None — no external service configuration required.
 
 ## Self-Check: PASSED
 
-- `.planning/ROADMAP.md` — UPDATED (09-06 ticked; Phase 9 row 6/6 Complete 2026-06-20; reconciliation note added)
+- `.planning/ROADMAP.md` — UPDATED (09-06 ticked; Phase 9 row 6/6 Complete 2026-06-19; reconciliation note added)
 - `.planning/REQUIREMENTS.md` — VERIFIED (UX-03/UX-04/UX-07 Complete in v1.2 traceability)
 - `.planning/STATE.md` — UPDATED (position, decisions, metrics, session)
 - `.planning/phases/09-editor-ux-polish/09-06-SUMMARY.md` — CREATED
 
 ---
 *Phase: 09-editor-ux-polish*
-*Completed: 2026-06-20*
+*Completed: 2026-06-19*

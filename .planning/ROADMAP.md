@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; submitted to .org, awaiting review) → [archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17)
-- 🚧 **v1.2 Editor UX Polish** — Phases 9–12 (Phase 9 editor polish **complete 2026-06-20** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 12; Phase 10 is independent research and does not gate the release.**
+- 🚧 **v1.2 Editor UX Polish** — Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 12; Phase 10 is independent research and does not gate the release.**
 
 ## Phases
 
@@ -89,7 +89,7 @@ Full phase details, success criteria, and outcomes are archived in
 **Goal**: The edit-mode toolbar is immediately clear on its own purpose, efficiently compact on small and mobile screens, and every behavioral change carries its accessibility guardrail
 **Depends on**: Phase 8
 **Requirements**: UX-03, UX-04, UX-07
-**Status: Complete (2026-06-20)** — all six plans executed; full suite green; UX-03/04/07 Complete in v1.2 traceability.
+**Status: Complete (2026-06-19)** — all six plans executed; full suite green; UX-03/04/07 Complete in v1.2 traceability.
 **Success Criteria** (what must be TRUE):
   1. The idle status reads "Edit Mode" *(reconciliation: the user's LOCKED refinement chose "Edit Mode" — shorter, more glanceable than the criterion's literal "Menu Edit Mode" — satisfying the intent: short, glanceable, non-colour-signalled, paired with a dashicon. Same pattern as Phase 8 / REL-06.)* Signals mode by dashicon + text label, not colour alone (WCAG 1.4.1); on first run only, an attention pulse draws the user's eye — localStorage-gated, keyboard-operable, dismissible, screen-reader-announced, dual-cleanup path (animationend + dismiss()), respects `prefers-reduced-motion` ✅
   2. The rename field shows placeholder "Menu label" that clears on focus; a visually-hidden `<label>` provides the programmatic accessible name for AT; placeholder colour #8c8f94 meets WCAG AA non-text contrast ✅
@@ -157,7 +157,7 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 6. Accessibility & Interaction | v1.1 | 3/3 | Complete | 2026-06-16 |
 | 7. Visual Polish & Icons | v1.1 | 4/4 | Complete | 2026-06-17 |
 | 8. Docs & Brand Assets | v1.1 | 4/4 (executable scope; REL-07/08 deferred) | Complete | 2026-06-17 |
-| 9. Editor UX Polish | v1.2 | 6/6 | Complete | 2026-06-20 |
+| 9. Editor UX Polish | v1.2 | 6/6 | Complete | 2026-06-19 |
 | 10. Third-Party Menu Compatibility Research | v1.2 | 0/TBD | Not started (research spike) | - |
 | 11. Editor Entry & Reorder Fixes | v1.2 | 0/TBD | Scaffolded (needs discuss) | - |
 | 12. Release Assets Refresh | v1.2 | 0/TBD | Scaffolded (REL-07/08 folded in) | - |

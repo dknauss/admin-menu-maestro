@@ -33,7 +33,7 @@ decisions:
 
 metrics:
   duration: "~15m"
-  completed: "2026-06-20"
+  completed: "2026-06-19"
   tasks_completed: 2
   tasks_total: 2
   files_modified: 3
