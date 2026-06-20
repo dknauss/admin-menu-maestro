@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: completed
-stopped_at: Completed 11.1-01-PLAN.md — HARD-01 custom_menu_order gate shipped; Plan 01 green; next = Plan 02 (HARD-02 config payload bounds)
-last_updated: "2026-06-20T16:06:36.571Z"
+stopped_at: Completed 11.1-02-PLAN.md — HARD-02 config payload bounds shipped; Plan 02 green; next = Plan 03 (save-race E2E coverage)
+last_updated: "2026-06-20T16:17:00.448Z"
 last_activity: 2026-06-19 — Phase 9 Plan 06 complete; zero-regression gate signed off; UX-03/04/07 all Complete; full suite JS 53/53, PHP 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors
 progress:
   total_phases: 8
   completed_phases: 3
   total_plans: 20
-  completed_plans: 16
+  completed_plans: 17
   percent: 90
 ---
 
@@ -66,6 +66,7 @@ Progress: [#########-] 90%
 | Phase 09-editor-ux-polish P05 | ~60m | 3 tasks (2 auto + 1 checkpoint) + regression fixes | 2 files |
 | Phase 09-editor-ux-polish P06 | ~15m | 2 tasks (gate + traceability) | 3 files |
 | Phase 11.1-p1-review-hardening P01 | 3m | 1 tasks | 2 files |
+| Phase 11.1-p1-review-hardening P02 | 9 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -96,6 +97,8 @@ Recent decisions affecting current work:
 - [Phase 09-editor-ux-polish P06 sign-off]: Full suite green at sign-off — JS logic 53/53, PHP unit 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors on shippable source. 3 e2e regressions caught and fixed by the orchestrator's full-suite gate (commits 38323c4, 927b682); 2 dead-surface items removed in code review (commit 1ef7fae).
 - [Phase 11.1-p1-review-hardening]: has_top_order() is public (not private): WP filter dispatch requires public visibility for array-style callbacks — private raises TypeError at call_user_func_array
 - [Phase 11.1-p1-review-hardening]: custom_menu_order gate reads config at filter-call time so WP's per-load invocation gets the live stored value; menu_order/reorder_top stays unconditional (harmless when gate is off, no-ops on empty order)
+- [Phase 11.1-p1-review-hardening]: HARD-02: Config::MAX_* constants pattern — all six size caps are named public class constants; tests reference Config::MAX_* never literals; data-URI over-limit dropped to '' (not substr'd — truncated base64 is corrupt)
+- [Phase 11.1-p1-review-hardening]: HARD-02: WP function stubs added to bootstrap-unit.php (not test file) — allows Config::sanitize() pure-unit calls including hidden_roles cap (wp_roles stub returns 60 roles); stubs use if(\!function_exists()) guards
 
 ### Roadmap Evolution
 
@@ -112,6 +115,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-20T16:06:36.569Z
-Stopped at: Completed 11.1-01-PLAN.md — HARD-01 custom_menu_order gate shipped; Plan 01 green; next = Plan 02 (HARD-02 config payload bounds)
+Last session: 2026-06-20T16:17:00.445Z
+Stopped at: Completed 11.1-02-PLAN.md — HARD-02 config payload bounds shipped; Plan 02 green; next = Plan 03 (save-race E2E coverage)
 Resume file: None
