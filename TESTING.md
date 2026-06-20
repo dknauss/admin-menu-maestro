@@ -2,9 +2,7 @@
 
 Three layers, smallest and fastest first.
 
-> **Current local status:** all three layers pass: unit 44/44, integration 29/29
-> with 81 assertions, and E2E 9/9. The E2E suite includes Phase 3 coverage for
-> reset-this-item and per-role visibility.
+> **Current expected status:** unit 44/44, integration 29/29 with 81 assertions, JavaScript unit tests, phpcs, PHPStan, Plugin Check, and the Playwright E2E suite should pass before release. E2E coverage includes reset-this-item, per-role visibility, icon persistence, keyboard reordering, first-run cues, and toolbar accessibility checks.
 
 ## Gotchas (first run)
 
@@ -81,3 +79,27 @@ stores the session.
 The DOM-join (locating submenu items by index within `.wp-submenu`) is only
 exercised by the E2E layer — that is the layer to watch when testing against a
 real-world menu with third-party plugins registered.
+
+
+## 4. Static and package QA
+
+Additional release gates:
+
+```bash
+composer lint
+composer analyse:phpstan
+npm run test:js
+npm run check:doc-links
+npm run audit:npm
+bash bin/build.sh
+```
+
+To run Plugin Check locally against the runtime tree:
+
+```bash
+npm run env:start
+npx wp-env run cli wp plugin install plugin-check --activate
+npx wp-env run cli wp plugin check /var/www/html/wp-content/plugins/maestro-menu-editor/build/maestro-menu-editor --format=json
+```
+
+`npm run audit:npm` wraps `npm audit` with a narrow allowlist for the current dev-only `@wordpress/env` → `js-yaml` advisory. Remove that allowlist when upstream ships a clean dependency path.

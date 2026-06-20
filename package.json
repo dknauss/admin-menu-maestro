@@ -1,11 +1,12 @@
 {
 	"name": "maestro",
-	"version": "1.0.0",
+	"version": "1.1.1",
 	"private": true,
 	"description": "Tooling for Maestro: The Inline Admin Menu Editor: wp-env, PHP integration tests, Playwright E2E.",
 	"scripts": {
 		"check:doc-links": "node bin/check-doc-links.mjs",
 		"test:js": "node --test tests/js/*.mjs",
+		"audit:npm": "node bin/audit-npm.mjs",
 		"env:start": "wp-env start",
 		"env:stop": "wp-env stop",
 		"env:clean": "wp-env clean all",
@@ -19,7 +20,7 @@
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.45.0",
-		"@wordpress/env": "^10.6.0",
+		"@wordpress/env": "^11.8.1",
 		"bootstrap-icons": "^1.13.1"
 	}
 }

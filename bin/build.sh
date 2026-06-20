@@ -14,6 +14,7 @@ rm -rf "$STAGE" "$OUT/$SLUG.zip"
 mkdir -p "$STAGE"
 
 cp "$ROOT/$SLUG.php" "$STAGE/"
+cp "$ROOT/uninstall.php" "$STAGE/"
 cp -r "$ROOT/includes" "$STAGE/"
 cp -r "$ROOT/assets" "$STAGE/"
 if [ -d "$ROOT/languages" ]; then

@@ -53,7 +53,7 @@ For the longer walkthrough, see [`docs/user-guide.md`](docs/user-guide.md).
 
 ## Status
 
-**v1.1.0 is live on the WordPress.org plugin directory** ([maestro-menu-editor](https://wordpress.org/plugins/maestro-menu-editor/)) — it adds keyboard-accessible reordering, a live "modified" indicator, solid-fill bundled icons, native dashicon save-status, and edit-mode polish over the 1.0.0 base (roadmap in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all test layers are green (unit 44, integration 29, E2E 16; phpcs clean; Plugin Check reports no errors on the extracted build zip). The editor uses the click-to-select model with debounced autosave:
+**v1.1.1 is live on the WordPress.org plugin directory** ([maestro-menu-editor](https://wordpress.org/plugins/maestro-menu-editor/)) — it includes the v1.1 polish release plus follow-up toolbar label refinements over the 1.0.0 base (roadmap in [`.planning/ROADMAP.md`](.planning/ROADMAP.md)). The server core (replay engine, REST API, sanitization) and the editor are done, and all test layers are expected to stay green (unit 44, integration 29, E2E coverage, JavaScript unit tests, phpcs, PHPStan, and Plugin Check on the runtime build). The editor uses the click-to-select model with debounced autosave:
 
 - **Debounced autosave (~500 ms)** on reorder, rename, icon pick, visibility toggle, and per-item reset — no manual Save button; a "Saving… / Saved" status indicator (dashicon + text) instead. Saves are serialized (single-flight) so a slow request can't overwrite newer edits. Reload only on Exit (which flushes any pending save) and on Reset all.
 - **Click-to-select with one shared controls panel.** No edit chrome until an item is selected: each row shows only a hover/focus-revealed drag handle. Selecting an item opens the shared panel (rename, icon picker for top-level items, per-role visibility, reset-this-item).
@@ -78,7 +78,7 @@ The plugin uses the `maestro-menu-editor` text domain and ships a translation te
 Build a runtime-only zip and upload it under Plugins → Add New → Upload:
 
 ```bash
-bin/build.sh        # writes build/maestro.zip (runtime files only)
+bin/build.sh        # writes build/maestro-menu-editor.zip (runtime files only)
 ```
 
 Activate it; **Edit Menu** appears in the admin bar. Never ship the dev tooling inside the installed plugin.
@@ -117,6 +117,10 @@ in the editor, then use **Switch To** (admin bar) to view the menu as that user.
 > - **[Development build (main)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)** — [`playground/blueprint-hosted.json`](playground/blueprint-hosted.json) tracks the `main` branch (bleeding edge). Use this to preview unreleased changes.
 >
 > Both use a `git:directory` resource; the local [`playground/blueprint.json`](playground/blueprint.json) mounts the working tree instead.
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for local setup, quality gates, and pull request expectations. For security reports, use the private process in [`SECURITY.md`](SECURITY.md); do not open public security issues.
 
 ## License
 

@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest an improvement for Maestro
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What are you trying to do, and why is the current behavior insufficient?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the simplest behavior that would solve the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Existing plugins, workarounds, or simpler options.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Admin menu editing
+        - Icons
+        - Role visibility
+        - Accessibility
+        - Localization
+        - Testing / QA
+        - Documentation
+        - Release / WordPress.org
+    validations:
+      required: true

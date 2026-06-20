@@ -1038,26 +1038,57 @@
 			return doAutosave(); // captures edits made while the last POST was in flight
 		}
 		setStatus( ok ? 'saved' : 'error' );
+		inFlight = null;
 		return null;
+	}
+
+	function waitForSaveIdle() {
+		if ( saveTimer ) {
+			return flushAutosave();
+		}
+		return inFlight || Promise.resolve();
+	}
+
+	function cancelQueuedAutosave() {
+		if ( saveTimer ) {
+			clearTimeout( saveTimer );
+			saveTimer = null;
+		}
+		savePending = false;
 	}
 
 	function doResetAll( e ) {
 		e.preventDefault();
 		if ( ! window.confirm( I.confirmAll ) ) { return; }
-		fetch( D.restUrl, {
-			method:      'DELETE',
-			headers:     { 'X-WP-Nonce': D.nonce },
-			credentials: 'same-origin'
-		} )
-			.then( function () { window.location.reload(); } )
-			.catch( function () { setStatus( 'error' ); } );
+
+		var button = e.currentTarget;
+		if ( button ) { button.disabled = true; }
+		setStatus( 'saving' );
+		cancelQueuedAutosave();
+
+		( inFlight || Promise.resolve() )
+			.then( function () {
+				return fetch( D.restUrl, {
+					method:      'DELETE',
+					headers:     { 'X-WP-Nonce': D.nonce },
+					credentials: 'same-origin'
+				} );
+			} )
+			.then( function ( r ) {
+				if ( ! r.ok ) { throw new Error( 'HTTP ' + r.status ); }
+				window.location.reload();
+			} )
+			.catch( function () {
+				if ( button ) { button.disabled = false; }
+				setStatus( 'error' );
+			} );
 	}
 
 	function onExit( e ) {
-		// If there's pending work, flush it before navigating so nothing is lost.
-		if ( saveTimer ) {
+		// If there's pending or active work, flush/wait before navigating so nothing is lost.
+		if ( saveTimer || inFlight ) {
 			e.preventDefault();
-			flushAutosave().then( function () {
+			waitForSaveIdle().then( function () {
 				window.location.href = D.exitUrl;
 			} );
 		}

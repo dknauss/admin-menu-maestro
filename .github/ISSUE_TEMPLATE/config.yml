@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security reports
+    url: https://github.com/dknauss/Maestro/security/advisories/new
+    about: Please report vulnerabilities privately, not in public issues.
+  - name: WordPress.org support
+    url: https://wordpress.org/support/plugin/maestro-menu-editor/
+    about: Get support for the released plugin.

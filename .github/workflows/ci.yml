@@ -18,6 +18,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  dependency-health:
+    name: Dependency metadata + audits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Validate Composer metadata
+        run: composer validate --strict
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --no-interaction
+
+      - name: Composer security audit
+        run: composer audit
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: npm security audit with repo allowlist
+        run: npm run audit:npm
+
+  php-lint:
+    name: PHP syntax (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Lint PHP files
+        run: find maestro-menu-editor.php uninstall.php includes tests -name '*.php' -print0 | xargs -0 -n1 php -l
+
   lint:
     name: Coding standards (WPCS)
     runs-on: ubuntu-latest
@@ -34,7 +86,26 @@ jobs:
         run: composer install --no-progress --prefer-dist --no-interaction
 
       - name: Run phpcs (WordPress standard + PHP compatibility)
-        run: vendor/bin/phpcs
+        run: composer lint
+
+  phpstan:
+    name: Static analysis (PHPStan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --prefer-dist --no-interaction
+
+      - name: Run PHPStan
+        run: composer analyse:phpstan
 
   unit:
     name: Unit tests (PHP ${{ matrix.php }})
@@ -57,6 +128,27 @@ jobs:
 
       - name: Run pure unit tests
         run: composer test:unit
+
+  node-quality:
+    name: JavaScript unit tests + docs links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: JavaScript unit tests
+        run: npm run test:js
+
+      - name: Documentation link hygiene
+        run: npm run check:doc-links
 
   integration-e2e:
     name: Integration + E2E (wp-env, WP 7.0)
@@ -95,6 +187,44 @@ jobs:
 
       - name: E2E tests (Playwright)
         run: npm run test:e2e
+
+      - name: Stop wp-env
+        if: always()
+        run: npm run env:stop
+
+  package-check:
+    name: Runtime package + Plugin Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build runtime ZIP
+        run: bash bin/build.sh
+
+      - name: Upload runtime ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-menu-editor
+          path: build/maestro-menu-editor.zip
+          if-no-files-found: error
+
+      - name: Start wp-env (Docker)
+        run: npm run env:start
+
+      - name: Install Plugin Check
+        run: npx wp-env run cli wp plugin install plugin-check --activate
+
+      - name: Run Plugin Check on runtime tree
+        run: npx wp-env run cli wp plugin check /var/www/html/wp-content/plugins/maestro-menu-editor/build/maestro-menu-editor --format=json
 
       - name: Stop wp-env
         if: always()
