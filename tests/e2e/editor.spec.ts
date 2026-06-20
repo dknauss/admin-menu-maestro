@@ -619,6 +619,39 @@ test.describe( 'Phase 7 — first-run cue appears once only (localStorage-gated)
 
 } );
 
+test.describe( 'UX-03 — first-run pulse on first editable menu item', () => {
+
+	test( 'maestro-firstrun-pulse class is present on first editable item when cue shows, and absent after dismiss', async ( { page } ) => {
+		// Clear the first-run flag so the cue (and pulse) will appear.
+		await page.goto( '/wp-admin/index.php' );
+		await page.evaluate( () => {
+			try {
+				localStorage.removeItem( 'maestroFirstRunDone' );
+			} catch ( e ) {
+				// Private browsing — ignore.
+			}
+		} );
+
+		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
+
+		// 1. The first-run cue must be visible.
+		await expect( page.locator( '.maestro-firstrun' ) ).toBeVisible();
+
+		// 2. The pulse class must be present on the first editable top-level item
+		//    immediately after the cue shows (before any user interaction).
+		const firstItem = page.locator( '#adminmenu > li.menu-top.maestro-item' ).first();
+		await expect( firstItem ).toHaveClass( /maestro-firstrun-pulse/ );
+
+		// 3. After dismissing the banner, the dismiss() path must remove the pulse class
+		//    (CRITICAL: this is the cleanup path under prefers-reduced-motion, where
+		//    animationend never fires and the class would otherwise stick forever).
+		await page.locator( '.maestro-firstrun-dismiss' ).click();
+		await expect( page.locator( '.maestro-firstrun' ) ).toHaveCount( 0 );
+		await expect( firstItem ).not.toHaveClass( /maestro-firstrun-pulse/ );
+	} );
+
+} );
+
 test.describe( 'Phase 7 — status icon: none when idle, dashicon for save states', () => {
 
 	test( 'idle status shows no ::before glyph; the saved state keeps its dashicon', async ( { page } ) => {
