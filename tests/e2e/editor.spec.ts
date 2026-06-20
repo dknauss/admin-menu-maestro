@@ -624,6 +624,13 @@ test.describe( 'Phase 7 — first-run cue appears once only (localStorage-gated)
 test.describe( 'UX-03 — first-run pulse on first editable menu item', () => {
 
 	test( 'maestro-firstrun-pulse class is present on first editable item when cue shows, and absent after dismiss', async ( { page } ) => {
+		// Run under reduced-motion: the one-shot pulse animation is disabled, so the
+		// class is NOT removed by animationend (which fires after only 1.5s and would
+		// race the test on slow CI). The class then persists until dismiss() — which
+		// makes the assertion deterministic AND exercises the critical reduced-motion
+		// cleanup path (dismiss() must remove the class since animationend never fires).
+		await page.emulateMedia( { reducedMotion: 'reduce' } );
+
 		// Clear the first-run flag so the cue (and pulse) will appear.
 		await page.goto( '/wp-admin/index.php' );
 		await page.evaluate( () => {
@@ -792,9 +799,6 @@ test.describe( 'UX-04 — rename placeholder + accessible name', () => {
 		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
 
 		// 1. The old visible "Rename " text-node wrapper label must be gone.
-		//    Confirm by checking no visible element contains exactly "Rename " text
-		//    adjacent to the rename input — the only "Rename" text in the panel
-		//    must be in the screen-reader-text label (visually hidden).
 		const panelField = page.locator( '.maestro-toolbar .maestro-panel-field' );
 		await expect( panelField ).toHaveCount( 0 );  // renameField wrapper <label> removed
 
@@ -806,10 +810,11 @@ test.describe( 'UX-04 — rename placeholder + accessible name', () => {
 		//    (Visible only when the field is empty; browser handles this natively.)
 		await expect( renameInput ).toHaveAttribute( 'placeholder', 'Menu label' );
 
-		// 4. The visually-hidden accessible label is present with text "Rename"
-		//    and wired to the input via for/id — Playwright's getByLabel resolves
-		//    the input via this for/id binding, proving the accessible name is present.
-		const labelledInput = page.getByLabel( 'Rename' );
+		// 4. WCAG 2.5.3 (Label in Name): the accessible name must MATCH the visible
+		//    placeholder text "Menu label", so speech-control users saying "Menu label"
+		//    reach the control. getByLabel resolves the input via the visually-hidden
+		//    <label for> — proving the accessible name equals the visible placeholder.
+		const labelledInput = page.getByLabel( 'Menu label' );
 		await expect( labelledInput ).toHaveAttribute( 'id', 'maestro-rename-field' );
 	} );
 

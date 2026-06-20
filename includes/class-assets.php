@@ -98,7 +98,6 @@ class Assets {
 					'saved'             => __( 'Saved', 'maestro-menu-editor' ),
 					'saveError'         => __( 'Save failed. Retrying on next change.', 'maestro-menu-editor' ),
 					'modeLabel'         => __( 'Edit Mode', 'maestro-menu-editor' ),
-					'rename'            => __( 'Rename', 'maestro-menu-editor' ),
 					'renamePlaceholder' => __( 'Menu label', 'maestro-menu-editor' ),
 					'icon'              => __( 'Icon', 'maestro-menu-editor' ),
 					'iconDialog'        => __( 'Choose an icon', 'maestro-menu-editor' ),

@@ -386,12 +386,15 @@
 		// context; `screen-reader-text` is WordPress admin's always-present SR class.
 		var label = el( 'span', 'maestro-panel-label screen-reader-text' );
 
-		// I.rename: used as screen-reader-only accessible name for the rename input.
-		// A placeholder is NOT an accessible name — the visually-hidden label is required
-		// so screen-reader and voice-control users can still target the field.
+		// Accessible name for the rename input. WCAG 2.5.3 (Label in Name): the
+		// accessible name must contain the VISIBLE label text — which here is the
+		// placeholder "Menu label" (the only visible hint when the field is empty) —
+		// so speech-control users who say "Menu label" reach this control. A
+		// placeholder alone is NOT an accessible name, so the visually-hidden <label>
+		// carries the same string.
 		var renameLabel = el( 'label', 'screen-reader-text' );
 		renameLabel.setAttribute( 'for', 'maestro-rename-field' );
-		renameLabel.textContent = I.rename;
+		renameLabel.textContent = I.renamePlaceholder;
 		var rename = el( 'input', 'maestro-rename-input' );
 		rename.type = 'text';
 		rename.id = 'maestro-rename-field';

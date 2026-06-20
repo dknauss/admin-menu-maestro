@@ -384,11 +384,12 @@ body.maestro-editing #collapse-menu {
 	background: #fff;
 	color: #1d2327;
 }
-/* Placeholder contrast: #8c8f94 is the WP admin muted-text token (~3.9:1 on #fff,
- * AA-compliant for non-text contrast per WCAG 1.4.11 and is WP-canonical).
- * opacity:1 overrides Firefox's default 0.54 which would fail the threshold. */
+/* Placeholder contrast: when the field is empty the placeholder is the only
+ * visible hint, so it counts as TEXT (WCAG 1.4.3 → 4.5:1), not the 3:1 non-text
+ * threshold. #8c8f94 (~3.3:1) fails that; #50575e is WP admin's secondary-text
+ * token at ~7:1 on #fff. opacity:1 overrides Firefox's default 0.54. */
 .maestro-rename-input::placeholder {
-	color: #8c8f94;
+	color: #50575e;
 	opacity: 1;
 }
 
