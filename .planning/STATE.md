@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: planning
-stopped_at: Completed 09-02-PLAN.md — UX-03 split mode indicator + modeLabel i18n
-last_updated: "2026-06-19T23:58:41.695Z"
+stopped_at: Completed 09-03-PLAN.md — UX-03 first-run pulse on first editable menu item
+last_updated: "2026-06-20T00:45:44.926Z"
 last_activity: 2026-06-17 — v1.2 roadmap written; v1.1 milestone archived; Phase 9 is the single phase for UX-03, UX-04, UX-07
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 2
   total_plans: 16
-  completed_plans: 11
+  completed_plans: 12
   percent: 90
 ---
 
@@ -61,6 +61,7 @@ Progress: [#########-] 90%
 *Updated after each plan completion*
 | Phase 09-editor-ux-polish P01 | 525594m | 2 tasks | 4 files |
 | Phase 09-editor-ux-polish P02 | 21m | 3 tasks | 5 files |
+| Phase 09-editor-ux-polish P03 | 15 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - [Phase 09-editor-ux-polish]: modeLabel key + LocalizationTest update shipped in one commit (never red mid-plan)
 - [Phase 09-editor-ux-polish]: idle dashicon is real DOM span (aria-hidden), not ::before, avoiding BUG-04 regression
 - [Phase 09-editor-ux-polish]: setStatus uses textContent='' at idle (not hidden attr); live region always present, only content varies
+- [Phase 09-editor-ux-polish]: Dual-path pulse cleanup: animationend (motion) + dismiss() (reduced-motion/early-dismiss) — animationend never fires under prefers-reduced-motion:reduce
+- [Phase 09-editor-ux-polish]: firstRunSeen gate seam now consumed by buildFirstRunCue() — inline try/catch replaced by window.maestroLogic.firstRunSeen()
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-19T23:58:41.693Z
-Stopped at: Completed 09-02-PLAN.md — UX-03 split mode indicator + modeLabel i18n
+Last session: 2026-06-20T00:45:44.923Z
+Stopped at: Completed 09-03-PLAN.md — UX-03 first-run pulse on first editable menu item
 Resume file: None
