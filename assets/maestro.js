@@ -1064,14 +1064,9 @@
 	 * Uses i18n strings I.firstRun / I.firstRunDismiss from the localized payload.
 	 */
 	function buildFirstRunCue() {
-		var seen = false;
-		try {
-			seen = window.localStorage.getItem( 'maestroFirstRunDone' ) === '1';
-		} catch ( storageErr ) {
-			// Private-browsing or blocked localStorage — skip the cue silently.
-			return;
-		}
-		if ( seen ) { return; }
+		// Gate on the Plan-01 seam: returns true if seen OR if storage throws
+		// (private-browsing / blocked — treat as seen so the cue is skipped safely).
+		if ( window.maestroLogic.firstRunSeen( window.localStorage ) ) { return; }
 
 		var cue = el( 'div', 'maestro-firstrun' );
 		cue.setAttribute( 'role', 'note' );
@@ -1081,6 +1076,18 @@
 		var dismissBtn = el( 'button', 'maestro-firstrun-dismiss', I.firstRunDismiss );
 		dismissBtn.type = 'button';
 
+		// Pulse the first editable top-level menu item to teach the core gesture.
+		// querySelector is called after init() has stamped .maestro-item on all items.
+		var firstItem = document.querySelector( '#adminmenu > li.menu-top.maestro-item' );
+		if ( firstItem ) {
+			firstItem.classList.add( 'maestro-firstrun-pulse' );
+			// Motion case: remove the class once the one-shot animation completes.
+			firstItem.addEventListener( 'animationend', function onEnd() {
+				firstItem.classList.remove( 'maestro-firstrun-pulse' );
+				firstItem.removeEventListener( 'animationend', onEnd );
+			} );
+		}
+
 		function dismiss() {
 			try {
 				window.localStorage.setItem( 'maestroFirstRunDone', '1' );
@@ -1088,6 +1095,9 @@
 				// Storage unavailable — still remove the element; just won't persist.
 			}
 			cue.remove();
+			// CRITICAL: under prefers-reduced-motion, animationend never fires, so
+			// the pulse class must also be removed here (Pitfall 1 / Plan-03 spec).
+			if ( firstItem ) { firstItem.classList.remove( 'maestro-firstrun-pulse' ); }
 		}
 
 		dismissBtn.addEventListener( 'click', dismiss );

@@ -438,6 +438,27 @@ body.maestro-editing #collapse-menu {
 	outline-offset: 2px;
 }
 
+/* One-shot attention cue on the first editable menu item during first run.
+ * Teaches the "click an item to edit" gesture by drawing the eye to the menu.
+ * Single animation (iteration-count 1), then stops. Never loops (WCAG 2.3.3 spirit).
+ * Removed by animationend (motion path) OR by dismiss() (reduced-motion / early path). */
+@keyframes maestro-pulse-item {
+	0%   { outline: 2px solid transparent; outline-offset: 2px; }
+	40%  { outline: 2px solid #2271b1;     outline-offset: 2px; }
+	60%  { outline: 2px solid #2271b1;     outline-offset: 2px; }
+	100% { outline: 2px solid transparent; outline-offset: 2px; }
+}
+#adminmenu li.maestro-firstrun-pulse {
+	animation: maestro-pulse-item 1.5s ease-in-out 1 forwards;
+}
+@media ( prefers-reduced-motion: reduce ) {
+	#adminmenu li.maestro-firstrun-pulse {
+		animation: none;
+		outline: 2px solid #2271b1;
+		outline-offset: 2px;
+	}
+}
+
 /* Inherit the WP admin column collapse breakpoint. */
 @media screen and ( max-width: 782px ) {
 	.maestro-toolbar { left: 0; }
