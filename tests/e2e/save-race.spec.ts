@@ -143,10 +143,21 @@ test.describe( 'HARD-03 — save-race regression coverage', () => {
 			return false;
 		} );
 
-		// Trigger the POST (rename commits + autosave fires).
+		// Trigger the autosave (rename commits -> scheduleAutosave queues a 500ms saveTimer).
 		await rename.press( 'Enter' );
 
-		// Immediately accept the Reset All confirm and click the button while POST is in flight.
+		// Wait until the autosave POST is actually IN FLIGHT before clicking Reset All.
+		// commitRename only *queues* a 500ms-debounced autosave; the POST is not dispatched
+		// until doAutosave fires. If Reset All lands inside that debounce window,
+		// cancelQueuedAutosave() kills the queued saveTimer and NO POST fires — that is
+		// race (b)'s scenario, not race (c)'s. waitForRequest resolves when the request is
+		// dispatched; the 2s route delay then holds the response open so inFlight is still
+		// set (saveTimer null) when Reset All is clicked — the precondition race (c) needs.
+		await page.waitForRequest(
+			r => POST_SAVE( r.url() ) && r.method() === 'POST'
+		);
+
+		// Accept the Reset All confirm and click the button while the POST is in flight.
 		page.once( 'dialog', d => d.accept() );
 		await page.locator( '.maestro-reset-all' ).click();
 
