@@ -522,11 +522,13 @@ test.describe( 'Phase 7 — UX-02 no-overlap / no-resize at 1200px and 700px', (
 			const panel = page.locator( '.maestro-toolbar .maestro-panel' );
 			await expect( panel ).toBeVisible();
 
-			// The toolbar and status element must be visible.
+			// The toolbar and its persistent mode indicator must be visible.
+			// (Post-09-02 the persistent indicator is `.maestro-mode-label`;
+			// `.maestro-status` is now the transient save-status, empty/hidden at idle.)
 			const toolbar = page.locator( '.maestro-toolbar' );
-			const statusEl = toolbar.locator( '.maestro-status' );
+			const modeLabel = toolbar.locator( '.maestro-mode-label' );
 			await expect( toolbar ).toBeVisible();
-			await expect( statusEl ).toBeVisible();
+			await expect( modeLabel ).toBeVisible();
 
 			// No horizontal overflow: toolbar width must fit within the viewport.
 			const toolbarBox = await toolbar.boundingBox();
