@@ -62,6 +62,7 @@ class LocalizationTest extends WP_UnitTestCase {
 			'saveError',
 			'modeLabel',
 			'rename',
+			'renamePlaceholder',
 			'icon',
 			'iconDialog',
 			'iconSearch',
