@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: in-progress
-stopped_at: Completed 11.1-03-PLAN.md — HARD-03 save-race E2E spec authored; E2E run deferred to Wave 2 boundary (Plan 04 gate); next = Plan 04 (Wave 2 boundary full e2e gate)
-last_updated: "2026-06-20T16:35:00.000Z"
-last_activity: 2026-06-20 — Phase 11.1 Plan 03 complete; save-race.spec.ts authored covering races (a)/(b)/(c); 2 commits; E2E run deferred to Wave 2 boundary
+status: completed
+stopped_at: Completed 11.1-04-PLAN.md — Phase 11.1 zero-regression gate signed off; HARD-01/02/03 Complete; ROADMAP + REQUIREMENTS updated; next = Phase 12 (after Phase 11 discuss + plan)
+last_updated: "2026-06-20T17:54:02.392Z"
+last_activity: 2026-06-19 — Phase 9 Plan 06 complete; zero-regression gate signed off; UX-03/04/07 all Complete; full suite JS 53/53, PHP 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors
 progress:
   total_phases: 8
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
   percent: 90
 ---
 
@@ -68,6 +68,7 @@ Progress: [#########-] 90%
 | Phase 11.1-p1-review-hardening P01 | 3m | 1 tasks | 2 files |
 | Phase 11.1-p1-review-hardening P02 | 9 | 2 tasks | 3 files |
 | Phase 11.1-p1-review-hardening P03 | 15m | 2 tasks | 1 file |
+| Phase 11.1-p1-review-hardening P04 | 8m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,7 @@ Recent decisions affecting current work:
 - [Phase 11.1-p1-review-hardening P03]: HARD-03: Race (b) uses page.on('request') counter (deterministic) not negative waitForResponse timeout (non-deterministic)
 - [Phase 11.1-p1-review-hardening P03]: HARD-03: Race (c) uses response-order array (responses.push inside waitForResponse callbacks) to assert POST before DELETE without sleeps
 - [Phase 11.1-p1-review-hardening P03]: HARD-03: E2E run deferred to Wave 2 boundary (Plan 04 gate, Docker, sandbox-disabled) — spec authored only; not marked green until boundary run passes
+- [Phase 11.1-p1-review-hardening]: Phase 11.1 signed off 2026-06-20: zero-regression bar held (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0 errors, Plugin Check 0 errors); HARD-01/02/03 Complete
 
 ### Roadmap Evolution
 
@@ -120,6 +122,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-20T16:17:00.445Z
-Stopped at: Completed 11.1-02-PLAN.md — HARD-02 config payload bounds shipped; Plan 02 green; next = Plan 03 (save-race E2E coverage)
+Last session: 2026-06-20T17:54:02.390Z
+Stopped at: Completed 11.1-04-PLAN.md — Phase 11.1 zero-regression gate signed off; HARD-01/02/03 Complete; ROADMAP + REQUIREMENTS updated; next = Phase 12 (after Phase 11 discuss + plan)
 Resume file: None
