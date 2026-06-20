@@ -486,7 +486,9 @@ body.maestro-editing #collapse-menu {
 		font-size: 12px;
 		min-height: 44px; /* tap-target floor — WCAG 2.5.5 AAA */
 	}
-	.maestro-rename-input {
+	/* Scope under .maestro-toolbar (specificity 0,2,0) so the 44px floor beats
+	 * WP core's own ≤782px input rule (input[type="text"], 0,1,1 → min-height:40px). */
+	.maestro-toolbar .maestro-rename-input {
 		padding: 0 6px;
 		font-size: 12px;
 		min-height: 44px; /* tap-target floor — WCAG 2.5.5 AAA */

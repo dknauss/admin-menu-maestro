@@ -659,7 +659,9 @@ test.describe( 'Phase 7 — status icon: none when idle, dashicon for save state
 	test( 'idle status shows no ::before glyph; the saved state keeps its dashicon', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
 		const status = page.locator( '.maestro-toolbar .maestro-status' );
-		await expect( status ).toBeVisible();
+		// The save-status element is intentionally empty (zero-size) at idle, so
+		// assert it is PRESENT rather than visible; ::before is queryable regardless.
+		await expect( status ).toHaveCount( 1 );
 
 		// Idle: the leading icon is unnecessary (the toolbar + text already signal
 		// edit mode), so there must be no ::before glyph.
@@ -720,7 +722,8 @@ test.describe( 'UX-03 — split mode indicator: persistent mode label + transien
 	test( 'idle .maestro-status::before content is none (save-status has no glyph at idle)', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
 		const status = page.locator( '.maestro-toolbar .maestro-status' );
-		await expect( status ).toBeVisible();
+		// Save-status is empty/zero-size at idle by design — assert presence, not visibility.
+		await expect( status ).toHaveCount( 1 );
 
 		// PRESERVED GUARD (Phase 7): the save-status ::before must have content:none at idle.
 		// The idle edit icon is now a real DOM <span> child of .maestro-mode-label,
