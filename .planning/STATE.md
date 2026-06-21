@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: executing
-stopped_at: Completed 11-03-PLAN.md
-last_updated: "2026-06-21T22:13:46.577Z"
-last_activity: "2026-06-21 — Phase 11 executed: 4/4 plans, full suite green at Wave 2 gate (JS 53/53, PHP unit 61/61, integration 37/37, e2e 31/31, phpcs clean, PHPStan 0); BUG-06 exercised real separators; UX-08a mobile PNGs captured"
+stopped_at: Completed 11-05-PLAN.md
+last_updated: "2026-06-21T22:30:00.000Z"
+last_activity: "2026-06-21 — Phase 11 gap-closure 11-05: Wave 0 red guards committed — enter-state UX-08a + de-cheated control-driven reorder (both RED by design, await 11-06/11-07 for GREEN)"
 progress:
   total_phases: 8
   completed_phases: 5
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 11 (Editor Entry & Reorder Fixes) — COMPLETE & VERIFIED (passed, 5/5 must-haves) on branch gsd/phase-11-editor-entry-reorder-fixes
-Plan: 11-01…11-04 complete (4/4); Phase 11.1 already complete; Phase 12 is the genuine next step on the 1.2.0 release path
-Status: Phase 11 complete & verified — UX-08/BUG-06/BUG-07 delivered; next: Phase 12, then tag 1.2.0 (branch awaits merge to main)
-Last activity: 2026-06-21 — Phase 11 executed: 4/4 plans, full suite green at Wave 2 gate (JS 53/53, PHP unit 61/61, integration 37/37, e2e 31/31, phpcs clean, PHPStan 0); BUG-06 exercised real separators; UX-08a mobile PNGs captured
+Phase: Phase 11 (Editor Entry & Reorder Fixes) — gap-closure in progress on branch gsd/phase-11-gap-closure
+Plan: 11-05 complete (gap-closure wave 0 guards); 11-06/11-07/11-08 remain
+Status: 11-05 done — enter-state UX-08a + de-cheated reorder guards RED and committed; next: 11-06 (enqueue fix), 11-07 (panel + move buttons), 11-08 (Wave 2 gate)
+Last activity: 2026-06-21 — Phase 11 gap-closure 11-05: Wave 0 red guards committed — enter-state UX-08a + de-cheated control-driven reorder (both RED by design, await 11-06/11-07 for GREEN)
 
 Progress: [#########-] 90%
 
@@ -72,6 +72,7 @@ Progress: [#########-] 90%
 | Phase 11-editor-entry-reorder-fixes P01 | 9 | 2 tasks | 2 files |
 | Phase 11-editor-entry-reorder-fixes P02 | 721 | 2 tasks | 2 files |
 | Phase 11-editor-entry-reorder-fixes P03 | 8 | 2 tasks | 1 files |
+| Phase 11-editor-entry-reorder-fixes P05 (gap-closure) | 10m | 2 tasks | 1 file |
 
 ## Accumulated Context
 
@@ -115,6 +116,8 @@ Recent decisions affecting current work:
 - [Phase 11-editor-entry-reorder-fixes]: maestro-ab-label wrapper added in class-admin-bar.php so CSS icon-only rule has stable plugin-scoped hook; meta.title is state-conditional (Edit Admin Menu / Exit Editor); display:block override uses specificity (0,2,1) matching WP core whitelist pattern — no \!important
 - [Phase 11-editor-entry-reorder-fixes]: BUG-06: single-node insertBefore keyed off dir and maestroChildren index; no new helper (pure DOM glue, not unit-testable as expect(fn).toBe(out))
 - [Phase 11-editor-entry-reorder-fixes]: BUG-07: removal code stays li.querySelector() — badge is still descendant of <li> after target change; no CSS edit (maestro.css owned by 11-02)
+- [Phase 11-editor-entry-reorder-fixes 11-05 gap-closure]: UX-08a enter-state guard navigates /wp-admin/index.php (no maestro_edit) at 782px/600px — RED because class-assets.php early-returns before enqueuing maestro.css in non-edit state; 11-06 turns it GREEN
+- [Phase 11-editor-entry-reorder-fixes 11-05 gap-closure]: Reorder test renamed to control-driven, OS-independent; L373-374 re-focus cheat removed; Alt+ArrowDown replaced by button.maestro-move-down clicks; rename-input focus asserted after selectItem — RED because button absent; 11-07 turns it GREEN
 
 ### Roadmap Evolution
 
