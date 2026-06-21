@@ -124,6 +124,7 @@ Recent decisions affecting current work:
 
 - **REL-07/REL-08 (deferred)** — refreshed banner + gallery-optimized screenshots; image work; no blocking dependency on v1.2
 - **V2-15 (backlog)** — role cloning for per-user menu hiding: feasibility note before any build
+- **Pin GSD milestones to releases (backlog/tooling)** — make the milestone the system of record for its release tag + pipeline trigger; see `.planning/todos/pending/2026-06-21-pin-gsd-milestones-to-releases.md`
 
 ### Blockers/Concerns
 
