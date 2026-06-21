@@ -99,17 +99,23 @@
 		if ( result.modified ) {
 			li.classList.add( 'maestro-modified' );
 
-			// Only inject the badge/sr-text once per row.
-			if ( ! li.querySelector( '.maestro-modified-badge' ) ) {
+			// Append badge/sr-text to the row label — same target updateMenuLabel()
+			// uses — so on top-level items with a submenu the badge sits beside the
+			// label name rather than after the <ul.wp-submenu>.
+			var labelTarget = m.isSub
+				? li.querySelector( 'a' )
+				: li.querySelector( '.wp-menu-name' );
+
+			if ( labelTarget && ! labelTarget.querySelector( '.maestro-modified-badge' ) ) {
 				var badge = el( 'span', 'maestro-modified-badge' );
 				badge.setAttribute( 'aria-hidden', 'true' );
 				badge.textContent = '•'; // bullet •
-				li.appendChild( badge );
+				labelTarget.appendChild( badge );
 			}
-			if ( ! li.querySelector( '.maestro-modified-sr' ) ) {
+			if ( labelTarget && ! labelTarget.querySelector( '.maestro-modified-sr' ) ) {
 				var srText = el( 'span', 'screen-reader-text maestro-modified-sr' );
 				srText.textContent = I.modified;
-				li.appendChild( srText );
+				labelTarget.appendChild( srText );
 			}
 		} else {
 			li.classList.remove( 'maestro-modified' );
