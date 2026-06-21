@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: completed
-stopped_at: Completed 11.1-04-PLAN.md — Phase 11.1 zero-regression gate signed off; HARD-01/02/03 Complete; ROADMAP + REQUIREMENTS updated; next = Phase 12 (after Phase 11 discuss + plan)
+status: in_progress
+stopped_at: Completed 11.1-04-PLAN.md — Phase 11.1 (HARD-01/02/03) signed off and merged to main; next = Phase 11 (Editor Entry & Reorder Fixes), which needs /gsd:discuss-phase 11 before planning. 1.2.0 release path remaining: 11 → 12 → tag.
 last_updated: "2026-06-20T17:58:18.283Z"
-last_activity: 2026-06-19 — Phase 9 Plan 06 complete; zero-regression gate signed off; UX-03/04/07 all Complete; full suite JS 53/53, PHP 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors
+last_activity: 2026-06-20 — Phase 11.1 complete (HARD-01/02/03); custom_menu_order gated, config payload bounded, save-race e2e locked in; full suite green (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0, Plugin Check 0); merged to main
 progress:
   total_phases: 8
   completed_phases: 4
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-14)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** v1.2 "Editor UX polish" — Phase 9 ready to plan
+**Current focus:** v1.2 "Editor UX polish" — Phases 9 + 11.1 done; Phase 11 next (discuss before planning), then Phase 12, then cut 1.2.0
 
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
 Phase: Phase 11 (Editor Entry & Reorder Fixes) — needs `/gsd:discuss-phase 11` before planning
-Plan: N/A — Phase 9 complete; Phase 10 is independent research (can run in parallel); Phase 11 is next on the 1.2.0 release path
-Status: Phase 9 complete; Phase 11 is next
-Last activity: 2026-06-19 — Phase 9 Plan 06 complete; zero-regression gate signed off; UX-03/04/07 all Complete; full suite JS 53/53, PHP 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors
+Plan: N/A — Phases 9 + 11.1 complete; Phase 10 is independent research (can run in parallel); Phase 11 is next on the 1.2.0 release path (discuss before planning)
+Status: Phases 9 + 11.1 complete; Phase 11 is next, then Phase 12, then tag 1.2.0
+Last activity: 2026-06-20 — Phase 11.1 complete (HARD-01/02/03); full suite green (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0, Plugin Check 0); merged to main
 
 Progress: [#########-] 90%
 
