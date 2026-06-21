@@ -352,7 +352,7 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 		await expect( page.locator( '#menu-posts .wp-menu-name' ) ).not.toContainText( 'Articles' );
 	} );
 
-	test( 'keyboard-only reorder moves a top-level item and persists', async ( { page } ) => {
+	test( 'panel reorder buttons move a top-level item and persist (control-driven, OS-independent)', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
 		await expect( page.locator( '.maestro-toolbar' ) ).toBeVisible();
 
@@ -364,29 +364,34 @@ test.describe( 'Admin Menu Maestro — editor', () => {
 
 		// Select Posts via keyboard: focus the anchor then press Enter.
 		// selectItem() is called, which populates the panel and moves focus to
-		// the rename input. We then re-focus the anchor to position the first
-		// Alt+Arrow keypress on the menu row.
+		// the rename input (real post-selection focus context on all OSes).
 		await page.locator( '#menu-posts > a.menu-top' ).focus();
 		await page.locator( '#menu-posts > a.menu-top' ).press( 'Enter' );
 		await expect( page.locator( '.maestro-toolbar .maestro-panel' ) ).toBeVisible();
 
-		// Bring focus back to the menu row anchor for the first keyboard move.
-		await page.locator( '#menu-posts > a.menu-top' ).focus();
+		// Assert the rename input is focused — this is the real focus context after
+		// selection. The original test cheated by re-focusing the row anchor here to
+		// paper over the fact that Alt+Arrow on macOS performs caret navigation in the
+		// input and never reaches the reorder handler.
+		await expect( page.locator( '.maestro-toolbar .maestro-rename-input' ) ).toBeFocused();
 
-		// First Alt+ArrowDown move — await the debounced autosave.
+		// Drive the panel ▼ reorder button (Tab-reachable from the rename input,
+		// OS-independent). button.maestro-move-down is delivered by 11-07.
+		// This is RED today: the button does not exist yet.
+		const moveDown = page.locator( '.maestro-toolbar .maestro-panel button.maestro-move-down' );
+
+		// First move-down — await the debounced autosave.
 		const save1 = page.waitForResponse(
 			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
 		);
-		await page.keyboard.press( 'Alt+ArrowDown' );
+		await moveDown.click();
 		await save1;
 
-		// CHAINED MOVE: the JS handler restores focus to the moved item's anchor
-		// after re-appending the DOM node. Without any re-focus here, the second
-		// press fires on the same item and moves it again — proving focus retention.
+		// Second move-down — the button exercises the same reorderMove/insertBefore path.
 		const save2 = page.waitForResponse(
 			r => POST_SAVE( r.url() ) && r.request().method() === 'POST' && r.ok()
 		);
-		await page.keyboard.press( 'Alt+ArrowDown' );
+		await moveDown.click();
 		await save2;
 
 		// Posts should have advanced by two positions (boundary permitting).
@@ -870,6 +875,46 @@ test.describe( 'Phase 11 — editor entry & reorder fixes (Wave 0 guards)', () =
 			// 60px is a generous upper bound for a single dashicon node — label text would push
 			// it larger. 11-02 wires the label-wrapper to be hidden; this width proxy is
 			// selector-agnostic.
+			const toggleBox = await page.locator( '#wp-admin-bar-maestro-toggle' ).boundingBox();
+			expect( toggleBox, `#wp-admin-bar-maestro-toggle must be in the DOM at ${ width }px` ).not.toBeNull();
+			expect(
+				toggleBox!.width,
+				`toggle must be icon-only (narrow) at ${ width }px — label text hidden`
+			).toBeLessThanOrEqual( 60 );
+		}
+	} );
+
+	/**
+	 * UX-08a (enter state): The admin-bar maestro-toggle must stay visible and render
+	 * icon-only at mobile widths <=782px and <=600px in the NON-edit (enter) state —
+	 * navigated with NO maestro_edit param.
+	 *
+	 * The existing UX-08a test above only exercises the EXIT state (maestro_edit=1).
+	 * This test exercises the ENTER state: the user is not yet editing and needs the
+	 * "Edit Menu" entry toggle to be visible on mobile.
+	 *
+	 * EXPECTED TO FAIL against current code: includes/class-assets.php:55 returns early
+	 * before enqueuing maestro.css when is_edit_mode() is false, so the <=782px admin-bar
+	 * override (maestro.css:516/521) never loads and WP core's display:none hides the node.
+	 * 11-06 makes this GREEN by enqueuing the override unconditionally.
+	 *
+	 * Wave 0 red guard — RED before any source change.
+	 */
+	test( 'UX-08a: edit ENTER toggle stays visible and icon-only at <=782px and <=600px (non-edit state)', async ( { page } ) => {
+		for ( const width of [ 782, 600 ] ) {
+			await page.setViewportSize( { width, height: 800 } );
+			// Navigate with NO maestro_edit param — this is the enter (non-edit) state.
+			await page.goto( '/wp-admin/index.php' );
+
+			// The toggle node must remain visible (core hides it at <=782px — override needed).
+			await expect( page.locator( '#wp-admin-bar-maestro-toggle' ) ).toBeVisible();
+
+			// Icon-only: the .ab-icon dashicon inside the node must be visible.
+			await expect( page.locator( '#wp-admin-bar-maestro-toggle .ab-icon' ) ).toBeVisible();
+
+			// The node bounding width should be small (icon-only, no label text expanding it).
+			// 60px is a generous upper bound for a single dashicon node — label text would push
+			// it larger. Width proxy is selector-agnostic.
 			const toggleBox = await page.locator( '#wp-admin-bar-maestro-toggle' ).boundingBox();
 			expect( toggleBox, `#wp-admin-bar-maestro-toggle must be in the DOM at ${ width }px` ).not.toBeNull();
 			expect(
