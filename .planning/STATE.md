@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: completed
+status: executing
 stopped_at: Phase 11 context gathered (UX-08a/b, BUG-06, BUG-07 decided; UX-09 reopened separately)
-last_updated: "2026-06-21T16:27:09.588Z"
+last_updated: "2026-06-21T16:33:02.695Z"
 last_activity: 2026-06-20 — Phase 11.1 complete (HARD-01/02/03); full suite green (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0, Plugin Check 0); merged to main
 progress:
   total_phases: 8
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 Milestone: v1.2 Editor UX Polish — in progress
 Phase: Phase 11 (Editor Entry & Reorder Fixes) — needs `/gsd:discuss-phase 11` before planning
 Plan: N/A — Phases 9 + 11.1 complete; Phase 10 is independent research (can run in parallel); Phase 11 is next on the 1.2.0 release path (discuss before planning)
-Status: Phases 9 + 11.1 complete; Phase 11 is next, then Phase 12, then tag 1.2.0
+Status: In progress — Phases 9 + 11.1 done; Phase 11 next (plan → execute), then Phase 12, then tag 1.2.0
 Last activity: 2026-06-20 — Phase 11.1 complete (HARD-01/02/03); full suite green (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0, Plugin Check 0); merged to main
 
 Progress: [#########-] 90%
@@ -122,6 +122,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-21T16:27:09.584Z
+Last session: 2026-06-21T16:33:02.691Z
 Stopped at: Phase 11 context gathered (UX-08a/b, BUG-06, BUG-07 decided; UX-09 reopened separately)
 Resume file: .planning/phases/11-editor-entry-reorder-fixes/11-CONTEXT.md
