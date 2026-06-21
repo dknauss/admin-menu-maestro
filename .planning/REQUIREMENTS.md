@@ -152,9 +152,9 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | UX-04 | Phase 9: Editor UX Polish | Complete |
 | UX-07 | Phase 9: Editor UX Polish | Complete |
 | V2-16 | Phase 10: Third-Party Menu Compatibility Research | Pending (research spike) |
-| UX-08 | Phase 11: Editor Entry & Reorder Fixes | Pending (scaffolded — needs discuss) |
-| BUG-06 | Phase 11: Editor Entry & Reorder Fixes | Pending (scaffolded) |
-| BUG-07 | Phase 11: Editor Entry & Reorder Fixes | Pending (scaffolded) |
+| UX-08 | Phase 11: Editor Entry & Reorder Fixes | Complete |
+| BUG-06 | Phase 11: Editor Entry & Reorder Fixes | Complete |
+| BUG-07 | Phase 11: Editor Entry & Reorder Fixes | Complete |
 | HARD-01 | Phase 11.1: P1 Review Hardening | Complete |
 | HARD-02 | Phase 11.1: P1 Review Hardening | Complete |
 | HARD-03 | Phase 11.1: P1 Review Hardening | Complete |

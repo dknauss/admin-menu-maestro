@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: executing
-stopped_at: Completed 11-02-PLAN.md
-last_updated: "2026-06-21T21:13:12.595Z"
+stopped_at: Completed 11-03-PLAN.md
+last_updated: "2026-06-21T21:31:21.103Z"
 last_activity: 2026-06-20 — Phase 11.1 complete (HARD-01/02/03); full suite green (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0, Plugin Check 0); merged to main
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 24
-  completed_plans: 21
+  completed_plans: 22
   percent: 90
 ---
 
@@ -71,6 +71,7 @@ Progress: [#########-] 90%
 | Phase 11.1-p1-review-hardening P04 | 8m | 2 tasks | 2 files |
 | Phase 11-editor-entry-reorder-fixes P01 | 9 | 2 tasks | 2 files |
 | Phase 11-editor-entry-reorder-fixes P02 | 721 | 2 tasks | 2 files |
+| Phase 11-editor-entry-reorder-fixes P03 | 8 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,8 @@ Recent decisions affecting current work:
 - [Phase 11-editor-entry-reorder-fixes]: BUG-06 Wave 0 test probes separator count and test.skip()s if none present — never passes vacuously; fixture added in 11-03
 - [Phase 11-editor-entry-reorder-fixes]: UX-08a icon-only assertion uses .ab-icon visible + bounding-width proxy (selector-agnostic) to avoid coupling to label-wrapper class chosen in 11-02
 - [Phase 11-editor-entry-reorder-fixes]: maestro-ab-label wrapper added in class-admin-bar.php so CSS icon-only rule has stable plugin-scoped hook; meta.title is state-conditional (Edit Admin Menu / Exit Editor); display:block override uses specificity (0,2,1) matching WP core whitelist pattern — no \!important
+- [Phase 11-editor-entry-reorder-fixes]: BUG-06: single-node insertBefore keyed off dir and maestroChildren index; no new helper (pure DOM glue, not unit-testable as expect(fn).toBe(out))
+- [Phase 11-editor-entry-reorder-fixes]: BUG-07: removal code stays li.querySelector() — badge is still descendant of <li> after target change; no CSS edit (maestro.css owned by 11-02)
 
 ### Roadmap Evolution
 
@@ -128,6 +131,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-21T21:13:12.591Z
-Stopped at: Completed 11-02-PLAN.md
+Last session: 2026-06-21T21:31:21.100Z
+Stopped at: Completed 11-03-PLAN.md
 Resume file: None
