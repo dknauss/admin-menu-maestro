@@ -45,7 +45,7 @@ created: 2026-06-21
 | UX-08b | PHP label strings changed ("Edit Menu" / "Exit") | unit (PHP) | `phpunit tests/unit/AdminBarTest.php` | ⚠️ verify at plan time | ⬜ pending |
 | UX-08b | i18n: no new JS keys → LocalizationTest unchanged | integration | `phpunit tests/integration/LocalizationTest.php` | ✅ | ⬜ pending |
 | UX-08a | Toggle visible at ≤782px | e2e | `editor.spec.ts` — `setViewportSize({width:782})` + `toBeVisible()` | ❌ W0 | ⬜ pending |
-| UX-08a | Icon-only (label text hidden) at ≤782px | e2e / screenshot | Playwright `boundingBox`/screenshot assertion at 782px | ❌ W0 (or manual) | ⬜ pending |
+| UX-08a | Icon-only (label text hidden) at ≤782px | e2e + scripted capture | Playwright `boundingBox` assertion (11-01/11-02 e2e) + deterministic `npm run screenshots` capture at 782/600px (11-04, MAESTRO_CAPTURE-gated) | ❌ W0 | ⬜ pending |
 | BUG-06 | Single-node move leaves separators in place | e2e | new test: `li.wp-menu-separator` positions unchanged after Alt+Arrow | ❌ W0 | ⬜ pending |
 | BUG-06 | Existing keyboard-reorder happy path still passes | e2e | `playwright test --grep "keyboard-only reorder"` | ✅ | ⬜ pending |
 | BUG-07 | Badge renders next to label on item-with-submenu | e2e | `.maestro-modified-badge` inside `#menu-posts .wp-menu-name` | ❌ W0 | ⬜ pending |
@@ -66,11 +66,13 @@ created: 2026-06-21
 
 ## Manual-Only Verifications
 
-| Behavior | Requirement | Why Manual | Test Instructions |
-|----------|-------------|------------|-------------------|
-| Mobile tap-target reachability (visual/UX confirmation) | UX-08a | Visual confirmation beyond `toBeVisible()` — the automated e2e covers visibility; a human screenshot at ≤782px / ≤600px confirms it is tappable and not visually broken | Browser-capable session at execute time: load wp-admin at 782px and 600px viewports, confirm the Maestro toggle is visible, icon-only, and tappable; capture screenshot for the phase gate |
+*None blocking.* The UX-08a mobile screenshot — previously a manual browser-handoff checkpoint — is now a **deterministic scripted capture** (11-04 Task 2): a `MAESTRO_CAPTURE`-gated Playwright spec (`tests/e2e/specs/capture-screenshots.spec.ts`, the wp-sudo `capture-screenshots.spec.ts` pattern) writes `ux-08a-782.png` / `ux-08a-600.png` into the phase `screenshots/` dir via `npm run screenshots`, reusing the e2e harness's admin auth. The authoritative visibility + icon-only assertions live in the UX-08a e2e (11-01/11-02).
 
-*Note: the UX-08a viewport-visibility assertion IS automatable in Playwright; the manual pass is a nice-to-have visual confirmation, not the primary gate.*
+| Behavior | Requirement | Status | Notes |
+|----------|-------------|--------|-------|
+| Mobile tap-target reachability (visual glance) | UX-08a | **Optional, non-blocking** | A human may glance at the committed PNGs to confirm comfortable thumb reach; it does NOT gate the phase and requires no separate browser session. |
+
+*Note: this follows the project pattern of scripting deterministic browser cases (per the global capability-detecting browser-handoff rule) rather than handing off to an interactive session.*
 
 ---
 
