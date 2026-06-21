@@ -61,6 +61,7 @@ completed: 2026-06-21
 | Playwright e2e | `npm run test:e2e` | 31/31 ✓ (28 baseline + UX-08a + BUG-06 + BUG-07) |
 | phpcs | `composer lint` | clean (8/8 files) ✓ |
 | PHPStan | `composer analyse:phpstan` | 0 errors ✓ |
+| Plugin Check | `wp plugin check build/maestro-menu-editor` | No errors found ✓ (built runtime tree, CI parity) |
 
 - **BUG-06 (e2e test 29) actually exercised separator preservation** against real WP-core separators — it ran and passed, it did **not** skip. No separator fixture was required.
 - **L301 'modified indicator' and L355 'keyboard-only reorder' baselines** still pass (no regression from the BUG-06/BUG-07 DOM changes).
