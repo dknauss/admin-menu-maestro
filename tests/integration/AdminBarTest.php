@@ -56,6 +56,13 @@ class AdminBarTest extends WP_UnitTestCase {
 	 * @return object|null The node object returned by WP_Admin_Bar::get_node().
 	 */
 	private function render_toggle_node() {
+		// WP_Admin_Bar lives in wp-includes/class-wp-admin-bar.php and is only
+		// auto-loaded when the admin bar actually renders. The phpunit integration
+		// bootstrap does not load it, so require it explicitly before instantiating.
+		if ( ! class_exists( 'WP_Admin_Bar' ) ) {
+			require_once ABSPATH . WPINC . '/class-wp-admin-bar.php';
+		}
+
 		$bar = new WP_Admin_Bar();
 
 		// Instantiating Admin_Bar hooks node() on admin_bar_menu at prio 100.
