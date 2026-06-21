@@ -93,7 +93,7 @@ skipped: 0
     - "Provide an OS-independent reorder affordance — RECOMMENDED: explicit up/down (▲/▼) buttons in the panel that call the existing reorderMove/insertBefore path (Tab-reachable from the rename input; works on all OSes + AT); optionally also a non-conflicting key combo"
     - "Update aria-keyshortcuts + i18n strings to match the chosen affordance"
     - "e2e: delete the :373-374 re-focus cheat, assert the rename input is focused after selection, then drive the actual control (button click is fully reproducible headless; an Alt/Option+Arrow-on-input test can pass headless yet still fail on real macOS)"
-  design_decision: "Fix approach is a UX choice (explicit buttons vs alternate key combo vs change focus-on-select); couples with the Gap-2 toolbar-space issue. Pending user input."
+  design_decision: "RESOLVED (user, 2026-06-21): add explicit ▲/▼ up/down reorder buttons in the panel — Tab-reachable from the rename input, reusing the existing reorderMove/insertBefore path; OS-independent and accessible. Fold these buttons INTO the Gap-2 toolbar compression so they fit at mobile widths (icon-only ▲/▼ with aria-labels). Optionally retain a non-conflicting key combo (NOT Alt/Option+Arrow) as an extra accelerator. Update aria-keyshortcuts/i18n to match. Keep rename auto-focus-on-select (do not regress the type-immediately flow)."
   debug_session: ""
 - truth: "The modified-state badge (bullet •) on a changed row is large/visible enough to read at a glance"
   status: failed
