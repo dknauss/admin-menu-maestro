@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: in_progress
-stopped_at: Completed 11.1-04-PLAN.md — Phase 11.1 (HARD-01/02/03) signed off and merged to main; next = Phase 11 (Editor Entry & Reorder Fixes), which needs /gsd:discuss-phase 11 before planning. 1.2.0 release path remaining: 11 → 12 → tag.
-last_updated: "2026-06-20T17:58:18.283Z"
-last_activity: 2026-06-20 — Phase 11.1 complete (HARD-01/02/03); custom_menu_order gated, config payload bounded, save-race e2e locked in; full suite green (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0, Plugin Check 0); merged to main
+status: completed
+stopped_at: Phase 11 context gathered (UX-08a/b, BUG-06, BUG-07 decided; UX-09 reopened separately)
+last_updated: "2026-06-21T16:27:09.588Z"
+last_activity: 2026-06-20 — Phase 11.1 complete (HARD-01/02/03); full suite green (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0, Plugin Check 0); merged to main
 progress:
   total_phases: 8
   completed_phases: 4
@@ -122,6 +122,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-20T17:54:02.390Z
-Stopped at: Completed 11.1-04-PLAN.md — Phase 11.1 zero-regression gate signed off; HARD-01/02/03 Complete; ROADMAP + REQUIREMENTS updated; next = Phase 12 (after Phase 11 discuss + plan)
-Resume file: None
+Last session: 2026-06-21T16:27:09.584Z
+Stopped at: Phase 11 context gathered (UX-08a/b, BUG-06, BUG-07 decided; UX-09 reopened separately)
+Resume file: .planning/phases/11-editor-entry-reorder-fixes/11-CONTEXT.md
