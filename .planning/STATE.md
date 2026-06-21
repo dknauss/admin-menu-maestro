@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: executing
-stopped_at: Completed 11-05-PLAN.md
-last_updated: "2026-06-21T22:30:00.000Z"
+status: completed
+stopped_at: Completed 11-06-PLAN.md
+last_updated: "2026-06-21T23:41:28.510Z"
 last_activity: "2026-06-21 — Phase 11 gap-closure 11-05: Wave 0 red guards committed — enter-state UX-08a + de-cheated control-driven reorder (both RED by design, await 11-06/11-07 for GREEN)"
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 28
-  completed_plans: 24
-  percent: 86
+  completed_plans: 25
+  percent: 90
 ---
 
 # Project State
@@ -73,6 +73,7 @@ Progress: [#########-] 90%
 | Phase 11-editor-entry-reorder-fixes P02 | 721 | 2 tasks | 2 files |
 | Phase 11-editor-entry-reorder-fixes P03 | 8 | 2 tasks | 1 files |
 | Phase 11-editor-entry-reorder-fixes P05 (gap-closure) | 10m | 2 tasks | 1 file |
+| Phase 11-editor-entry-reorder-fixes P06 | 2 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -118,6 +119,8 @@ Recent decisions affecting current work:
 - [Phase 11-editor-entry-reorder-fixes]: BUG-07: removal code stays li.querySelector() — badge is still descendant of <li> after target change; no CSS edit (maestro.css owned by 11-02)
 - [Phase 11-editor-entry-reorder-fixes 11-05 gap-closure]: UX-08a enter-state guard navigates /wp-admin/index.php (no maestro_edit) at 782px/600px — RED because class-assets.php early-returns before enqueuing maestro.css in non-edit state; 11-06 turns it GREEN
 - [Phase 11-editor-entry-reorder-fixes 11-05 gap-closure]: Reorder test renamed to control-driven, OS-independent; L373-374 re-focus cheat removed; Alt+ArrowDown replaced by button.maestro-move-down clicks; rename-input focus asserted after selectItem — RED because button absent; 11-07 turns it GREEN
+- [Phase 11-editor-entry-reorder-fixes]: 11-06 removes maestro.css duplicate toggle override; 11-07 adds to the same file in a separate commit in dependency order — no conflict
+- [Phase 11-editor-entry-reorder-fixes]: Always-loaded micro-stylesheet pattern: maestro-admin-bar.css holds only the always-needed admin-bar CSS; heavy editor bundle stays edit-mode-gated
 
 ### Roadmap Evolution
 
@@ -135,6 +138,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-21T22:30:00.000Z
-Stopped at: Completed 11-05-PLAN.md
+Last session: 2026-06-21T23:41:28.508Z
+Stopped at: Completed 11-06-PLAN.md
 Resume file: None
