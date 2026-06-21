@@ -1,0 +1,289 @@
+<?php
+/**
+ * Pure unit tests for Config::sanitize() payload-size caps (HARD-02).
+ *
+ * All assertions reference Config::MAX_* constants, never literals.
+ * WordPress function stubs live in tests/bootstrap-unit.php so the no-WP
+ * unit suite can call Config::sanitize() and Config::sanitize_icon().
+ *
+ * Coverage:
+ *  Task 1 — Title byte cap (MAX_TITLE_BYTES), items count cap (MAX_ITEMS),
+ *            top_order cap (MAX_ORDER_ENTRIES), sub_order children cap
+ *            (MAX_SUB_ORDER_CHILDREN), hidden_roles cap (MAX_HIDDEN_ROLES).
+ *  Task 2 — data-URI byte cap (MAX_DATA_URI_BYTES) via sanitize_icon() 'data' branch.
+ *
+ * @package Maestro
+ */
+
+namespace Maestro\Tests\Unit;
+
+use Maestro\Config;
+use Yoast\PHPUnitPolyfills\TestCases\TestCase;
+
+/**
+ * @covers \Maestro\Config::sanitize
+ * @covers \Maestro\Config::sanitize_icon
+ */
+class ConfigSanitizeTest extends TestCase {
+
+	/** @var Config */
+	private $config;
+
+	protected function set_up() {
+		parent::set_up();
+		$this->config = new Config();
+	}
+
+	/* -----------------------------------------------------------------------
+	 * Title byte cap (MAX_TITLE_BYTES)
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * A title of exactly MAX_TITLE_BYTES bytes must pass through unchanged.
+	 */
+	public function test_title_at_limit_passes_unchanged() {
+		$title = str_repeat( 'a', Config::MAX_TITLE_BYTES );
+		$raw   = array(
+			'items' => array( 'menu-slug' => array( 'title' => $title ) ),
+		);
+		$out   = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_TITLE_BYTES, strlen( $out['items']['menu-slug']['title'] ) );
+	}
+
+	/**
+	 * A title of MAX_TITLE_BYTES+1 bytes must be truncated to MAX_TITLE_BYTES.
+	 */
+	public function test_title_over_by_one_is_truncated() {
+		$title = str_repeat( 'b', Config::MAX_TITLE_BYTES + 1 );
+		$raw   = array(
+			'items' => array( 'menu-slug' => array( 'title' => $title ) ),
+		);
+		$out   = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_TITLE_BYTES, strlen( $out['items']['menu-slug']['title'] ) );
+	}
+
+	/**
+	 * A very long title (500 bytes) must be truncated to MAX_TITLE_BYTES.
+	 */
+	public function test_title_well_over_is_truncated() {
+		$title = str_repeat( 'c', 500 );
+		$raw   = array(
+			'items' => array( 'menu-slug' => array( 'title' => $title ) ),
+		);
+		$out   = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_TITLE_BYTES, strlen( $out['items']['menu-slug']['title'] ) );
+	}
+
+	/**
+	 * An empty/whitespace-only title must not produce a 'title' key (existing behaviour).
+	 */
+	public function test_empty_title_omitted() {
+		$raw = array(
+			'items' => array( 'menu-slug' => array( 'title' => '   ' ) ),
+		);
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertArrayNotHasKey( 'menu-slug', $out['items'] );
+	}
+
+	/* -----------------------------------------------------------------------
+	 * Items count cap (MAX_ITEMS)
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Exactly MAX_ITEMS slugs must all be stored.
+	 */
+	public function test_items_at_limit_all_stored() {
+		$items = array();
+		for ( $i = 1; $i <= Config::MAX_ITEMS; $i++ ) {
+			$items[ "slug-$i" ] = array( 'title' => "Title $i" );
+		}
+		$raw = array( 'items' => $items );
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_ITEMS, count( $out['items'] ) );
+	}
+
+	/**
+	 * MAX_ITEMS+1 slugs: only first MAX_ITEMS stored (insertion order).
+	 */
+	public function test_items_over_by_one_last_dropped() {
+		$items = array();
+		for ( $i = 1; $i <= Config::MAX_ITEMS + 1; $i++ ) {
+			$items[ "slug-$i" ] = array( 'title' => "Title $i" );
+		}
+		$raw = array( 'items' => $items );
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_ITEMS, count( $out['items'] ) );
+		$this->assertArrayHasKey( 'slug-1', $out['items'], 'First slug must be present' );
+		$this->assertArrayNotHasKey( 'slug-' . ( Config::MAX_ITEMS + 1 ), $out['items'], 'Last slug must be dropped' );
+	}
+
+	/* -----------------------------------------------------------------------
+	 * top_order cap (MAX_ORDER_ENTRIES)
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Exactly MAX_ORDER_ENTRIES entries must all be stored.
+	 */
+	public function test_top_order_at_limit_all_stored() {
+		$slugs = array();
+		for ( $i = 1; $i <= Config::MAX_ORDER_ENTRIES; $i++ ) {
+			$slugs[] = "slug-$i";
+		}
+		$raw = array( 'top_order' => $slugs );
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_ORDER_ENTRIES, count( $out['top_order'] ) );
+	}
+
+	/**
+	 * MAX_ORDER_ENTRIES+1 entries: only first MAX_ORDER_ENTRIES stored.
+	 */
+	public function test_top_order_over_by_one_truncated() {
+		$slugs = array();
+		for ( $i = 1; $i <= Config::MAX_ORDER_ENTRIES + 1; $i++ ) {
+			$slugs[] = "slug-$i";
+		}
+		$raw = array( 'top_order' => $slugs );
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_ORDER_ENTRIES, count( $out['top_order'] ) );
+		$this->assertSame( 'slug-1', $out['top_order'][0], 'First entry must be kept' );
+	}
+
+	/* -----------------------------------------------------------------------
+	 * sub_order children cap (MAX_SUB_ORDER_CHILDREN)
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Exactly MAX_SUB_ORDER_CHILDREN children under one parent must all be stored.
+	 */
+	public function test_sub_order_children_at_limit_all_stored() {
+		$children = array();
+		for ( $i = 1; $i <= Config::MAX_SUB_ORDER_CHILDREN; $i++ ) {
+			$children[] = "child-$i";
+		}
+		$raw = array( 'sub_order' => array( 'parent-slug' => $children ) );
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_SUB_ORDER_CHILDREN, count( $out['sub_order']['parent-slug'] ) );
+	}
+
+	/**
+	 * MAX_SUB_ORDER_CHILDREN+1 children: only first MAX_SUB_ORDER_CHILDREN stored.
+	 */
+	public function test_sub_order_children_over_by_one_truncated() {
+		$children = array();
+		for ( $i = 1; $i <= Config::MAX_SUB_ORDER_CHILDREN + 1; $i++ ) {
+			$children[] = "child-$i";
+		}
+		$raw = array( 'sub_order' => array( 'parent-slug' => $children ) );
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_SUB_ORDER_CHILDREN, count( $out['sub_order']['parent-slug'] ) );
+		$this->assertSame( 'child-1', $out['sub_order']['parent-slug'][0], 'First child must be kept' );
+	}
+
+	/* -----------------------------------------------------------------------
+	 * hidden_roles cap (MAX_HIDDEN_ROLES)
+	 * The wp_roles() stub in bootstrap-unit.php returns 60 valid roles
+	 * (role-1 … role-60), so array_intersect passes them all through and
+	 * the slice cap is exercised cleanly.
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * Exactly MAX_HIDDEN_ROLES roles must all be stored.
+	 */
+	public function test_hidden_roles_at_limit_all_stored() {
+		$roles = array();
+		for ( $i = 1; $i <= Config::MAX_HIDDEN_ROLES; $i++ ) {
+			$roles[] = "role-$i";
+		}
+		$raw = array(
+			'items' => array(
+				'menu-slug' => array( 'hidden_roles' => $roles ),
+			),
+		);
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_HIDDEN_ROLES, count( $out['items']['menu-slug']['hidden_roles'] ) );
+	}
+
+	/**
+	 * MAX_HIDDEN_ROLES+1 roles: only first MAX_HIDDEN_ROLES stored.
+	 */
+	public function test_hidden_roles_over_by_one_truncated() {
+		$roles = array();
+		for ( $i = 1; $i <= Config::MAX_HIDDEN_ROLES + 1; $i++ ) {
+			$roles[] = "role-$i";
+		}
+		$raw = array(
+			'items' => array(
+				'menu-slug' => array( 'hidden_roles' => $roles ),
+			),
+		);
+		$out = $this->config->sanitize( $raw );
+
+		$this->assertSame( Config::MAX_HIDDEN_ROLES, count( $out['items']['menu-slug']['hidden_roles'] ) );
+	}
+
+	/* -----------------------------------------------------------------------
+	 * data-URI byte cap (MAX_DATA_URI_BYTES) — Task 2
+	 * Tests Config::sanitize_icon() 'data' branch directly (pure — no esc_url_raw).
+	 * --------------------------------------------------------------------- */
+
+	/**
+	 * A real small data-URI (well under cap) must pass through unchanged.
+	 */
+	public function test_data_uri_small_real_passes_unchanged() {
+		$icon = 'data:image/svg+xml;base64,PHN2Zy8+';
+		$this->assertSame( $icon, Config::sanitize_icon( $icon ) );
+	}
+
+	/**
+	 * A data-URI of exactly MAX_DATA_URI_BYTES bytes must pass through unchanged.
+	 */
+	public function test_data_uri_at_limit_passes_unchanged() {
+		$prefix = 'data:image/png;base64,';
+		$needed = Config::MAX_DATA_URI_BYTES - strlen( $prefix );
+		// Fill with valid base64 chars ('A') to reach exactly MAX_DATA_URI_BYTES total.
+		$body   = str_repeat( 'A', $needed );
+		$icon   = $prefix . $body;
+		$this->assertSame( Config::MAX_DATA_URI_BYTES, strlen( $icon ) );
+		$this->assertSame( $icon, Config::sanitize_icon( $icon ) );
+	}
+
+	/**
+	 * A data-URI of MAX_DATA_URI_BYTES+1 bytes must be dropped to '' (not truncated).
+	 */
+	public function test_data_uri_over_by_one_dropped() {
+		$prefix = 'data:image/png;base64,';
+		$needed = Config::MAX_DATA_URI_BYTES - strlen( $prefix ) + 1;
+		$body   = str_repeat( 'A', $needed );
+		$icon   = $prefix . $body;
+		$this->assertSame( Config::MAX_DATA_URI_BYTES + 1, strlen( $icon ) );
+		$this->assertSame( '', Config::sanitize_icon( $icon ) );
+	}
+
+	/**
+	 * A data-URI well over the cap must be dropped to ''.
+	 */
+	public function test_data_uri_well_over_cap_dropped() {
+		$prefix = 'data:image/png;base64,';
+		$body   = str_repeat( 'A', Config::MAX_DATA_URI_BYTES * 2 );
+		$icon   = $prefix . $body;
+		$this->assertSame( '', Config::sanitize_icon( $icon ) );
+	}
+
+	/**
+	 * An empty string must return '' (existing behaviour unchanged).
+	 */
+	public function test_data_uri_empty_returns_empty() {
+		$this->assertSame( '', Config::sanitize_icon( '' ) );
+	}
+}

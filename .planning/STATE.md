@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: planning
-stopped_at: Completed 09-06-PLAN.md — Phase 9 zero-regression gate signed off; Phase 9 (UX-03/04/07) complete; next = Phase 11 (Editor Entry & Reorder Fixes) on the 1.2.0 release path
-last_updated: "2026-06-20T03:00:00.000Z"
-last_activity: 2026-06-19 — Phase 9 complete (UX-03/04/07); full suite green; next = Phase 11 (release path 9 → 11 → 12); Phase 10 is independent research
+status: completed
+stopped_at: Completed 11.1-04-PLAN.md — Phase 11.1 zero-regression gate signed off; HARD-01/02/03 Complete; ROADMAP + REQUIREMENTS updated; next = Phase 12 (after Phase 11 discuss + plan)
+last_updated: "2026-06-20T17:58:18.283Z"
+last_activity: 2026-06-19 — Phase 9 Plan 06 complete; zero-regression gate signed off; UX-03/04/07 all Complete; full suite JS 53/53, PHP 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors
 progress:
-  total_phases: 7
-  completed_phases: 3
-  total_plans: 16
-  completed_plans: 14
-  percent: 93
+  total_phases: 8
+  completed_phases: 4
+  total_plans: 20
+  completed_plans: 19
+  percent: 90
 ---
 
 # Project State
@@ -65,6 +65,10 @@ Progress: [#########-] 90%
 | Phase 09-editor-ux-polish P04 | 18 | 3 tasks | 5 files |
 | Phase 09-editor-ux-polish P05 | ~60m | 3 tasks (2 auto + 1 checkpoint) + regression fixes | 2 files |
 | Phase 09-editor-ux-polish P06 | ~15m | 2 tasks (gate + traceability) | 3 files |
+| Phase 11.1-p1-review-hardening P01 | 3m | 1 tasks | 2 files |
+| Phase 11.1-p1-review-hardening P02 | 9 | 2 tasks | 3 files |
+| Phase 11.1-p1-review-hardening P03 | 15m | 2 tasks | 1 file |
+| Phase 11.1-p1-review-hardening P04 | 8m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -93,6 +97,19 @@ Recent decisions affecting current work:
 - [Phase 09-editor-ux-polish]: wave-boundary e2e gate pattern — when Docker/sandbox blocks per-task e2e, run full Playwright suite once at wave boundary before the regression-gate plan
 - [Phase 09-editor-ux-polish P06 sign-off]: "Edit Mode" (not the literal "Menu Edit Mode") is the LOCKED idle indicator text — user's refinement; satisfies UX-03's intent (short, glanceable, non-colour-signalled); reconciliation recorded in ROADMAP Phase 9 success criteria. Same pattern as Phase 8 / REL-06.
 - [Phase 09-editor-ux-polish P06 sign-off]: Full suite green at sign-off — JS logic 53/53, PHP unit 44/44, integration 29/29, e2e 24/24, phpcs clean, Plugin Check 0 errors on shippable source. 3 e2e regressions caught and fixed by the orchestrator's full-suite gate (commits 38323c4, 927b682); 2 dead-surface items removed in code review (commit 1ef7fae).
+- [Phase 11.1-p1-review-hardening]: has_top_order() is public (not private): WP filter dispatch requires public visibility for array-style callbacks — private raises TypeError at call_user_func_array
+- [Phase 11.1-p1-review-hardening]: custom_menu_order gate reads config at filter-call time so WP's per-load invocation gets the live stored value; menu_order/reorder_top stays unconditional (harmless when gate is off, no-ops on empty order)
+- [Phase 11.1-p1-review-hardening]: HARD-02: Config::MAX_* constants pattern — all six size caps are named public class constants; tests reference Config::MAX_* never literals; data-URI over-limit dropped to '' (not substr'd — truncated base64 is corrupt)
+- [Phase 11.1-p1-review-hardening]: HARD-02: WP function stubs added to bootstrap-unit.php (not test file) — allows Config::sanitize() pure-unit calls including hidden_roles cap (wp_roles stub returns 60 roles); stubs use if(\!function_exists()) guards
+- [Phase 11.1-p1-review-hardening P03]: HARD-03: Race (a) exit detection via maestro_edit=1 URL presence/absence — avoids coupling test to server-computed D.exitUrl
+- [Phase 11.1-p1-review-hardening P03]: HARD-03: Race (b) uses page.on('request') counter (deterministic) not negative waitForResponse timeout (non-deterministic)
+- [Phase 11.1-p1-review-hardening P03]: HARD-03: Race (c) uses response-order array (responses.push inside waitForResponse callbacks) to assert POST before DELETE without sleeps
+- [Phase 11.1-p1-review-hardening P03]: HARD-03: E2E run deferred to Wave 2 boundary (Plan 04 gate, Docker, sandbox-disabled) — spec authored only; not marked green until boundary run passes
+- [Phase 11.1-p1-review-hardening]: Phase 11.1 signed off 2026-06-20: zero-regression bar held (PHP unit 61/61, JS 53/53, integration 33/33, e2e 28/28, phpcs clean, PHPStan 0 errors, Plugin Check 0 errors); HARD-01/02/03 Complete
+
+### Roadmap Evolution
+
+- Phase 11.1 inserted after Phase 11: P1 review hardening — scope `custom_menu_order`, bound config payload, save-race E2E coverage (from the 2026-06-20 code-review follow-up). Lands inside the 9 → 11 → 12 cut path, before the 1.2.0 tag.
 
 ### Pending Todos
 
@@ -105,6 +122,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-06-20T03:00:00.000Z
-Stopped at: Completed 09-06-PLAN.md — Phase 9 zero-regression gate signed off; UX-03/04/07 Complete; Phase 9 done; next = Phase 11 (needs /gsd:discuss-phase 11 before planning)
+Last session: 2026-06-20T17:54:02.390Z
+Stopped at: Completed 11.1-04-PLAN.md — Phase 11.1 zero-regression gate signed off; HARD-01/02/03 Complete; ROADMAP + REQUIREMENTS updated; next = Phase 12 (after Phase 11 discuss + plan)
 Resume file: None

@@ -59,7 +59,7 @@ A comprehensive code/process review identified seven priority follow-ups. This h
 
 ### Release / repository operations
 
-- **Update GitHub About homepage**: repository metadata currently points to a stale `dknauss/admin-menu-maestro` Playground URL; update it to the active `dknauss/Maestro` URL.
+- ~~**Update GitHub About homepage**~~ — **Done (2026-06-20).** Repository metadata now points to the active `dknauss/Maestro` stable Playground blueprint URL.
 - **Branch cleanup**: remote branch list is clean except `ci/deploy-dispatch`, but local stale branches remain. Prune/delete local-only branches after confirming no work is needed.
 - **Decide Composer lock policy**: `.gitignore` says `composer.lock` is intentionally not committed. If CI keeps `composer validate --strict`, this is fine; if release reproducibility becomes more important than library-style dependency freshness, revisit the policy.
 - **Remove npm audit allowlist when upstream fixes `@wordpress/env`**: the advisory is dev-only and documented in `bin/audit-npm.mjs`; Dependabot/npm updates should revisit it.

@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; submitted to .org, awaiting review) → [archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17)
-- 🚧 **v1.2 Editor UX Polish** — Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 12; Phase 10 is independent research and does not gate the release.**
+- 🚧 **v1.2 Editor UX Polish** — Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 12; Phase 10 is independent research and does not gate the release.**
 
 ## Phases
 
@@ -130,6 +130,24 @@ Full phase details, success criteria, and outcomes are archived in
   5. Behavioral JS changes are red-first node:test where a logic seam exists; the full zero-regression bar holds (PHP unit, integration, e2e green; Plugin Check 0 errors; phpcs clean)
 **Plans**: TBD
 
+### Phase 11.1: P1 Review Hardening (INSERTED)
+
+**Goal**: The three P1 residuals from the 2026-06-20 code-review follow-up are closed before the 1.2.0 cut — Maestro stops claiming core menu-order machinery it isn't using, the stored config payload is bounded against bloat, and the already-shipped save-race hardening is locked in by automated regression coverage
+**Depends on**: Phase 11
+**Requirements**: HARD-01, HARD-02, HARD-03
+**Inserted 2026-06-20** from the code-review follow-up handoff ([`.planning/reviews/code-review-followup-2026-06-20.md`](reviews/code-review-followup-2026-06-20.md)). Backend/test hardening, independent of the Phase 11 editor UX work; lands inside the 9 → 11 → 11.1 → 12 cut path so it ships in 1.2.0. All code items follow strict red-first TDD per [`CLAUDE.md`](../CLAUDE.md).
+**Status: Complete (2026-06-20)** — all four plans executed; full suite green; HARD-01/02/03 Complete in v1.2 traceability. Zero-regression bar held: PHP unit 61/61, JS logic 53/53, PHP integration 33/33 (85 assertions), Playwright e2e 28/28, phpcs clean, PHPStan 0 errors, Plugin Check 0 errors on shippable source.
+**Success Criteria** (what must be TRUE):
+  1. **HARD-01** ✅ — `custom_menu_order` is enabled only when a non-empty `top_order` is stored; with no stored top-level order, Maestro leaves the `custom_menu_order` / `menu_order` machinery untouched (passes through to other plugins). Confirmed by unit tests over the gating predicate and `reorder_top()`, plus an integration assertion that the filter is not forced `true` on an empty config.
+  2. **HARD-02** ✅ — `Config::sanitize()` caps title length, item/`top_order`/`sub_order` entry counts, `hidden_roles` list length, and data-URI byte length; over-limit input is dropped or truncated deterministically rather than stored verbatim. Covered by red-first unit tests on the pure `sanitize()` path (valid input under the caps is unchanged; over-limit input is bounded).
+  3. **HARD-03** ✅ — Playwright E2E covers the three save races and they resolve correctly: (a) slow REST `POST /config` + Exit waits for the in-flight/queued save; (b) pending rename + Reset All cancels the queued autosave and the DELETE wins; (c) in-flight save + Reset All waits for the save to settle before DELETE and only reloads on success. Test-only — no production behaviour change.
+  4. ✅ The full zero-regression bar holds: PHP unit 61/61, PHP integration 33/33 (85 assertions), JS logic 53/53, Playwright e2e 28/28, `phpcs` clean, PHPStan 0 errors, Plugin Check 0 errors on the shippable source.
+**Plans**: 4 plans
+  - [x] 11.1-01-PLAN.md — HARD-01: gate `custom_menu_order` on a stored `top_order` (predicate-gated filter; red-first integration assertions) [HARD-01]
+  - [x] 11.1-02-PLAN.md — HARD-02: bound `Config::sanitize()` payload (title/items/order/roles counts + data-URI bytes as named `MAX_*` constants; red-first unit) [HARD-02]
+  - [x] 11.1-03-PLAN.md — HARD-03: Playwright e2e for the three save races (slow-save+Exit, pending-rename+Reset All, in-flight+Reset All); test-only [HARD-03]
+  - [x] 11.1-04-PLAN.md — zero-regression gate (full suite + PHPStan + Plugin Check 0 errors) + flip HARD-01/02/03 traceability to Complete [HARD-01, HARD-02, HARD-03]
+
 ### Phase 12: Release Assets Refresh
 **Goal**: The WordPress.org/GitHub banner is refreshed to the REL-07 design target and the directory screenshots are recaptured against the FINAL v1.2 editor UI, so the live listing reflects what 1.2.0 actually ships
 **Depends on**: Phase 9, Phase 11
@@ -145,7 +163,7 @@ Full phase details, success criteria, and outcomes are archived in
 ## Progress
 
 **Execution Order:**
-v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 release path: 9 → 11 → 12, then cut 1.2.0. Phase 10 is an independent research spike (may run anytime, does not gate the release). Phase 11 depends on 9; Phase 12 (release assets) depends on 9 + 11 so screenshots reflect the final UI.
+v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 release path: 9 → 11 → 11.1 → 12, then cut 1.2.0. Phase 10 is an independent research spike (may run anytime, does not gate the release). Phase 11 depends on 9; Phase 11.1 (P1 hardening) depends on 11 and ships in the cut; Phase 12 (release assets) depends on 9 + 11 so screenshots reflect the final UI.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -160,4 +178,5 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 9. Editor UX Polish | v1.2 | 6/6 | Complete | 2026-06-19 |
 | 10. Third-Party Menu Compatibility Research | v1.2 | 0/TBD | Not started (research spike) | - |
 | 11. Editor Entry & Reorder Fixes | v1.2 | 0/TBD | Scaffolded (needs discuss) | - |
+| 11.1. P1 Review Hardening | 4/4 | Complete    | 2026-06-20 | 2026-06-20 |
 | 12. Release Assets Refresh | v1.2 | 0/TBD | Scaffolded (REL-07/08 folded in) | - |

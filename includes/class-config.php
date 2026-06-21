@@ -35,6 +35,50 @@ defined( 'ABSPATH' ) || exit;
 class Config {
 
 	/**
+	 * Maximum byte length of a stored title (strlen, not mb_strlen — storage-truthful).
+	 *
+	 * @var int
+	 */
+	const MAX_TITLE_BYTES = 200;
+
+	/**
+	 * Maximum number of items stored in the 'items' map.
+	 *
+	 * @var int
+	 */
+	const MAX_ITEMS = 200;
+
+	/**
+	 * Maximum number of entries in 'top_order'.
+	 *
+	 * @var int
+	 */
+	const MAX_ORDER_ENTRIES = 200;
+
+	/**
+	 * Maximum number of children per parent in 'sub_order'.
+	 *
+	 * @var int
+	 */
+	const MAX_SUB_ORDER_CHILDREN = 200;
+
+	/**
+	 * Maximum number of hidden roles per item (far above any real site's role count).
+	 *
+	 * @var int
+	 */
+	const MAX_HIDDEN_ROLES = 50;
+
+	/**
+	 * Maximum byte length of a data-URI icon (128 KB raw string).
+	 * ~57x the largest bundled Bootstrap icon (2,242 bytes). A truncated
+	 * base64 string is corrupt, so over-limit data-URIs are dropped to ''.
+	 *
+	 * @var int
+	 */
+	const MAX_DATA_URI_BYTES = 131072;
+
+	/**
 	 * In-request cache of the option.
 	 *
 	 * @var array|null
@@ -117,7 +161,11 @@ class Config {
 				$entry = array();
 
 				if ( isset( $item['title'] ) && '' !== trim( (string) $item['title'] ) ) {
-					$entry['title'] = sanitize_text_field( $item['title'] );
+					$title = sanitize_text_field( $item['title'] );
+					if ( strlen( $title ) > self::MAX_TITLE_BYTES ) {
+						$title = substr( $title, 0, self::MAX_TITLE_BYTES );
+					}
+					$entry['title'] = $title;
 				}
 
 				if ( isset( $item['icon'] ) ) {
@@ -131,6 +179,9 @@ class Config {
 					$roles = array_values(
 						array_intersect( array_map( 'sanitize_key', $item['hidden_roles'] ), $valid_roles )
 					);
+					if ( count( $roles ) > self::MAX_HIDDEN_ROLES ) {
+						$roles = array_slice( $roles, 0, self::MAX_HIDDEN_ROLES );
+					}
 					if ( $roles ) {
 						$entry['hidden_roles'] = $roles;
 					}
@@ -138,19 +189,29 @@ class Config {
 
 				if ( $entry ) {
 					$out['items'][ $slug ] = $entry;
+					if ( count( $out['items'] ) >= self::MAX_ITEMS ) {
+						break; // Deterministic: first N slugs in incoming object order win.
+					}
 				}
 			}
 		}
 
 		if ( ! empty( $raw['top_order'] ) && is_array( $raw['top_order'] ) ) {
-			$out['top_order'] = array_values( array_map( array( $this, 'clean_slug' ), $raw['top_order'] ) );
+			$out['top_order'] = array_slice(
+				array_values( array_map( array( $this, 'clean_slug' ), $raw['top_order'] ) ),
+				0,
+				self::MAX_ORDER_ENTRIES
+			);
 		}
 
 		if ( ! empty( $raw['sub_order'] ) && is_array( $raw['sub_order'] ) ) {
 			foreach ( $raw['sub_order'] as $parent => $children ) {
 				if ( is_array( $children ) ) {
-					$out['sub_order'][ $this->clean_slug( $parent ) ] =
-						array_values( array_map( array( $this, 'clean_slug' ), $children ) );
+					$out['sub_order'][ $this->clean_slug( $parent ) ] = array_slice(
+						array_values( array_map( array( $this, 'clean_slug' ), $children ) ),
+						0,
+						self::MAX_SUB_ORDER_CHILDREN
+					);
 				}
 			}
 		}
@@ -243,6 +304,9 @@ class Config {
 			case 'none':
 				return 'none';
 			case 'data':
+				if ( strlen( $icon ) > self::MAX_DATA_URI_BYTES ) {
+					return ''; // Over-limit: a truncated base64 string is corrupt — drop the icon.
+				}
 				return $icon; // Format-validated above; safe as a background-image source.
 			case 'url':
 				$url = esc_url_raw( $icon, array( 'http', 'https' ) );
