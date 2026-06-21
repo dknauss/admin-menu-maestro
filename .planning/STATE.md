@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: completed
+status: executing
 stopped_at: Completed 11-06-PLAN.md
 last_updated: "2026-06-21T23:41:28.510Z"
-last_activity: "2026-06-21 — Phase 11 gap-closure 11-05: Wave 0 red guards committed — enter-state UX-08a + de-cheated control-driven reorder (both RED by design, await 11-06/11-07 for GREEN)"
+last_activity: "2026-06-21 — Phase 11 gap-closure 11-06: always-loaded maestro-admin-bar.css enqueued before the is_edit_mode() early return — ENTER toggle reachable at <=782px (UX-08a Gap 1 closed); 11-07/11-08 remain"
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 28
   completed_plans: 25
-  percent: 90
+  percent: 89
 ---
 
 # Project State
@@ -27,9 +27,9 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 
 Milestone: v1.2 Editor UX Polish — in progress
 Phase: Phase 11 (Editor Entry & Reorder Fixes) — gap-closure in progress on branch gsd/phase-11-gap-closure
-Plan: 11-05 complete (gap-closure wave 0 guards); 11-06/11-07/11-08 remain
-Status: 11-05 done — enter-state UX-08a + de-cheated reorder guards RED and committed; next: 11-06 (enqueue fix), 11-07 (panel + move buttons), 11-08 (Wave 2 gate)
-Last activity: 2026-06-21 — Phase 11 gap-closure 11-05: Wave 0 red guards committed — enter-state UX-08a + de-cheated control-driven reorder (both RED by design, await 11-06/11-07 for GREEN)
+Plan: 11-05, 11-06 complete (gap-closure waves 0–1, 2/4); 11-07/11-08 remain
+Status: 11-06 done — always-loaded admin-bar CSS makes the ENTER toggle reachable at <=782px (UX-08a Gap 1 closed); next: 11-07 (panel ▲/▼ move buttons + ≤600px icon-only compression + badge bump), 11-08 (Wave 2 full-suite gate). e2e guards stay RED until 11-07 lands and the 11-08 Docker boundary run goes GREEN.
+Last activity: 2026-06-21 — Phase 11 gap-closure 11-06: always-loaded maestro-admin-bar.css enqueued before the is_edit_mode() early return — ENTER toggle reachable on mobile (UX-08a Gap 1 closed)
 
 Progress: [#########-] 90%
 
