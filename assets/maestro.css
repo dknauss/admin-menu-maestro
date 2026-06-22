@@ -275,13 +275,12 @@ body.maestro-editing #collapse-menu {
 	z-index: 99999;
 	display: flex;
 	flex-wrap: wrap; /* BUG-03: wrap zones onto extra rows when narrow, never overlap */
-	/* flex-end (not center): the toolbar is fixed to the viewport bottom and grows
-	 * upward. Bottom-aligning the zones keeps the right-side actions (Reset All) and
-	 * status pinned to the bottom row when the panel wraps to a taller layout — e.g.
-	 * when the transient "Saving…" status appears on rename-commit. With center
-	 * alignment the panel growing taller re-centred every child and shifted Reset All
-	 * upward mid-click, swallowing the click (HARD-03 race (b) regression from 11-07). */
-	align-items: flex-end;
+	/* Midline alignment: every zone (mode/status tiles, panel buttons, right actions)
+	 * shares a vertical centre. The earlier flex-end workaround for the HARD-03 race(b)
+	 * click-shift is no longer needed — now that all controls are icon-only the toolbar
+	 * stays on one row at normal widths (the tiny status tile can't force the panel to
+	 * wrap the way the old 72px "Saving…" text did), and that test is hardened test-side. */
+	align-items: center;
 	gap: 8px 16px; /* row-gap when wrapped | inter-zone gap: status | panel | right-actions */
 	padding: 10px 16px;
 	background: #1d2327;
@@ -289,6 +288,32 @@ body.maestro-editing #collapse-menu {
 	box-shadow: 0 -2px 10px rgba( 0, 0, 0, 0.25 );
 }
 .maestro-toolbar .button { margin: 0; }
+
+/* Uniform glyph size across the whole toolbar so every icon reads as one set
+ * (panel controls, Reset All / Exit, and the mode/status tiles). */
+.maestro-toolbar .dashicons {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+	line-height: 1;
+}
+
+/* Mode indicator and the active save-status render as outlined square tiles that
+ * match the icon buttons in size and centre on the same midline. The outline
+ * colour follows the indicator colour via currentColor — green for edit-mode and
+ * "saved", amber while saving, red on error. The idle status has no tile. */
+.maestro-mode-label,
+.maestro-status:not( .maestro-status-idle ) {
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 30px;
+	padding: 4px 8px;
+	border: 1px solid currentColor;
+	border-radius: 3px;
+}
 
 /* Status zone — sits to the left, never overlapped by the panel label. */
 .maestro-status {
@@ -317,9 +342,9 @@ body.maestro-editing #collapse-menu {
 	flex-shrink: 0;
 }
 .maestro-mode-icon {
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -336,10 +361,10 @@ body.maestro-editing #collapse-menu {
  * pseudo-element is used only for saving/saved/error save-state feedback. */
 .maestro-status::before {
 	font-family: dashicons;
-	font-size: 16px;
+	font-size: 20px;
 	line-height: 1;
-	width: 16px;
-	height: 16px;
+	width: 20px;
+	height: 20px;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	speak: never; /* presentational; screen reader hears the text label */
@@ -519,6 +544,11 @@ body.maestro-editing #collapse-menu {
 		padding: 4px 8px;
 		font-size: 12px;
 		min-height: 44px; /* tap-target floor — WCAG 2.5.5 AAA */
+	}
+	/* Keep the mode/status tiles the same height as the buttons at mobile widths. */
+	.maestro-mode-label,
+	.maestro-status:not( .maestro-status-idle ) {
+		min-height: 44px;
 	}
 	/* Scope under .maestro-toolbar (specificity 0,2,0) so the 44px floor beats
 	 * WP core's own ≤782px input rule (input[type="text"], 0,1,1 → min-height:40px). */
