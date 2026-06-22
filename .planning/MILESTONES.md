@@ -5,6 +5,26 @@ A historical record of shipped versions. Full details for each milestone live in
 
 ---
 
+## v1.2 — Editor UX Polish
+
+**Status:** ✅ Shipped 2026-06-22
+**Phases:** 9, 10 (research spike), 11, 11.1, 11.2, 12
+**Tag:** `v1.2.0`
+
+**Delivered:** Redesigned the edit-mode surface from the ground up for clarity, compactness, and mobile reach — unified icon-only toolbar with semantic colour, mobile-reachable editor entry, a first-run onboarding pulse, separator-safe keyboard/button reorder, internal hardening against config bloat and save races, and a refreshed WordPress.org listing to match the new UI.
+
+**Key accomplishments:**
+1. **Redesigned icon-only unified edit-mode toolbar** — one outlined gray-button system with semantic colour (green editing/saved, amber unsaved, red reset-all), flat non-clickable status indicators, ▲/▼ move controls; fully accessible (aria-label + title + aria-live; ≥44px tap targets). (UX-10, Phase 11.2)
+2. **Mobile-reachable editing** — the admin-bar "Edit Menu" entry toggle stays visible at ≤782px (was hidden), touch-sized controls. (UX-08, UX-07, Phase 11)
+3. **Editor UX polish** — persistent "Edit Mode" indicator + first-run attention pulse, rename placeholder, auto-clearing "Saved" state. (UX-03, UX-04, Phase 9)
+4. **Separator-safe reorder + badge fix** — keyboard/▲▼ reorder leaves menu separators in place; modified badge renders on the changed row. (BUG-06, BUG-07, Phase 11)
+5. **Internal hardening** — `custom_menu_order` engaged only when items are reordered, bounded config payload, race-safe save/reset/exit with e2e coverage. (HARD-01/02/03, Phase 11.1)
+6. **Refreshed wp.org listing** — balanced banner + 6 recaptured directory screenshots against the new UI. (REL-07, REL-08, Phase 12)
+
+**Archives:** [v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md) · [v1.2-REQUIREMENTS.md](milestones/v1.2-REQUIREMENTS.md)
+
+---
+
 ## v1.0 — WordPress.org Release Readiness
 
 **Status:** ✅ Shipped 2026-06-14 (submitted to WordPress.org; awaiting .org review)
@@ -39,17 +59,3 @@ test-covered, with full .org listing assets, and submitted to the review queue.
 
 **Archives:** v1.1 lives in the active roadmap history for Phases 6–8; v1.0 remains archived under `.planning/milestones/`.
 
----
-
-## v1.2 — Editor UX Polish
-
-**Status:** 🚧 In progress
-**Phases:** 9–12, plus inserted Phase 11.1 hardening
-**Target release:** `1.2.0`
-**Target tag:** `v1.2.0`
-**Cut condition:** Phases 9, 11, 11.1, and 12 complete and audited; Phase 10 is non-blocking research.
-**Pipeline:** GitHub release/tag workflow → WordPress.org SVN deploy via `wp-deploy.yml` / `prep-release.sh`.
-
-**Release checklist source:** Active release metadata and checklist live in `.planning/STATE.md` while the milestone is in progress. Move final shipped details here when `$gsd-complete-milestone` archives v1.2.
-
----
