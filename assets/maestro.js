@@ -404,6 +404,10 @@
 	 */
 	function iconButton( btn, glyph, label ) {
 		btn.setAttribute( 'aria-label', label );
+		// Visible hover hint for sighted users now that the text label is hidden
+		// at all widths (the .maestro-btn-label span stays in the DOM for the
+		// accessible name fallback, but is display:none via CSS).
+		btn.setAttribute( 'title', label );
 
 		var icon = el( 'span', 'dashicons ' + glyph );
 		icon.setAttribute( 'aria-hidden', 'true' );
@@ -416,21 +420,28 @@
 	function buildToolbar() {
 		var bar = el( 'div', 'maestro-toolbar' );
 
-		// Persistent mode label — NOT a live region, text never changes (UX-03).
-		// The aria-hidden dashicon supplies a non-colour shape cue (WCAG 1.4.1).
+		// Persistent mode indicator — NOT a live region, text never changes (UX-03).
+		// Icon-only (green pencil) to reclaim toolbar width; the accessible name is
+		// carried by aria-label and a hidden .maestro-btn-label span, with a title
+		// tooltip for sighted users. The green pencil is the non-colour shape cue.
 		var modeEl = el( 'div', 'maestro-mode-label' );
+		modeEl.setAttribute( 'aria-label', I.modeLabel );
+		modeEl.setAttribute( 'title', I.modeLabel );
 		var modeIcon = el( 'span', 'dashicons dashicons-edit maestro-mode-icon' );
 		modeIcon.setAttribute( 'aria-hidden', 'true' );
 		modeEl.appendChild( modeIcon );
-		modeEl.appendChild( document.createTextNode( I.modeLabel ) );
+		modeEl.appendChild( el( 'span', 'maestro-btn-label', I.modeLabel ) );
 		bar.appendChild( modeEl );
 
 		// Transient save-status — aria-live, empty at idle so no announcement fires.
+		// Icon-only: the per-state ::before dashicon (spinner/check/warning) is the
+		// visible cue; the word ("Saving…"/"Saved"/…) lives in a screen-reader-only
+		// child so assistive tech still announces it via the live region.
 		statusEl = el( 'span', 'maestro-status maestro-status-idle' );
 		statusEl.setAttribute( 'role', 'status' );
 		statusEl.setAttribute( 'aria-live', 'polite' );
 		statusEl.setAttribute( 'aria-atomic', 'true' );
-		statusEl.textContent = '';   // empty at idle (do NOT set I.idle here)
+		statusEl.appendChild( el( 'span', 'maestro-status-text screen-reader-text' ) );
 		bar.appendChild( statusEl );
 
 		// Shared panel — empty/hidden until something is selected.
@@ -1058,10 +1069,16 @@
 
 	function setStatus( state ) {
 		if ( ! statusEl ) { return; }
+		// Class change drives the visible ::before glyph; the word goes into the
+		// SR-only child (not statusEl.textContent, which would wipe that child and
+		// render the word visibly). The live region still announces the change.
 		statusEl.className = 'maestro-status maestro-status-' + state;
-		statusEl.textContent = window.maestroLogic.modeStatusLabel( state, I );
+		var label = window.maestroLogic.modeStatusLabel( state, I );
+		var textEl = statusEl.querySelector( '.maestro-status-text' );
+		if ( textEl ) { textEl.textContent = label; }
+		statusEl.setAttribute( 'title', label ); // hover hint reflects state ('' at idle)
 		if ( state === 'saved' || state === 'error' ) {
-			speak( statusEl.textContent );
+			speak( label );
 		}
 	}
 

@@ -89,14 +89,24 @@ body.maestro-editing #collapse-menu {
 	user-select: none;
 }
 
-/* Panel buttons: inline-flex so the aria-hidden dashicon glyph and the
- * .maestro-btn-label text span sit side-by-side, vertically centred.
- * At <=600px the label span is hidden by media query; the icon remains. */
+/* Panel buttons: icon-only at ALL widths to keep the toolbar compact. The
+ * aria-hidden dashicon glyph is the visible control; the .maestro-btn-label
+ * text span stays in the DOM as an accessible-name fallback but is hidden by
+ * the rule below. The accessible name is carried by aria-label + a title
+ * tooltip (set in iconButton()). Square 44px keeps the WCAG 2.5.5 tap target. */
 .maestro-panel button {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 4px;
+	min-width: 44px;
 }
+
+/* Hide the visible text label of any toolbar control that carries one — the
+ * five panel buttons and the persistent mode indicator. aria-label + title
+ * supply the accessible name and a sighted-user hover hint. (Reset All / Exit
+ * are plain text buttons without a .maestro-btn-label, so they keep their text.) */
+.maestro-toolbar .maestro-btn-label { display: none; }
 
 /* Per-item reset button: focus-visible outline so keyboard users can see focus */
 .maestro-reset-item:focus-visible {
@@ -528,23 +538,7 @@ body.maestro-editing #collapse-menu {
 	 * so the ENTER toggle is reachable in the non-edit state too (single source of truth). */
 }
 
-/* ---------- icon-only compression at <=600px (Gap 2 / UX-08b) ----------
- *
- * At mobile widths the toolbar cannot fit all five secondary buttons with
- * their visible text labels plus the rename input. Collapse the text labels
- * while keeping the aria-label (authoritative accessible name at all widths)
- * so no control becomes unlabeled (WCAG 4.1.2).
- *
- * Scope: .maestro-toolbar so specificity (0,2,0) beats WP core's button
- * rules and avoids !important (per project pattern from Phase 09-editor-ux).
- */
-@media screen and ( max-width: 600px ) {
-	/* Hide the visible text span; aria-label remains the accessible name. */
-	.maestro-toolbar .maestro-panel button .maestro-btn-label { display: none; }
-
-	/* Preserve WCAG 2.5.5 tap target when text is gone: square icon button. */
-	.maestro-toolbar .maestro-panel button {
-		min-width: 44px;
-		justify-content: center;
-	}
-}
+/* Note: panel buttons are icon-only at ALL widths (see .maestro-panel button +
+ * .maestro-toolbar .maestro-btn-label above), so the former <=600px-only
+ * compression block (Gap 2 / UX-08b) is no longer needed — the labels never
+ * show on screen; aria-label/title carry the accessible name everywhere. */

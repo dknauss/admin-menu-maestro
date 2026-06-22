@@ -745,19 +745,23 @@ test.describe( 'Phase 7 — status icon: none when idle, dashicon for save state
 
 test.describe( 'UX-03 — split mode indicator: persistent mode label + transient save-status', () => {
 
-	test( 'persistent .maestro-mode-label is visible with dashicon child and "Edit Mode" text', async ( { page } ) => {
+	test( 'persistent .maestro-mode-label is icon-only with pencil dashicon and "Edit Mode" accessible name', async ( { page } ) => {
 		await page.goto( '/wp-admin/index.php?maestro_edit=1' );
 
-		// The persistent mode label must be visible in the toolbar at all times.
+		// The persistent mode indicator must be visible in the toolbar at all times.
 		const modeLabel = page.locator( '.maestro-toolbar .maestro-mode-label' );
 		await expect( modeLabel ).toBeVisible();
 
-		// It must contain a .dashicons child (the aria-hidden mode icon).
+		// It must contain a .dashicons child (the aria-hidden green pencil mode icon).
 		const modeIcon = modeLabel.locator( '.dashicons' );
 		await expect( modeIcon ).toHaveCount( 1 );
 
-		// Its text content must include "Edit Mode".
-		await expect( modeLabel ).toContainText( 'Edit Mode' );
+		// Icon-only: the accessible name is carried by aria-label (UX-03 intent — a
+		// glanceable, non-colour-dependent "you are editing" cue), not visible text.
+		await expect( modeLabel ).toHaveAttribute( 'aria-label', 'Edit Mode' );
+
+		// The visible text label is hidden to keep the toolbar compact.
+		await expect( modeLabel.locator( '.maestro-btn-label' ) ).toBeHidden();
 	} );
 
 	test( 'save-status element is separate from mode label and empty at idle', async ( { page } ) => {
