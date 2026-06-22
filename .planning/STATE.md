@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: executing
-stopped_at: Completed 11-03-PLAN.md
-last_updated: "2026-06-21T22:13:46.577Z"
-last_activity: "2026-06-21 — Phase 11 executed: 4/4 plans, full suite green at Wave 2 gate (JS 53/53, PHP unit 61/61, integration 37/37, e2e 31/31, phpcs clean, PHPStan 0); BUG-06 exercised real separators; UX-08a mobile PNGs captured"
+stopped_at: Completed 11-08-PLAN.md — Phase 11 COMPLETE & verified (10/10)
+last_updated: "2026-06-22T02:35:00.000Z"
+last_activity: "2026-06-22 — Phase 11 (editor entry & reorder fixes) COMPLETE & verified 10/10: all 4 UAT gap-closure defects closed, Wave 2 gate GREEN sandbox-disabled. Branch gsd/phase-11-gap-closure awaits merge to main. Next: Phase 12 (11.1 already done) → cut 1.2.0"
 progress:
   total_phases: 8
-  completed_phases: 5
-  total_plans: 24
-  completed_plans: 23
-  percent: 90
+  completed_phases: 6
+  total_plans: 28
+  completed_plans: 28
+  percent: 93
 ---
 
 # Project State
@@ -26,12 +26,24 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 11 (Editor Entry & Reorder Fixes) — COMPLETE & VERIFIED (passed, 5/5 must-haves) on branch gsd/phase-11-editor-entry-reorder-fixes
-Plan: 11-01…11-04 complete (4/4); Phase 11.1 already complete; Phase 12 is the genuine next step on the 1.2.0 release path
-Status: Phase 11 complete & verified — UX-08/BUG-06/BUG-07 delivered; next: Phase 12, then tag 1.2.0 (branch awaits merge to main)
-Last activity: 2026-06-21 — Phase 11 executed: 4/4 plans, full suite green at Wave 2 gate (JS 53/53, PHP unit 61/61, integration 37/37, e2e 31/31, phpcs clean, PHPStan 0); BUG-06 exercised real separators; UX-08a mobile PNGs captured
+Phase: Phase 11 (Editor Entry & Reorder Fixes) — COMPLETE & VERIFIED (10/10 must-haves) on branch gsd/phase-11-gap-closure; branch awaits merge to main
+Plan: 11-01…11-08 all complete (4 original + 4 gap-closure); Wave 2 gate GREEN sandbox-disabled; gsd-verifier passed 10/10
+Status: Phase 11 gap closure COMPLETE & verified — all 4 UAT defects closed (UX-08a mobile entry toggle, UX-08b/BUG-06 OS-independent ▲/▼ reorder + ≤600px compression, BUG-07 badge). Next genuine step: Phase 12 (release-assets refresh) — Phase 11.1 is already done — then cut 1.2.0. (Note: `phase complete` CLI reports next_phase 11.1, but 11.1 is already complete; Phase 12 is the real next.)
+Last activity: 2026-06-22 — Phase 11 COMPLETE & verified (10/10); branch gsd/phase-11-gap-closure awaits merge to main
 
-Progress: [#########-] 90%
+Progress: [█████████░] 93%
+
+## Release Binding
+
+This GSD milestone is explicitly pinned to the release artifact it is meant to ship:
+
+- **Milestone:** v1.2 — Editor UX Polish
+- **Target release:** `1.2.0`
+- **Target tag:** `v1.2.0`
+- **Release status:** planned / not cut
+- **Release cut condition:** Phases 9 → 11 → 11.1 → 12 complete and audited; Phase 10 remains non-blocking research.
+- **Pipeline:** GitHub release/tag workflow → WordPress.org SVN deploy via `wp-deploy.yml` / `prep-release.sh`.
+- **Checklist owner:** `$gsd-complete-milestone` / milestone audit should verify the release checklist before the milestone is considered shipped.
 
 ## Performance Metrics
 
@@ -72,6 +84,9 @@ Progress: [#########-] 90%
 | Phase 11-editor-entry-reorder-fixes P01 | 9 | 2 tasks | 2 files |
 | Phase 11-editor-entry-reorder-fixes P02 | 721 | 2 tasks | 2 files |
 | Phase 11-editor-entry-reorder-fixes P03 | 8 | 2 tasks | 1 files |
+| Phase 11-editor-entry-reorder-fixes P05 (gap-closure) | 10m | 2 tasks | 1 file |
+| Phase 11-editor-entry-reorder-fixes P06 | 2 | 2 tasks | 3 files |
+| Phase 11-editor-entry-reorder-fixes P07 | 24 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -80,6 +95,7 @@ Progress: [#########-] 90%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [GSD tooling]: Milestones are pinned to release artifacts in STATE.md (`release_target`, `release_tag`, release status, cut condition, pipeline, and checklist) so milestone completion cannot drift from the version tag/publish step.
 - [Phase 07]: Non-color status via ::before glyphs replaced with dashicons; idle dot de-emphasised (BUG-04/BUG-05)
 - [Phase 07]: First-run cue as fixed bar above toolbar, localStorage-gated — same gate pattern applies to UX-03
 - [Phase 07]: BUG-03 toolbar wrap/stack at narrow widths landed — UX-07 continues from this base for denser mobile sizing
@@ -115,9 +131,19 @@ Recent decisions affecting current work:
 - [Phase 11-editor-entry-reorder-fixes]: maestro-ab-label wrapper added in class-admin-bar.php so CSS icon-only rule has stable plugin-scoped hook; meta.title is state-conditional (Edit Admin Menu / Exit Editor); display:block override uses specificity (0,2,1) matching WP core whitelist pattern — no \!important
 - [Phase 11-editor-entry-reorder-fixes]: BUG-06: single-node insertBefore keyed off dir and maestroChildren index; no new helper (pure DOM glue, not unit-testable as expect(fn).toBe(out))
 - [Phase 11-editor-entry-reorder-fixes]: BUG-07: removal code stays li.querySelector() — badge is still descendant of <li> after target change; no CSS edit (maestro.css owned by 11-02)
+- [Phase 11-editor-entry-reorder-fixes 11-05 gap-closure]: UX-08a enter-state guard navigates /wp-admin/index.php (no maestro_edit) at 782px/600px — RED because class-assets.php early-returns before enqueuing maestro.css in non-edit state; 11-06 turns it GREEN
+- [Phase 11-editor-entry-reorder-fixes 11-05 gap-closure]: Reorder test renamed to control-driven, OS-independent; L373-374 re-focus cheat removed; Alt+ArrowDown replaced by button.maestro-move-down clicks; rename-input focus asserted after selectItem — RED because button absent; 11-07 turns it GREEN
+- [Phase 11-editor-entry-reorder-fixes]: 11-06 removes maestro.css duplicate toggle override; 11-07 adds to the same file in a separate commit in dependency order — no conflict
+- [Phase 11-editor-entry-reorder-fixes]: Always-loaded micro-stylesheet pattern: maestro-admin-bar.css holds only the always-needed admin-bar CSS; heavy editor bundle stays edit-mode-gated
+- [Phase 11-editor-entry-reorder-fixes]: 11-07: moveSelected(dir,opts) shared function: opts.restoreFocusToAnchor for keyboard path; button path omits (not detached by insertBefore)
+- [Phase 11-editor-entry-reorder-fixes]: 11-07: aria-keyshortcuts dropped entirely — Alt+Arrow retained but undiscoverable; ▲/▼ buttons are OS-independent discoverable affordance
+- [Phase 11-editor-entry-reorder-fixes]: 11-07: iconButton() helper routes all five secondary panel buttons through one code path to prevent icon/label drift
+- [Phase 11-editor-entry-reorder-fixes]: 11-08: WP_ENV_TESTS_PORT honored in BOTH playwright.config baseURL AND global-setup login URL — lets e2e run on an alternate tests port when 8889 is taken by another wp-env project (gate ran on 8899)
+- [Phase 11-editor-entry-reorder-fixes]: 11-08: race(b) HARD-03 failure root-caused to e2e click-delivery — 11-07's extra panel buttons enlarged the position:fixed flex-wrap toolbar so the live rename preview reflowed it mid-click; product is correct (genuine Reset-All click cancels the queued autosave, DELETE wins, no persist). Hardened by committing the rename first (settle layout, keep queued autosave) and asserting reset-wins/no-persist; postCount===0 dropped (it only held for a sub-500ms click). No-persist reload assertion retained as anti-masking guard
 
 ### Roadmap Evolution
 
+- GSD milestone release binding added to STATE.md: v1.2 now carries explicit target release `1.2.0`, tag `v1.2.0`, cut condition, pipeline, and release checklist.
 - Phase 11.1 inserted after Phase 11: P1 review hardening — scope `custom_menu_order`, bound config payload, save-race E2E coverage (from the 2026-06-20 code-review follow-up). Lands inside the 9 → 11 → 12 cut path, before the 1.2.0 tag.
 
 ### Pending Todos
@@ -127,10 +153,11 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-None.
+- **RESOLVED (2026-06-22) — 11-08 Wave 2 gate:** Ran sandbox-disabled on this project's wp-env. Port 8889 was held by another wp-env project, so this stack was started on **dev 8898 / tests 8899** and the gate run via `WP_ENV_TESTS_PORT=8899` (the alternate-port path the 11-08 config change enables); the other project's stack was left untouched. Gate GREEN: JS 53/53, PHP integration 37/37, e2e 32 pass/0 fail, screenshots 4/4. Tear down with `npx wp-env stop` when done.
+- **Hygiene follow-up (non-blocking):** Phase-07 e2e screenshot specs overwrite committed PNGs on every full e2e run (not `MAESTRO_CAPTURE`-gated like the Phase-11 capture spec). Side-effect changes were reverted during the gate; gate the Phase-07 captures the same way to stop the churn.
 
 ## Session Continuity
 
-Last session: 2026-06-21T21:31:21.100Z
-Stopped at: Completed 11-03-PLAN.md
+Last session: 2026-06-22T00:24:31.196Z
+Stopped at: Completed 11-07-PLAN.md
 Resume file: None

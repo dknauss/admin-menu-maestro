@@ -52,6 +52,15 @@ class Assets {
 	 * @return void
 	 */
 	public function enqueue() {
+		// Always-loaded: keep the editor ENTER/EXIT toggle reachable in the admin bar at <=782px,
+		// regardless of edit mode (the heavy editor assets below stay edit-mode-gated). UX-08a.
+		wp_enqueue_style(
+			'maestro-admin-bar',
+			MAESTRO_URL . 'assets/maestro-admin-bar.css',
+			array( 'dashicons' ),
+			MAESTRO_VERSION
+		);
+
 		if ( ! is_edit_mode() ) {
 			return;
 		}
@@ -119,6 +128,10 @@ class Assets {
 					'moveAtBottom'      => esc_html__( '%s is already last', 'maestro-menu-editor' ),
 					'dirUp'             => esc_html__( 'up', 'maestro-menu-editor' ),
 					'dirDown'           => esc_html__( 'down', 'maestro-menu-editor' ),
+					/* translators: Accessible label for the "move selected item up" button in the editor panel. */
+					'moveUp'            => __( 'Move up', 'maestro-menu-editor' ),
+					/* translators: Accessible label for the "move selected item down" button in the editor panel. */
+					'moveDown'          => __( 'Move down', 'maestro-menu-editor' ),
 					/* translators: Short label appended to modified menu items for screen readers. */
 					'modified'          => esc_html__( '(modified)', 'maestro-menu-editor' ),
 					/* translators: One-time hint shown to first-time users of the menu editor. */

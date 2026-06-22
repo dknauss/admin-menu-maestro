@@ -2,9 +2,11 @@
 
 ## Milestones
 
-- ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; submitted to .org, awaiting review) → [archive](milestones/v1.0-ROADMAP.md)
-- ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17)
-- 🚧 **v1.2 Editor UX Polish** — Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 12; Phase 10 is independent research and does not gate the release.**
+**Release binding:** GSD milestones are the system of record for their release artifacts. Historical milestones record shipped tags in `.planning/MILESTONES.md`; the active milestone records `release_target`, `release_tag`, release status, cut condition, pipeline, and release checklist in `.planning/STATE.md`.
+
+- ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; release tag `v1.0.0`) → [archive](milestones/v1.0-ROADMAP.md)
+- ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17; release line `1.1.x`, latest shipped `1.1.1`)
+- 🚧 **v1.2 Editor UX Polish** — target release `1.2.0` / tag `v1.2.0`; Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 12; Phase 10 is independent research and does not gate the release.**
 
 ## Phases
 
@@ -128,11 +130,17 @@ Full phase details, success criteria, and outcomes are archived in
   3. Keyboard reorder (Alt+Arrow) moves only the selected item by one position and leaves `wp-menu-separator` nodes in place — no menu distortion on a separator-bearing menu; confirmed by e2e on a menu that contains separators (BUG-06)
   4. The modified-state badge renders on the changed row (next to the label/anchor), including top-level items that have submenus, not after the submenu `<ul>` — confirmed by screenshot/e2e (BUG-07)
   5. Behavioral JS changes are red-first node:test where a logic seam exists; the full zero-regression bar holds (PHP unit, integration, e2e green; Plugin Check 0 errors; phpcs clean)
-**Plans**: 4 plans across 3 waves (test-first Wave 0; conflict-free file ownership per wave)
-  - [ ] 11-01-PLAN.md — Wave 0: land the 3 new e2e tests (UX-08a/BUG-06/BUG-07) + AdminBarTest (integration) for UX-08b
-  - [ ] 11-02-PLAN.md — Wave 1: UX-08a CSS responsive override + UX-08b compact label strings (class-admin-bar.php, maestro.css)
-  - [ ] 11-03-PLAN.md — Wave 1: BUG-06 single-node insertBefore + BUG-07 badge-on-row (maestro.js)
-  - [ ] 11-04-PLAN.md — Wave 2: zero-regression full-suite gate + UX-08a mobile screenshot checkpoint
+**Plans**: 4 original plans (complete 2026-06-21) + 4 gap-closure plans (UAT 2026-06-21) across 3 waves
+  - [x] 11-01-PLAN.md — Wave 0: land the 3 new e2e tests (UX-08a/BUG-06/BUG-07) + AdminBarTest (integration) for UX-08b
+  - [x] 11-02-PLAN.md — Wave 1: UX-08a CSS responsive override + UX-08b compact label strings (class-admin-bar.php, maestro.css)
+  - [x] 11-03-PLAN.md — Wave 1: BUG-06 single-node insertBefore + BUG-07 badge-on-row (maestro.js)
+  - [x] 11-04-PLAN.md — Wave 2: zero-regression full-suite gate + UX-08a mobile screenshot checkpoint
+
+**Gap closure** (UAT 2026-06-21 found 4 real defects after ship/merge; fix plans `gap_closure: true`, run via `/gsd:execute-phase 11 --gaps-only`):
+  - [x] 11-05-PLAN.md — Wave 0 (tests-first): add UX-08a ENTER-state mobile guard (no maestro_edit) + de-cheat the keyboard-reorder e2e to drive new panel ▲/▼ controls — both RED first [UX-08a, BUG-06]
+  - [x] 11-06-PLAN.md — Wave 1: Gap 1 — enqueue the ≤782px admin-bar override unconditionally (new assets/maestro-admin-bar.css, above the is_edit_mode() early return) so the ENTER toggle is reachable on mobile [UX-08a]
+  - [x] 11-07-PLAN.md — Wave 1: Gaps 2+3+4 (coupled) — explicit ▲/▼ panel reorder buttons (OS-independent, reuse reorderMove/insertBefore) folded into ≤600px icon-only toolbar compression (aria-label + .maestro-btn-label) + modified-badge size bump 10px→15px [BUG-06, UX-08b]
+  - [x] 11-08-PLAN.md — Wave 2: zero-regression full-suite gate (sandbox-disabled) GREEN + enter-state mobile screenshots (ux-08a-enter-{782,600}.png); race(b) HARD-03 hardened against toolbar-reflow click fragility [UX-08a, UX-08b, BUG-06, BUG-07]
 
 ### Phase 11.1: P1 Review Hardening (INSERTED)
 
@@ -181,6 +189,6 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 8. Docs & Brand Assets | v1.1 | 4/4 (executable scope; REL-07/08 deferred) | Complete | 2026-06-17 |
 | 9. Editor UX Polish | v1.2 | 6/6 | Complete | 2026-06-19 |
 | 10. Third-Party Menu Compatibility Research | v1.2 | 0/TBD | Not started (research spike) | - |
-| 11. Editor Entry & Reorder Fixes | 4/4 | Complete    | 2026-06-21 | - |
-| 11.1. P1 Review Hardening | 4/4 | Complete    | 2026-06-20 | 2026-06-20 |
+| 11. Editor Entry & Reorder Fixes | v1.2 | 8/8 | Complete | 2026-06-22 |
+| 11.1. P1 Review Hardening | v1.2 | 4/4 | Complete | 2026-06-20 |
 | 12. Release Assets Refresh | v1.2 | 0/TBD | Scaffolded (REL-07/08 folded in) | - |

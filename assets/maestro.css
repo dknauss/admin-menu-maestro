@@ -81,12 +81,21 @@ body.maestro-editing #collapse-menu {
 }
 .maestro-editing #adminmenu .maestro-modified-badge {
 	color: #dba617;
-	font-size: 10px;
+	font-size: 15px; /* Gap 4 / BUG-07: bumped from 10px — bullet reads at a glance */
 	line-height: 1;
 	margin-left: 4px;
 	vertical-align: middle;
 	pointer-events: none;
 	user-select: none;
+}
+
+/* Panel buttons: inline-flex so the aria-hidden dashicon glyph and the
+ * .maestro-btn-label text span sit side-by-side, vertically centred.
+ * At <=600px the label span is hidden by media query; the icon remains. */
+.maestro-panel button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
 }
 
 /* Per-item reset button: focus-visible outline so keyboard users can see focus */
@@ -256,7 +265,13 @@ body.maestro-editing #collapse-menu {
 	z-index: 99999;
 	display: flex;
 	flex-wrap: wrap; /* BUG-03: wrap zones onto extra rows when narrow, never overlap */
-	align-items: center;
+	/* flex-end (not center): the toolbar is fixed to the viewport bottom and grows
+	 * upward. Bottom-aligning the zones keeps the right-side actions (Reset All) and
+	 * status pinned to the bottom row when the panel wraps to a taller layout — e.g.
+	 * when the transient "Saving…" status appears on rename-commit. With center
+	 * alignment the panel growing taller re-centred every child and shifted Reset All
+	 * upward mid-click, swallowing the click (HARD-03 race (b) regression from 11-07). */
+	align-items: flex-end;
 	gap: 8px 16px; /* row-gap when wrapped | inter-zone gap: status | panel | right-actions */
 	padding: 10px 16px;
 	background: #1d2327;
@@ -509,14 +524,27 @@ body.maestro-editing #collapse-menu {
 	.maestro-icon-tab { padding: 10px 12px; }
 	.maestro-vis-row { padding: 8px 0; }
 
-	/* UX-08a: WP core hides all top-level admin-bar nodes at <=782px via
-	 * #wp-toolbar > ul > li { display:none } and whitelists only built-in nodes.
-	 * Keep our editor entry reachable on mobile. Specificity (0,2,1) matches
-	 * core's own whitelist pattern — no !important needed. */
-	#wpadminbar li#wp-admin-bar-maestro-toggle { display: block; }
+	/* UX-08a admin-bar override moved to assets/maestro-admin-bar.css (11-06) — always-loaded
+	 * so the ENTER toggle is reachable in the non-edit state too (single source of truth). */
+}
 
-	/* Icon-only: hide the label text, keep the dashicon so the tap target
-	 * remains identifiable without eating toolbar width on a phone. The
-	 * accessible name is preserved in the <a title="..."> from meta.title. */
-	#wpadminbar li#wp-admin-bar-maestro-toggle .maestro-ab-label { display: none; }
+/* ---------- icon-only compression at <=600px (Gap 2 / UX-08b) ----------
+ *
+ * At mobile widths the toolbar cannot fit all five secondary buttons with
+ * their visible text labels plus the rename input. Collapse the text labels
+ * while keeping the aria-label (authoritative accessible name at all widths)
+ * so no control becomes unlabeled (WCAG 4.1.2).
+ *
+ * Scope: .maestro-toolbar so specificity (0,2,0) beats WP core's button
+ * rules and avoids !important (per project pattern from Phase 09-editor-ux).
+ */
+@media screen and ( max-width: 600px ) {
+	/* Hide the visible text span; aria-label remains the accessible name. */
+	.maestro-toolbar .maestro-panel button .maestro-btn-label { display: none; }
+
+	/* Preserve WCAG 2.5.5 tap target when text is gone: square icon button. */
+	.maestro-toolbar .maestro-panel button {
+		min-width: 44px;
+		justify-content: center;
+	}
 }
