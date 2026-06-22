@@ -318,13 +318,20 @@ body.maestro-editing #collapse-menu {
 .maestro-toolbar .button { margin: 0; }
 
 /* Uniform glyph size across the whole toolbar so every icon reads as one set
- * (panel controls, Reset All / Exit, and the mode/status tiles). */
+ * (panel controls, Reset All / Exit, and the mode/status tiles). Flex-centre the
+ * glyph so it sits dead-centre regardless of its line box. */
 .maestro-toolbar .dashicons {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	font-size: 20px;
 	width: 20px;
 	height: 20px;
 	line-height: 1;
 }
+/* WP core's `.wp-core-ui .button .dashicons` (0,3,0) forces a tall line-height
+ * that pushed the in-button glyph off-centre; reclaim 1/20px at equal specificity. */
+.maestro-toolbar .button .dashicons { line-height: 1; }
 
 /* (Mode + active save-status tiles are styled by the unified control system
  * near the top of this file — same outlined box as the buttons; colour follows
