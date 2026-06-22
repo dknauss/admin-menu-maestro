@@ -89,6 +89,15 @@ body.maestro-editing #collapse-menu {
 	user-select: none;
 }
 
+/* Panel buttons: inline-flex so the aria-hidden dashicon glyph and the
+ * .maestro-btn-label text span sit side-by-side, vertically centred.
+ * At <=600px the label span is hidden by media query; the icon remains. */
+.maestro-panel button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
 /* Per-item reset button: focus-visible outline so keyboard users can see focus */
 .maestro-reset-item:focus-visible {
 	outline: 2px solid #2271b1;
@@ -511,4 +520,25 @@ body.maestro-editing #collapse-menu {
 
 	/* UX-08a admin-bar override moved to assets/maestro-admin-bar.css (11-06) — always-loaded
 	 * so the ENTER toggle is reachable in the non-edit state too (single source of truth). */
+}
+
+/* ---------- icon-only compression at <=600px (Gap 2 / UX-08b) ----------
+ *
+ * At mobile widths the toolbar cannot fit all five secondary buttons with
+ * their visible text labels plus the rename input. Collapse the text labels
+ * while keeping the aria-label (authoritative accessible name at all widths)
+ * so no control becomes unlabeled (WCAG 4.1.2).
+ *
+ * Scope: .maestro-toolbar so specificity (0,2,0) beats WP core's button
+ * rules and avoids !important (per project pattern from Phase 09-editor-ux).
+ */
+@media screen and ( max-width: 600px ) {
+	/* Hide the visible text span; aria-label remains the accessible name. */
+	.maestro-toolbar .maestro-panel button .maestro-btn-label { display: none; }
+
+	/* Preserve WCAG 2.5.5 tap target when text is gone: square icon button. */
+	.maestro-toolbar .maestro-panel button {
+		min-width: 44px;
+		justify-content: center;
+	}
 }
