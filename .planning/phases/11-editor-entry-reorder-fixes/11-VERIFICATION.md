@@ -1,95 +1,142 @@
 ---
 phase: 11-editor-entry-reorder-fixes
-verified: 2026-06-21T22:00:00Z
+verified: 2026-06-22T00:00:00Z
 status: passed
-score: 5/5 must-haves verified
-re_verification: false
+score: 10/10 must-haves verified
+re_verification:
+  previous_status: passed
+  previous_score: 5/5
+  gaps_closed:
+    - "UX-08a enter-state toggle reachable on mobile (maestro-admin-bar.css always-loaded before is_edit_mode() return)"
+    - "OS-independent panel reorder buttons via moveSelected(dir) shared function wired to reorderMove/insertBefore"
+    - "Toolbar icon-only compression at <=600px with 44px tap-target floor and WCAG 4.1.2 aria-labels"
+    - "Modified badge legible at 15px (was 10px)"
+    - "Corrected e2e guards (enter-state UX-08a + control-driven reorder) flipped GREEN at Wave 2 gate"
+    - "Enter-state screenshots ux-08a-enter-782.png and ux-08a-enter-600.png captured (valid PNGs)"
+  gaps_remaining: []
+  regressions: []
 ---
 
-# Phase 11: Editor Entry & Reorder Fixes — Verification Report
+# Phase 11: editor-entry-reorder-fixes Verification Report (Gap Closure 11-05...11-08)
 
-**Phase Goal:** The editor is reachable and compact on mobile, keyboard reorder preserves separators, and the modified-state badge sits on the changed row — closing the mobile-access gap and two visual defects surfaced by the 2026-06-19 bot-review audit.
-**Verified:** 2026-06-21
+**Phase Goal:** The editor is reachable and compact on mobile, keyboard reorder preserves separators, and the modified-state badge sits on the changed row — closing the mobile-access gap and two visual defects surfaced by the bot-review audit; PLUS the 4 UAT defects found after ship (gap closure): mobile ENTER toggle reachable, OS-independent reorder affordance, toolbar fits at <=600px, badge legible.
+**Verified:** 2026-06-22
 **Status:** PASSED
-**Re-verification:** No — initial verification
+**Re-verification:** Yes — gap-closure round covering plans 11-05...11-08 (builds on initial 11-01...11-04 verification)
+
+---
 
 ## Goal Achievement
 
-### Observable Truths
+### Observable Truths (Gap Closure Round — Plans 11-05...11-08)
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Maestro edit-mode toggle reachable at <=782px (UX-08a) | VERIFIED | `maestro.css:516` — `#wpadminbar li#wp-admin-bar-maestro-toggle { display: block; }` inside `@media screen and (max-width: 782px)`. Specificity (0,2,1) matches WP core's own whitelist pattern; no `!important`. E2e test 28 `UX-08a: edit toggle stays visible and icon-only at <=782px and <=600px` passed 31/31 gate run. |
-| 2 | Toggle visible label compact; long-form accessible name retained via meta.title (UX-08b) | VERIFIED | `class-admin-bar.php:51-57` — visible titles are `'Exit'` / `'Edit Menu'` with `.maestro-ab-label` wrapper; `meta.title` carries `'Exit Editor'` / `'Edit Admin Menu'` (state-conditional). Icon-only at <=782px via `maestro.css:521` hiding `.maestro-ab-label`. AdminBarTest 4/4 assertions green (integration 37/37). |
-| 3 | Keyboard reorder (Alt+Arrow) moves only selected item; separators stay in place (BUG-06) | VERIFIED | `maestro.js:295-311` — old `newOrder.forEach(appendChild)` loop replaced with single-node `insertBefore` keyed off `dir` and `maestroChildren` index. Old `slugToNode` map and the forEach loop are completely absent (grep confirms zero hits). E2e test 29 `BUG-06: Alt+Arrow keyboard reorder leaves wp-menu-separator nodes in place` ran against real WP-core separators (positions 4/9/25/59/99 in wp-env) — not skipped, passed. |
-| 4 | Modified-state badge renders on the changed row, inside `.wp-menu-name`, for items with submenus (BUG-07) | VERIFIED | `maestro.js:105-119` — `labelTarget` computed as `m.isSub ? li.querySelector('a') : li.querySelector('.wp-menu-name')` and both badge and sr-text appended to `labelTarget`, not `li`. Removal code at L122-125 still uses `li.querySelector()` (badge remains an `li` descendant — no double-inject risk). E2e test 30 `BUG-07: modified badge renders inside .wp-menu-name for an item with a submenu` passed. Existing L301 modified-indicator baseline unaffected. |
-| 5 | Behavioral JS changes covered red-first; zero-regression bar holds across all suites | VERIFIED | Wave 0 tests authored before any production code (commits 24bf00f, 8c7f749 pre-date a5f18dc/029ba35/5c16c97/9f1ac8a). Gate run (11-04, sandbox-disabled Docker): JS 53/53, PHP unit 61/61, integration 37/37, e2e 31/31, phpcs clean, PHPStan 0 errors, Plugin Check "No errors found". |
+| 1 | `assets/maestro-admin-bar.css` exists with the `@media (max-width:782px)` override for `#wpadminbar li#wp-admin-bar-maestro-toggle { display:block }` and `.maestro-ab-label { display:none }` | VERIFIED | File is 9 lines; lines 7-8 contain the correct selectors; specificity (0,2,1); no !important |
+| 2 | `includes/class-assets.php` enqueues `maestro-admin-bar` with `dashicons` dependency BEFORE the `is_edit_mode()` early return | VERIFIED | `wp_enqueue_style('maestro-admin-bar', …, array('dashicons'), MAESTRO_VERSION)` at lines 57-62; `if (!is_edit_mode()) return;` guard at line 64 — enqueue unconditionally precedes the gate |
+| 3 | `assets/maestro.js` has `function moveSelected(dir, opts)` factoring out the reorder body, calling `window.maestroLogic.reorderMove` + `parentUl.insertBefore` (separator-preserving path, BUG-06) | VERIFIED | `function moveSelected` at line 282; `reorderMove(currentSlugs, selectedSlug, dir)` at line 308; single-node `insertBefore` at lines 331 and 334 |
+| 4 | `button.maestro-move-up` and `button.maestro-move-down` are built in `buildToolbar()`, each carrying `aria-label` (I.moveUp / I.moveDown) and a `.maestro-btn-label` span via `iconButton()` | VERIFIED | Lines 476-490: `el('button','button maestro-move-up')` at 476; `iconButton(moveUp,'dashicons-arrow-up-alt2',I.moveUp)` at 478; analogous `moveDown` at 484-490 |
+| 5 | All five secondary panel buttons (iconBtn, visBtn, resetItemBtn, moveUp, moveDown) are routed through `iconButton()` — each carrying `aria-label` + aria-hidden dashicon span + `.maestro-btn-label` span (WCAG 4.1.2) | VERIFIED | Lines 478, 486, 494, 502, 510 all invoke `iconButton()`; helper defined at line 405 sets `aria-label`, appends aria-hidden dashicon span, appends `.maestro-btn-label` span |
+| 6 | `assets/maestro.css` has a `@media screen and (max-width: 600px)` block hiding `.maestro-btn-label` and setting `button { min-width:44px; justify-content:center }` (UX-08b toolbar fit) | VERIFIED | Block at lines 535-544; `.maestro-toolbar .maestro-panel button .maestro-btn-label { display: none; }` at line 537; `min-width: 44px; justify-content: center` at lines 541-542 |
+| 7 | Modified badge `font-size` is 14-16px (Gap 4 / BUG-07 cosmetic) | VERIFIED | `font-size: 15px;` at maestro.css line 84 within `.maestro-editing #adminmenu .maestro-modified-badge`; comment confirms "bumped from 10px" |
+| 8 | The `wp-admin-bar-maestro-toggle` override is absent from `assets/maestro.css` (single source of truth in maestro-admin-bar.css) | VERIFIED | `grep "wp-admin-bar-maestro-toggle" assets/maestro.css` returns no output |
+| 9 | Enter-state screenshots `ux-08a-enter-782.png` and `ux-08a-enter-600.png` exist as valid PNG images at correct viewport dimensions | VERIFIED | `file` command confirms: `ux-08a-enter-782.png: PNG image data, 782 x 800, 8-bit/color RGB`; `ux-08a-enter-600.png: PNG image data, 600 x 800, 8-bit/color RGB` |
+| 10 | No SUMMARY file among 11-05...11-08 contains "Self-Check: FAILED"; all four report successful completion | VERIFIED | All four summaries read in full; none contain the phrase; each reports green gate counts |
 
-**Score:** 5/5 truths verified
+**Score: 10/10 truths verified**
 
-### Required Artifacts
+---
 
-| Artifact | Expected | Status | Details |
+### Required Artifacts (Gap Closure Plans)
+
+| Artifact | Provides | Status | Details |
 |----------|----------|--------|---------|
-| `includes/class-admin-bar.php` | UX-08b compact titles + long-form meta.title | VERIFIED | L51-57: `'Edit Menu'`/`'Exit'` as visible labels with `.maestro-ab-label` wrapper; `meta.title` = `'Edit Admin Menu'`/`'Exit Editor'` (state-conditional). |
-| `assets/maestro.css` | UX-08a scoped <=782px override + icon-only label hide | VERIFIED | L512-521 inside existing 782px media block: `display:block` for `#wpadminbar li#wp-admin-bar-maestro-toggle` and `display:none` for `.maestro-ab-label`. Scoped specificity, no `!important`. |
-| `assets/maestro.js` | BUG-06 `insertBefore` + BUG-07 `labelTarget` | VERIFIED | L295-311: single-node `insertBefore` (old forEach-appendChild loop absent). L105-119: `labelTarget` computed and badge appended to label, not `<li>`. |
-| `tests/e2e/editor.spec.ts` | Three new Phase 11 test blocks (UX-08a, BUG-06, BUG-07) | VERIFIED | Lines 858, 894, 977: all three tests present in `test.describe('Phase 11 — editor entry & reorder fixes (Wave 0 guards)')`. |
-| `tests/integration/AdminBarTest.php` | Four UX-08b assertions; WP runtime integration class | VERIFIED | Class `AdminBarTest extends WP_UnitTestCase` in `Maestro\Tests\Integration`; four methods (`test_enter_label_contains_edit_menu`, `test_exit_label_contains_exit`, `test_enter_meta_title_is_long_form`, `test_exit_meta_title_is_long_form`). WP_Admin_Bar class-exists guard at L62-64. |
-| `tests/e2e/specs/capture-screenshots.spec.ts` | MAESTRO_CAPTURE-gated mobile screenshot generator | VERIFIED | Guard `test.skip(!CAPTURE, ...)` at L32-34. Waits on `#wp-admin-bar-maestro-toggle` before capturing. Mirrors wp-sudo pattern. |
-| `.planning/phases/11-editor-entry-reorder-fixes/screenshots/ux-08a-782.png` | Committed mobile capture at 782px | VERIFIED | File exists on disk. |
-| `.planning/phases/11-editor-entry-reorder-fixes/screenshots/ux-08a-600.png` | Committed mobile capture at 600px | VERIFIED | File exists on disk. |
+| `assets/maestro-admin-bar.css` | <=782px admin-bar toggle display:block + icon-only override, always loaded | VERIFIED | Exists, correct content, correct selectors, no editor-specific CSS included |
+| `includes/class-assets.php` | Unconditional enqueue before is_edit_mode() return; moveUp/moveDown i18n keys | VERIFIED | Enqueue at lines 57-62 precedes guard at line 64; `'moveUp'` at line 132, `'moveDown'` at line 134 in i18n map |
+| `assets/maestro.js` | moveUp/moveDown panel buttons + moveSelected(dir) shared function + iconButton() helper; aria-keyshortcuts dropped | VERIFIED | 15 pattern matches across maestro-move-up/down, iconButton, maestro-btn-label, moveSelected; `aria-keyshortcuts` removed from selectItem (line 370 removes it) and no longer set on move |
+| `assets/maestro.css` | <=600px icon-only block + badge font-size 15px | VERIFIED | @media (max-width:600px) block at lines 535-544; font-size:15px at line 84 |
+| `tests/e2e/editor.spec.ts` | Enter-state UX-08a test (no maestro_edit, 782+600px) + de-cheated control-driven reorder test | VERIFIED | Enter-state test at line 903 (description: "non-edit state"); reorder test at line 355 ("control-driven, OS-independent"); rename-input `toBeFocused()` at line 376; `button.maestro-move-down` selector at line 381; no Alt+ArrowDown in L355-414 range |
+| `tests/integration/LocalizationTest.php` | moveUp/moveDown in expected i18n keys | VERIFIED | Lines 76-77 contain `'moveUp'` and `'moveDown'` in the expected keys array |
+| `screenshots/ux-08a-enter-782.png` | Regenerable proof the ENTER toggle is icon-only at 782px | VERIFIED | Valid PNG, 782x800 |
+| `screenshots/ux-08a-enter-600.png` | Regenerable proof the ENTER toggle is icon-only at 600px | VERIFIED | Valid PNG, 600x800 |
+
+---
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `assets/maestro.css` | `#wp-admin-bar-maestro-toggle` | `display:block` inside `@media max-width:782px` | WIRED | `maestro.css:516` — scoped rule present and inside the existing 782px block. |
-| `assets/maestro.css` | `.maestro-ab-label` hide | `display:none` inside same 782px block | WIRED | `maestro.css:521` — `.maestro-ab-label` hidden at <=782px; targets the plugin-controlled wrapper (not WP core's `.ab-label`). |
-| `includes/class-admin-bar.php` | `meta.title` long-form accessible name | `esc_attr__` state-conditional string | WIRED | `class-admin-bar.php:55-57` — `'Exit Editor'`/`'Edit Admin Menu'` set in `meta['title']` based on `$editing`. |
-| `assets/maestro.js` reorder handler | `parentUl.insertBefore(selectedNode, neighbour)` | single-node move keyed off `dir` | WIRED | `maestro.js:306-310` — `insertBefore` for both `up` and `down` directions; `afterNode.nextSibling` handles last-position edge case. No `newOrder.forEach(appendChild)` anywhere in the file. |
-| `assets/maestro.js` badge injection | `.wp-menu-name` / anchor `labelTarget` | `labelTarget.appendChild(badge)` | WIRED | `maestro.js:105-119` — `labelTarget` variable computed and used consistently for both badge and sr-text. `li.querySelector()` removal still works (badge is an `li` descendant). |
-| `tests/integration/AdminBarTest.php` | `Maestro\Admin_Bar::node()` | `new Admin_Bar()` + `do_action('admin_bar_menu', $bar)` | WIRED | `AdminBarTest.php:70-71` — instantiates `Admin_Bar` (which hooks `node()` on `admin_bar_menu` via constructor), fires the action, reads node back. `WP_Admin_Bar` auto-load guarded at L62-64. |
-
-### Requirements Coverage
-
-| Requirement | Source Plans | Description | Status | Evidence |
-|-------------|-------------|-------------|--------|----------|
-| UX-08 (UX-08a + UX-08b) | 11-01, 11-02, 11-04 | Admin-bar editor entry: mobile visibility + compact label | SATISFIED | CSS override (`maestro.css:516-521`) enables mobile visibility; compact labels in PHP (`class-admin-bar.php:51-57`); long-form accessible name in `meta.title`. AdminBarTest 4 assertions green; UX-08a e2e passed. REQUIREMENTS.md traceability row: `UX-08 | Phase 11 | Complete`. |
-| BUG-06 | 11-01, 11-03, 11-04 | Separators not preserved during keyboard reorder | SATISFIED | `insertBefore` single-node move at `maestro.js:295-311` replaces the full-set `forEach(appendChild)` loop. BUG-06 e2e ran against real WP-core separators (not skipped). REQUIREMENTS.md: `BUG-06 | Phase 11 | Complete`. |
-| BUG-07 | 11-01, 11-03, 11-04 | Modified badge lands after submenu, not on the row | SATISFIED | `labelTarget` appended at `maestro.js:105-119`; badge is inside `.wp-menu-name` for top-level items. BUG-07 e2e (`#menu-posts .wp-menu-name .maestro-modified-badge`) passed. REQUIREMENTS.md: `BUG-07 | Phase 11 | Complete`. |
-
-**Orphaned requirements check:** REQUIREMENTS.md v1.2 traceability maps UX-08, BUG-06, BUG-07 to Phase 11 — all three are accounted for by the plans. UX-08a and UX-08b are sub-designators of UX-08 used in plan frontmatter; UX-08 is the canonical REQUIREMENTS.md ID and is marked Complete. No orphaned IDs found.
-
-### Anti-Patterns Found
-
-| File | Line | Pattern | Severity | Impact |
-|------|------|---------|----------|--------|
-| None | — | — | — | No TODO/FIXME/placeholder comments or empty implementations found in Phase 11 files. |
-
-Checked `class-admin-bar.php`, `assets/maestro.css` (UX-08a block), `assets/maestro.js` (L85-130, L275-340), `tests/integration/AdminBarTest.php`, `tests/e2e/editor.spec.ts` (Phase 11 describe block), `tests/e2e/specs/capture-screenshots.spec.ts`.
-
-### Human Verification Items
-
-#### 1. Visual: UX-08a icon-only toggle at mobile widths
-
-**Test:** Run `npm run screenshots` (with wp-env running), then open `.planning/phases/11-editor-entry-reorder-fixes/screenshots/ux-08a-782.png` and `ux-08a-600.png`.
-**Expected:** Admin bar visible at top, Maestro dashicon-only node (no "Edit Menu" text) visible and tappable. The Maestro edit toolbar visible at bottom.
-**Why human:** Automated checks verify the node is present and bounding width <=60px. Visual comfortability of the tap target and absence of layout conflicts with adjacent core admin-bar nodes requires a human eye. The committed PNGs serve this purpose; a glance is non-blocking.
-
-#### 2. Visual: BUG-07 badge position on a submenu parent item
-
-**Test:** In wp-admin edit mode, rename "Posts" to any string and observe the modified badge.
-**Expected:** Bullet "•" appears inline next to the label text "Posts" (or renamed string) in the same horizontal row — NOT below the expanded submenu list.
-**Why human:** The e2e assertion confirms the badge is a DOM descendant of `.wp-menu-name`, but the rendered visual position (inline vs. after the submenu) depends on CSS paint order and is only confirmed by seeing it in a real browser.
-
-### Gaps Summary
-
-No gaps found. All five success criteria are satisfied by the source code, test coverage is red-first (Wave 0 tests committed before production code), and the full zero-regression suite held at the Wave 2 gate (JS 53/53, PHP unit 61/61, integration 37/37, e2e 31/31, phpcs clean, PHPStan 0 errors, Plugin Check 0 errors).
-
-The one noteworthy detail: REQUIREMENTS.md uses `UX-08` as the canonical ID (not `UX-08a`/`UX-08b`); the sub-designators appear only in plan frontmatter as implementation divisions. All three canonical IDs (UX-08, BUG-06, BUG-07) are marked Complete in the v1.2 traceability table.
+| `class-assets.php::enqueue()` | `assets/maestro-admin-bar.css` | `wp_enqueue_style('maestro-admin-bar', …, array('dashicons'))` ABOVE `is_edit_mode()` return | WIRED | Lines 57-62 confirmed before line 64 guard — not conditional on edit mode |
+| `assets/maestro.js` move buttons | `window.maestroLogic.reorderMove + parentUl.insertBefore` | `moveSelected(dir)` called by button click handlers at lines 481 and 489 | WIRED | Button clicks at 481/489 call `moveSelected('up'/'down')`; `moveSelected` calls `reorderMove` at 308 and `insertBefore` at 331/334 |
+| `assets/maestro.css @media (max-width:600px)` | `.maestro-panel button .maestro-btn-label` | `display:none` hides label span; `min-width:44px` keeps tap target | WIRED | Selector `.maestro-toolbar .maestro-panel button .maestro-btn-label { display: none; }` at line 537 |
+| `tests/e2e/editor.spec.ts` enter-state test | `#wp-admin-bar-maestro-toggle` | `page.goto('/wp-admin/index.php')` with NO query params + `toBeVisible()` | WIRED | Line 907: `page.goto('/wp-admin/index.php')` (no maestro_edit); line 910: `toBeVisible()`; line 918-923: boundingBox width <= 60 |
+| `tests/e2e/editor.spec.ts` reorder test | `button.maestro-move-down` | rename-input focus asserted; L373-374 cheat deleted; `moveDown.click()` | WIRED | Line 376: `.maestro-rename-input toBeFocused()`; line 381: `page.locator('…button.maestro-move-down')`; lines 387/394: `moveDown.click()` — no re-focus cheat, no Alt+Arrow |
 
 ---
 
-_Verified: 2026-06-21_
+### Requirements Coverage
+
+| Requirement | Source Plan(s) | Description | Status | Evidence |
+|-------------|----------------|-------------|--------|----------|
+| UX-08a | 11-05, 11-06, 11-08 | Editor ENTER toggle visible and icon-only at <=782px in non-edit state | SATISFIED | maestro-admin-bar.css always-loaded; e2e navigates /wp-admin/index.php (no maestro_edit) at 782+600px and asserts toBeVisible + boundingBox.width <= 60; screenshots captured; Wave 2 gate: 32/32 e2e passed |
+| UX-08b | 11-07, 11-08 | Toolbar fits at <=600px — panel buttons collapse to icon-only with 44px tap targets | SATISFIED | @media (max-width:600px) block in maestro.css; iconButton() gives all five secondary buttons aria-label + .maestro-btn-label; min-width:44px at <=600px; 44px tap-target e2e (editor.spec.ts:1008) still green |
+| BUG-06 | 11-05, 11-07, 11-08 | Keyboard reorder preserves separators; OS-independent reorder affordance delivered | SATISFIED | moveSelected(dir) reuses reorderMove + single-node insertBefore (separator-preserving path from 11-03); button.maestro-move-up/down in panel Tab-reachable from rename input; e2e drives button clicks and asserts two-step move + persistence + separator baseline |
+| BUG-07 | 11-07, 11-08 | Modified badge legible (bumped to 14-16px) | SATISFIED | font-size: 15px in maestro.css line 84; DOM position (on .wp-menu-name from 11-03) unchanged; BUG-07 placement e2e still green |
+
+Note: REQUIREMENTS.md uses `UX-08` as the canonical ID (with sub-items a and b described inline); the plan frontmatter splits these as `UX-08a`/`UX-08b`. The canonical entry is marked Complete in the v1.2 traceability table. No orphaned requirement IDs found.
+
+---
+
+### HARD-03 Race(b) Hardening Confirmation
+
+Commit `2eb2a2d` hardened (not weakened) the `save-race.spec.ts` race(b) test after 11-07's enlarged flex-wrap toolbar caused Playwright click-delivery fragility:
+
+- The test still waits for and asserts a DELETE response (line 236: `await deleteDone`).
+- The test still asserts the rename did NOT persist after reload (lines 243-244: `toContainText('Posts')` and `not.toContainText('ArticlesRaceB')`).
+- The only structural change: the rename is committed (blur) before clicking Reset All, so the flex-wrap toolbar settles to its final layout before the synthetic click. This makes click delivery deterministic without affecting the race scenario under test.
+- A genuine reset-loses regression (rename persisting after Reset All) would still fail the no-persist assertions. The test is not masked.
+
+---
+
+### Anti-Patterns Found
+
+No blockers or warnings in any gap-closure file.
+
+Apparent "placeholder" matches in maestro.js and maestro.css are all legitimate:
+- `.ui-sortable-placeholder` — jQuery UI sortable visual affordance (correct use)
+- `rename.placeholder = I.renamePlaceholder` — standard HTML input placeholder attribute
+- `::placeholder` — CSS pseudo-element for input placeholder styling
+
+No TODO/FIXME/XXX/HACK in any of the gap-closure files (`maestro-admin-bar.css`, `maestro.js` gap-closure sections, `maestro.css` new blocks, `class-assets.php` enqueue addition, `editor.spec.ts` new/converted tests).
+
+---
+
+### Human Verification Required
+
+The following items cannot be verified from source inspection alone. The Wave 2 gate (Docker suite, sandbox-disabled, JS 53/53, PHP 37/37, e2e 32 passed / 4 capture-skipped / 0 failed) was confirmed green per 11-08 SUMMARY and established session context. These are noted for completeness only.
+
+1. **Mobile admin-bar visual appearance (enter state)**
+   - Test: Open the WP admin on a real phone or browser resized to 375px in the non-edit state; confirm the Maestro "Edit Menu" toggle is visible and shows only the dashicon (no text label).
+   - Expected: Toggle visible, dashicon only, no horizontal overflow.
+   - Why human: Visual rendering on real device; the committed enter-state PNGs provide photographic evidence but a live check at narrow widths is the definitive test.
+
+2. **Toolbar icon-only layout at <=600px with item selected**
+   - Test: Resize browser to <=600px, click a menu item, confirm all panel buttons show only dashicons (no text), toolbar fits without horizontal scroll, buttons are at least 44px wide.
+   - Expected: No overflow, all controls accessible and tap-target compliant.
+   - Why human: Visual layout and overflow behavior.
+
+3. **Modified badge legibility at 15px**
+   - Test: In edit mode, modify a menu item; confirm the bullet marker next to the row label is visibly larger than before (was 10px, now 15px) and reads at a glance.
+   - Expected: Bullet is clearly visible without zooming in.
+   - Why human: Perceptual legibility judgment.
+
+---
+
+### Gaps Summary
+
+No gaps. All 10 must-haves from plans 11-05 through 11-08 are satisfied in the actual codebase. All four gap-closure requirement IDs (UX-08a, UX-08b, BUG-06, BUG-07) are implemented, covered by the corrected e2e guards, and confirmed green at the Wave 2 zero-regression gate (JS 53/53, PHP integration 37/37, Playwright e2e 32/32 non-capture tests, 4/4 screenshot captures).
+
+---
+
+_Verified: 2026-06-22_
 _Verifier: Claude Sonnet 4.6 (gsd-verifier)_

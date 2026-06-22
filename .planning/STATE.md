@@ -3,26 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: executing
-stopped_at: Completed 11-08-PLAN.md
-last_updated: "2026-06-22T02:30:00.000Z"
-last_activity: "2026-06-22 — Phase 11 gap-closure 11-08: Wave 2 gate GREEN sandbox-disabled (JS 53/53, PHP integration 37/37, e2e 32 pass/0 fail, screenshots 4/4); both 11-05 RED guards now GREEN; enter-state mobile PNGs captured. race(b) HARD-03 hardened (toolbar-reflow click fragility, product verified correct). All 4 gap-closure plans done — ready for verification"
+stopped_at: Completed 11-08-PLAN.md — Phase 11 COMPLETE & verified (10/10)
+last_updated: "2026-06-22T02:35:00.000Z"
+last_activity: "2026-06-22 — Phase 11 (editor entry & reorder fixes) COMPLETE & verified 10/10: all 4 UAT gap-closure defects closed, Wave 2 gate GREEN sandbox-disabled. Branch gsd/phase-11-gap-closure awaits merge to main. Next: Phase 12 (11.1 already done) → cut 1.2.0"
 progress:
   total_phases: 8
-  completed_phases: 4
+  completed_phases: 6
   total_plans: 28
-  completed_plans: 27
-  percent: 96
-release_target: "1.2.0"
-release_tag: "v1.2.0"
-release_status: "planned"
-release_cut_after: "Phases 9, 11, 11.1, and 12 complete; Phase 10 is non-blocking research"
-release_pipeline: "GitHub release/tag workflow -> WordPress.org SVN deploy via wp-deploy/prep-release.sh"
-release_checklist:
-  - "Complete Phase 11 gap-closure, including 11-08 full-suite gate"
-  - "Complete Phase 12 release-assets refresh"
-  - "Run milestone audit / zero-regression gate"
-  - "Tag v1.2.0 and publish through the GitHub Actions release pipeline"
-  - "Confirm WordPress.org SVN deploy/tag/assets"
+  completed_plans: 28
+  percent: 93
 ---
 
 # Project State
@@ -37,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 11 (Editor Entry & Reorder Fixes) — gap-closure in progress on branch gsd/phase-11-gap-closure
-Plan: 11-05, 11-06, 11-07, 11-08 ALL complete (4/4 gap-closure plans); Wave 2 gate GREEN sandbox-disabled; ready for gsd-verifier + phase complete
-Status: Phase 11 gap closure COMPLETE — all 4 UAT defects closed (UX-08a mobile entry toggle, UX-08b/BUG-06 OS-independent ▲/▼ reorder + ≤600px compression, BUG-07 badge). Wave 2 gate GREEN sandbox-disabled. Next: gsd-verifier, then `phase complete`, then Phase 12 → cut 1.2.0.
-Last activity: 2026-06-22 — Phase 11 gap-closure 11-07: ▲/▼ reorder buttons + icon-only compression + badge bump — Gaps 2/3/4 closed
+Phase: Phase 11 (Editor Entry & Reorder Fixes) — COMPLETE & VERIFIED (10/10 must-haves) on branch gsd/phase-11-gap-closure; branch awaits merge to main
+Plan: 11-01…11-08 all complete (4 original + 4 gap-closure); Wave 2 gate GREEN sandbox-disabled; gsd-verifier passed 10/10
+Status: Phase 11 gap closure COMPLETE & verified — all 4 UAT defects closed (UX-08a mobile entry toggle, UX-08b/BUG-06 OS-independent ▲/▼ reorder + ≤600px compression, BUG-07 badge). Next genuine step: Phase 12 (release-assets refresh) — Phase 11.1 is already done — then cut 1.2.0. (Note: `phase complete` CLI reports next_phase 11.1, but 11.1 is already complete; Phase 12 is the real next.)
+Last activity: 2026-06-22 — Phase 11 COMPLETE & verified (10/10); branch gsd/phase-11-gap-closure awaits merge to main
 
 Progress: [█████████░] 93%
 
