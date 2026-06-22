@@ -116,9 +116,18 @@ body.maestro-editing #collapse-menu {
 	box-shadow: none;
 	text-decoration: none; /* Exit is an <a class="button"> */
 }
-/* Tiles are status indicators, not buttons — no pointer affordance/hover. */
+/* The mode + status are INDICATORS, not buttons — strip the button box so they
+ * read as flat glyphs (no border/fill, not clickable). They keep the 20px glyph
+ * and midline centring; the colour still carries state. */
 .maestro-mode-label,
-.maestro-status:not( .maestro-status-idle ) { cursor: default; }
+.maestro-status:not( .maestro-status-idle ) {
+	cursor: default;
+	border: 0;
+	background: transparent;
+	min-width: 0;
+	min-height: 0;
+	padding: 0 2px;
+}
 .maestro-toolbar .button:hover {
 	background: #50575e; /* lighter gray on hover; glyph keeps its role colour */
 }
@@ -126,9 +135,19 @@ body.maestro-editing #collapse-menu {
 	outline: 2px solid #2271b1;
 	outline-offset: 1px;
 }
+/* A control with nothing to do (Reset Item on an unmodified item) is dimmed and
+ * non-interactive, so its enabled/amber state means "you have changes to undo". */
+.maestro-toolbar .button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.maestro-toolbar .button:disabled:hover { background: #2c3338; }
+/* Group the controls: a touch more space before the item-attribute group
+ * (Icon / Visibility / Reset Item) sets it apart from the ▲/▼ reorder pair. */
+.maestro-toolbar .maestro-icon-btn { margin-left: 8px; }
 /* Semantic role colours (recolour glyph + outline via currentColor). Scoped
  * under .maestro-toolbar (0,2,0) so they out-specify the unified base above. */
-.maestro-toolbar .maestro-reset-all { color: #f86368; } /* glyph stays red on the gray hover */
+.maestro-toolbar .maestro-reset-all { color: #ff5c5c; } /* stronger, more saturated destructive red */
 
 /* Hide the visible text label of any toolbar control that carries one — the
  * five panel buttons and the persistent mode indicator. aria-label + title
@@ -411,7 +430,7 @@ body.maestro-editing #collapse-menu {
 /* 0,2,0 so the state colour beats the unified base's neutral default. */
 .maestro-status.maestro-status-saving { color: #f0b849; }
 .maestro-status.maestro-status-saved  { color: #6bc187; }
-.maestro-status.maestro-status-error  { color: #f86368; }
+.maestro-status.maestro-status-error  { color: #ff5c5c; } /* matches the destructive red */
 
 .maestro-panel {
 	display: flex;

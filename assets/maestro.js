@@ -38,6 +38,7 @@
 	var saveInFlight = false;  // a full-replace POST is currently running
 	var savePending = false;   // another change arrived mid-flight; save again on land
 	var inFlight = null;       // promise that settles when the whole save chain is done
+	var savedClearTimer = null; // reverts the transient "Saved" tile back to idle
 
 	/* ---------- helpers ---------------------------------------------------- */
 
@@ -124,6 +125,9 @@
 			var oldSr = li.querySelector( '.maestro-modified-sr' );
 			if ( oldSr ) { oldSr.remove(); }
 		}
+
+		// Keep the panel Reset button in sync when the change is to the selected item.
+		updateResetButton( slug, result.modified );
 	}
 
 	/* ---------- folded-mode override -------------------------------------- */
@@ -502,7 +506,7 @@
 
 		var iconBtn = el( 'button', 'button maestro-icon-btn' );
 		iconBtn.type = 'button';
-		iconButton( iconBtn, 'dashicons-format-image', I.icon );
+		iconButton( iconBtn, 'dashicons-art', I.icon );
 		iconBtn.addEventListener( 'click', function ( e ) {
 			e.preventDefault();
 			openIconPicker( iconBtn );
@@ -559,7 +563,7 @@
 		resetAll.addEventListener( 'click', doResetAll );
 
 		var exit = el( 'a', 'button maestro-exit' );
-		iconButton( exit, 'dashicons-no-alt', I.exit );
+		iconButton( exit, 'dashicons-arrow-left-alt', I.exit );
 		exit.href = D.exitUrl;
 		exit.addEventListener( 'click', onExit );
 
@@ -585,11 +589,18 @@
 		// Icon picker is top-level only; submenu items have no icon column.
 		panel.iconBtn.style.display = m.isSub ? 'none' : '';
 
-		// Reflect modified state on the reset button so it is discoverable in
-		// context: emphasised when the item is actually modified, subdued otherwise.
+		// Reflect modified state on the reset button: amber + enabled when modified,
+		// dimmed + disabled when there is nothing to reset.
 		var def = m.isSub ? pristineSub( slug ) : pristineTop( slug );
-		var isModified = window.maestroLogic.diffItem( m, def ).modified;
+		updateResetButton( slug, window.maestroLogic.diffItem( m, def ).modified );
+	}
+
+	// Sync the per-item Reset button to the selected item's modified state so its
+	// enabled/amber state means "you have changes to undo".
+	function updateResetButton( slug, isModified ) {
+		if ( ! panel.resetBtn || slug !== selectedSlug ) { return; }
 		panel.resetBtn.classList.toggle( 'is-modified', isModified );
+		panel.resetBtn.disabled = ! isModified;
 	}
 
 	/* ---------- rename (single, idempotent) -------------------------------- */
@@ -1147,6 +1158,18 @@
 		}
 		setStatus( ok ? 'saved' : 'error' );
 		inFlight = null;
+		// The "Saved" tile is transient — fade it back to idle so the toolbar
+		// settles to just the persistent mode indicator. An error stays put until
+		// the next change. A new save (which sets 'saving') cancels this via the
+		// state guard inside the callback.
+		if ( savedClearTimer ) { clearTimeout( savedClearTimer ); }
+		if ( ok ) {
+			savedClearTimer = setTimeout( function () {
+				if ( statusEl && statusEl.classList.contains( 'maestro-status-saved' ) ) {
+					setStatus( 'idle' );
+				}
+			}, 2000 );
+		}
 		return null;
 	}
 
