@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: executing
-stopped_at: Phase 11 merged (PR #49); Phase 11.2 (editor toolbar redesign) complete & recorded
-last_updated: "2026-06-22T17:00:00.000Z"
-last_activity: "2026-06-22 — Phase 11 merged to main via PR #49. Phase 11.2 (icon-only unified toolbar redesign, UX-10) built via interactive design iteration, recorded as 11.2-SUMMARY; e2e 32/0. On branch gsd/editor-toolbar-redesign awaiting its own PR. Next: Phase 12 (release assets) → cut 1.2.0"
+status: planning
+stopped_at: Phases 11 + 11.2 merged to main (PR #49, #50); planning Phase 12
+last_updated: "2026-06-22T18:00:00.000Z"
+last_activity: "2026-06-22 — Phases 11 (PR #49) and 11.2 toolbar redesign (PR #50) both merged to main; stale branches pruned. Planning Phase 12 (release assets: REL-07 banner + REL-08 screenshots) on branch gsd/phase-12-release-assets-refresh — RESEARCH + VALIDATION written. Phase 12 is the last gate before cutting 1.2.0."
 progress:
   total_phases: 9
   completed_phases: 7
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 11 MERGED to main (PR #49). Phase 11.2 (Editor Toolbar Redesign, UX-10) — COMPLETE & recorded; on branch gsd/editor-toolbar-redesign awaiting its own PR to main.
-Plan: Phase 11 — 11-01…11-08 complete & merged. Phase 11.2 — no plans (retroactive record, 11.2-SUMMARY); 8 commits; e2e 32/0, JS 53/53, PHP integration 37/37.
-Status: Phase 11.2 icon-only unified toolbar redesign complete (one outlined gray button system + semantic colour, flat non-clickable indicators, auto-clearing Saved, disabled Reset Item, control grouping, back-arrow Exit, palette icon-picker glyph, stronger red). Accessibility preserved. Next genuine step: Phase 12 (release-assets refresh) — captures the 11.2 UI — then cut 1.2.0.
-Last activity: 2026-06-22 — Phase 11 merged (#49); Phase 11.2 built + recorded; branch gsd/editor-toolbar-redesign awaiting PR
+Phase: Phase 12 (Release Assets Refresh) — PLANNING on branch gsd/phase-12-release-assets-refresh. Phases 11 (#49) + 11.2 (#50) merged to main.
+Plan: Phase 12 — RESEARCH + VALIDATION written; gsd-planner next. REL-07 banner (one-line balance fix in build_final.py, VARIANT_SUFFIX staging, visual-review gate) + REL-08 screenshots (new MAESTRO_CAPTURE-gated capture spec against the post-11.2 UI; Docker dependency; readme caption sync).
+Status: Last v1.2 phase before the release cut. Assets-only; no plugin code. After Phase 12 ships, cut 1.2.0 (tag v1.2.0 → wp.org SVN deploy).
+Last activity: 2026-06-22 — Phases 11 + 11.2 merged; planning Phase 12 (release assets)
 
 Progress: [█████████░] 93%
 
