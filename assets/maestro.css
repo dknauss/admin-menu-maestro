@@ -81,7 +81,7 @@ body.maestro-editing #collapse-menu {
 }
 .maestro-editing #adminmenu .maestro-modified-badge {
 	color: #dba617;
-	font-size: 10px;
+	font-size: 15px; /* Gap 4 / BUG-07: bumped from 10px — bullet reads at a glance */
 	line-height: 1;
 	margin-left: 4px;
 	vertical-align: middle;
