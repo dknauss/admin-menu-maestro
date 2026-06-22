@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: Last v1.2 phase before the release cut. Assets-only; no plugin code. After Phase 12 ships, cut 1.2.0 (tag v1.2.0 → wp.org SVN deploy).
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-06-22T18:36:30.416Z"
-last_activity: 2026-06-22 — Phases 11 + 11.2 merged; planning Phase 12 (release assets)
+status: executing
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-06-22T19:30:00.000Z"
+last_activity: "2026-06-22 — Phase 12 executing: 12-01 (balanced banner, REL-07) + 12-02 (6 directory screenshots vs post-11.2 UI, REL-08) complete & human-approved. Next: 12-03 caption sync + asset gate → phase verify → cut 1.2.0"
 progress:
   total_phases: 9
   completed_phases: 6
-  total_plans: 31
-  completed_plans: 30
-  percent: 93
+  total_plans: 32
+  completed_plans: 31
+  percent: 97
 ---
 
 # Project State
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 12 (Release Assets Refresh) — PLANNING on branch gsd/phase-12-release-assets-refresh. Phases 11 (#49) + 11.2 (#50) merged to main.
-Plan: Phase 12 — RESEARCH + VALIDATION written; gsd-planner next. REL-07 banner (one-line balance fix in build_final.py, VARIANT_SUFFIX staging, visual-review gate) + REL-08 screenshots (new MAESTRO_CAPTURE-gated capture spec against the post-11.2 UI; Docker dependency; readme caption sync).
-Status: Last v1.2 phase before the release cut. Assets-only; no plugin code. After Phase 12 ships, cut 1.2.0 (tag v1.2.0 → wp.org SVN deploy).
-Last activity: 2026-06-22 — Phases 11 + 11.2 merged; planning Phase 12 (release assets)
+Phase: Phase 12 (Release Assets Refresh) — EXECUTING on branch gsd/phase-12-release-assets-refresh. 12-01 + 12-02 complete & human-approved; 12-03 next.
+Plan: 12-01 ✓ REL-07 balanced banner (tagline fit to wordmark width; live banners regenerated, human-approved). 12-02 ✓ REL-08 6 directory screenshots vs post-11.2 UI (overview, icon picker, visibility, rename+saved, group drag, sub-item ▲/▼) — count = 6. 12-03 next: sync readme `== Screenshots ==` to 6 captions + deterministic asset gate + e2e.
+Status: Assets-only; last v1.2 phase. After 12-03 + phase verify, cut 1.2.0 (tag v1.2.0 → wp.org SVN deploy). wp-env is up on :8899 (capture env).
+Last activity: 2026-06-22 — Phase 12: 12-01 banner + 12-02 screenshots complete & approved; 12-03 caption sync next
 
 Progress: [█████████░] 93%
 
