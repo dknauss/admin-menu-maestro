@@ -555,7 +555,7 @@
 		// guarded by the confirm dialog in doResetAll().
 		var resetAll = el( 'button', 'button maestro-reset-all' );
 		resetAll.type = 'button';
-		iconButton( resetAll, 'dashicons-image-rotate', I.resetAll );
+		iconButton( resetAll, 'dashicons-backup', I.resetAll );
 		resetAll.addEventListener( 'click', doResetAll );
 
 		var exit = el( 'a', 'button maestro-exit' );

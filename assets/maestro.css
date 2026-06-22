@@ -89,18 +89,48 @@ body.maestro-editing #collapse-menu {
 	user-select: none;
 }
 
-/* Panel buttons: icon-only at ALL widths to keep the toolbar compact. The
- * aria-hidden dashicon glyph is the visible control; the .maestro-btn-label
- * text span stays in the DOM as an accessible-name fallback but is hidden by
- * the rule below. The accessible name is carried by aria-label + a title
- * tooltip (set in iconButton()). Square 44px keeps the WCAG 2.5.5 tap target. */
-.maestro-panel button {
+/* ---- Unified toolbar control system -------------------------------------
+ * Every interactive control (panel buttons, Reset All, Exit) AND the two
+ * indicator tiles (mode, active save-status) share one outlined box. Colour is
+ * the ONLY thing that varies, and it carries meaning rather than zone:
+ *   grey  = ordinary, safe controls (move / icon / visibility / exit)
+ *   green = active edit-mode + "saved"
+ *   amber = in-progress saving + "this item is modified" (Reset Item)
+ *   red   = error + destructive Reset All
+ * border:currentColor means a single `color` recolours both glyph and outline. */
+.maestro-toolbar .button,
+.maestro-mode-label,
+.maestro-status:not( .maestro-status-idle ) {
+	box-sizing: border-box;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 4px;
-	min-width: 44px;
+	min-width: 40px;
+	min-height: 36px;
+	padding: 4px 8px;
+	border: 1px solid currentColor;
+	border-radius: 3px;
+	background: transparent;
+	color: #c3c4c7; /* neutral default; role rules below recolour glyph + outline */
+	box-shadow: none;
+	text-decoration: none; /* Exit is an <a class="button"> */
 }
+/* Tiles are status indicators, not buttons — no pointer affordance/hover. */
+.maestro-mode-label,
+.maestro-status:not( .maestro-status-idle ) { cursor: default; }
+.maestro-toolbar .button:hover {
+	background: rgba( 255, 255, 255, 0.08 );
+	color: #f0f0f1;
+}
+.maestro-toolbar .button:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 1px;
+}
+/* Semantic role colours (recolour glyph + outline via currentColor). Scoped
+ * under .maestro-toolbar (0,2,0) so they out-specify the unified base above. */
+.maestro-toolbar .maestro-reset-all { color: #f86368; }
+.maestro-toolbar .maestro-reset-all:hover { background: rgba( 248, 99, 104, 0.14 ); color: #f86368; }
 
 /* Hide the visible text label of any toolbar control that carries one — the
  * five panel buttons and the persistent mode indicator. aria-label + title
@@ -113,16 +143,14 @@ body.maestro-editing #collapse-menu {
 	outline: 2px solid #2271b1;
 	outline-offset: 2px;
 }
-/* Emphasise the reset button when the selected item is modified */
+/* Caution colour when the selected item is modified — amber glyph + outline
+ * (consistent with the outlined control system; no solid fill). */
 .maestro-reset-item.is-modified {
-	border-color: #dba617;
-	color: #1d2327;
-	background: #dba617;
+	color: #dba617;
 }
-.maestro-reset-item.is-modified:hover,
-.maestro-reset-item.is-modified:focus-visible {
-	border-color: #c9961a;
-	background: #c9961a;
+.maestro-reset-item.is-modified:hover {
+	background: rgba( 219, 166, 23, 0.14 );
+	color: #dba617;
 }
 
 /* ---------- per-item DOM: selection only -------------------------------- */
@@ -298,22 +326,9 @@ body.maestro-editing #collapse-menu {
 	line-height: 1;
 }
 
-/* Mode indicator and the active save-status render as outlined square tiles that
- * match the icon buttons in size and centre on the same midline. The outline
- * colour follows the indicator colour via currentColor — green for edit-mode and
- * "saved", amber while saving, red on error. The idle status has no tile. */
-.maestro-mode-label,
-.maestro-status:not( .maestro-status-idle ) {
-	box-sizing: border-box;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 44px;
-	min-height: 30px;
-	padding: 4px 8px;
-	border: 1px solid currentColor;
-	border-radius: 3px;
-}
+/* (Mode + active save-status tiles are styled by the unified control system
+ * near the top of this file — same outlined box as the buttons; colour follows
+ * the indicator colour via currentColor.) */
 
 /* Status zone — sits to the left, never overlapped by the panel label. */
 .maestro-status {
@@ -392,9 +407,10 @@ body.maestro-editing #collapse-menu {
 	opacity: 1;
 }
 
-.maestro-status-saving { color: #f0b849; }
-.maestro-status-saved  { color: #6bc187; }
-.maestro-status-error  { color: #f86368; }
+/* 0,2,0 so the state colour beats the unified base's neutral default. */
+.maestro-status.maestro-status-saving { color: #f0b849; }
+.maestro-status.maestro-status-saved  { color: #6bc187; }
+.maestro-status.maestro-status-error  { color: #f86368; }
 
 .maestro-panel {
 	display: flex;
@@ -403,8 +419,8 @@ body.maestro-editing #collapse-menu {
 	gap: 8px;
 	flex: 1;
 	min-width: 0;
-	padding-left: 16px; /* wider inset reinforces the left-separator as a zone boundary */
-	border-left: 2px solid #3c434a; /* 2px makes the divider more prominent */
+	padding-left: 12px; /* inset reinforces the left-separator as a zone boundary */
+	border-left: 1px solid #3c434a; /* subtle zone divider (matches right-actions) */
 }
 .maestro-panel[hidden] { display: none; }
 .maestro-panel-label {
@@ -448,17 +464,10 @@ body.maestro-editing #collapse-menu {
 	gap: 8px;
 	margin-left: auto;
 	flex-shrink: 0; /* keeps reset-all/exit reachable; never squeezed */
-	padding-left: 16px;
-	border-left: 2px solid #3c434a; /* mirrors panel zone separator */
+	padding-left: 12px;
+	border-left: 1px solid #3c434a; /* subtle zone divider (mirrors panel separator) */
 }
-/* Reset All / Exit are icon-only too (their .maestro-btn-label is hidden by the
- * rule above). Centre the glyph and hold the WCAG 2.5.5 square tap target. */
-.maestro-toolbar-right .button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 44px;
-}
+/* (Reset All / Exit share the unified control box near the top of this file.) */
 
 /* ---------- first-run cue ----------------------------------------------- */
 
