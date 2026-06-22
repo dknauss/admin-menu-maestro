@@ -111,7 +111,7 @@ body.maestro-editing #collapse-menu {
 	padding: 4px 8px;
 	border: 1px solid currentColor;
 	border-radius: 0; /* sharp corners */
-	background: #3c434a; /* gray fill so each control reads clearly as a button */
+	background: #2c3338; /* gray fill (subtle; the coloured 1px border carries the boundary) */
 	color: #c3c4c7; /* neutral default; role rules below recolour glyph + outline */
 	box-shadow: none;
 	text-decoration: none; /* Exit is an <a class="button"> */
@@ -444,10 +444,12 @@ body.maestro-editing #collapse-menu {
 .maestro-rename-input {
 	width: 180px;
 	max-width: 100%;
+	box-sizing: border-box;
+	min-height: 36px; /* match the control buttons' height */
 	font-size: 13px;
-	padding: 2px 6px;
-	border-radius: 2px;
-	border: 1px solid #2271b1;
+	padding: 4px 8px; /* match button padding */
+	border-radius: 0; /* square corners to match the buttons */
+	border: 1px solid #c3c4c7; /* neutral, matches the ordinary-control outline; stays white for legibility */
 	background: #fff;
 	color: #1d2327;
 }
