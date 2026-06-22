@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: executing
-stopped_at: Completed 11-08-PLAN.md — Phase 11 COMPLETE & verified (10/10)
-last_updated: "2026-06-22T02:35:00.000Z"
-last_activity: "2026-06-22 — Phase 11 (editor entry & reorder fixes) COMPLETE & verified 10/10: all 4 UAT gap-closure defects closed, Wave 2 gate GREEN sandbox-disabled. Branch gsd/phase-11-gap-closure awaits merge to main. Next: Phase 12 (11.1 already done) → cut 1.2.0"
+stopped_at: Phase 11 merged (PR #49); Phase 11.2 (editor toolbar redesign) complete & recorded
+last_updated: "2026-06-22T17:00:00.000Z"
+last_activity: "2026-06-22 — Phase 11 merged to main via PR #49. Phase 11.2 (icon-only unified toolbar redesign, UX-10) built via interactive design iteration, recorded as 11.2-SUMMARY; e2e 32/0. On branch gsd/editor-toolbar-redesign awaiting its own PR. Next: Phase 12 (release assets) → cut 1.2.0"
 progress:
-  total_phases: 8
-  completed_phases: 6
+  total_phases: 9
+  completed_phases: 7
   total_plans: 28
   completed_plans: 28
-  percent: 93
+  percent: 95
 ---
 
 # Project State
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-14)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** v1.2 "Editor UX polish" — Phases 9, 11, 11.1 done; Phase 12 next, then cut 1.2.0
+**Current focus:** v1.2 "Editor UX polish" — Phases 9, 11, 11.1, 11.2 done; Phase 12 next, then cut 1.2.0
 
 ## Current Position
 
 Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 11 (Editor Entry & Reorder Fixes) — COMPLETE & VERIFIED (10/10 must-haves) on branch gsd/phase-11-gap-closure; branch awaits merge to main
-Plan: 11-01…11-08 all complete (4 original + 4 gap-closure); Wave 2 gate GREEN sandbox-disabled; gsd-verifier passed 10/10
-Status: Phase 11 gap closure COMPLETE & verified — all 4 UAT defects closed (UX-08a mobile entry toggle, UX-08b/BUG-06 OS-independent ▲/▼ reorder + ≤600px compression, BUG-07 badge). Next genuine step: Phase 12 (release-assets refresh) — Phase 11.1 is already done — then cut 1.2.0. (Note: `phase complete` CLI reports next_phase 11.1, but 11.1 is already complete; Phase 12 is the real next.)
-Last activity: 2026-06-22 — Phase 11 COMPLETE & verified (10/10); branch gsd/phase-11-gap-closure awaits merge to main
+Phase: Phase 11 MERGED to main (PR #49). Phase 11.2 (Editor Toolbar Redesign, UX-10) — COMPLETE & recorded; on branch gsd/editor-toolbar-redesign awaiting its own PR to main.
+Plan: Phase 11 — 11-01…11-08 complete & merged. Phase 11.2 — no plans (retroactive record, 11.2-SUMMARY); 8 commits; e2e 32/0, JS 53/53, PHP integration 37/37.
+Status: Phase 11.2 icon-only unified toolbar redesign complete (one outlined gray button system + semantic colour, flat non-clickable indicators, auto-clearing Saved, disabled Reset Item, control grouping, back-arrow Exit, palette icon-picker glyph, stronger red). Accessibility preserved. Next genuine step: Phase 12 (release-assets refresh) — captures the 11.2 UI — then cut 1.2.0.
+Last activity: 2026-06-22 — Phase 11 merged (#49); Phase 11.2 built + recorded; branch gsd/editor-toolbar-redesign awaiting PR
 
 Progress: [█████████░] 93%
 
@@ -41,7 +41,7 @@ This GSD milestone is explicitly pinned to the release artifact it is meant to s
 - **Target release:** `1.2.0`
 - **Target tag:** `v1.2.0`
 - **Release status:** planned / not cut
-- **Release cut condition:** Phases 9 → 11 → 11.1 → 12 complete and audited; Phase 10 remains non-blocking research.
+- **Release cut condition:** Phases 9 → 11 → 11.1 → 11.2 → 12 complete and audited; Phase 10 remains non-blocking research.
 - **Pipeline:** GitHub release/tag workflow → WordPress.org SVN deploy via `wp-deploy.yml` / `prep-release.sh`.
 - **Checklist owner:** `$gsd-complete-milestone` / milestone audit should verify the release checklist before the milestone is considered shipped.
 
