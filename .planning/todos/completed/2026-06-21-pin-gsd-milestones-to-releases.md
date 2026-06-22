@@ -19,3 +19,12 @@ Make the milestone the system of record for its release:
 Cross-project (applies to any GSD repo with releases — Maestro, wp-sudo), so it likely belongs as a GSD-tooling enhancement (milestone frontmatter + a complete-milestone hook) rather than per-repo. Minimum viable version: just record the target tag explicitly in milestone STATE so it's no longer buried in prose.
 
 Source: Dan's FYI on 2026-06-21. See workspace memory `project-gsd-milestones-pin-releases`. Not yet scoped.
+
+## Completion note
+
+Minimum viable per-repo release pinning is now recorded in `.planning/STATE.md`
+(`release_target`, `release_tag`, release status, cut condition, pipeline, and
+checklist), with supporting notes in `.planning/ROADMAP.md` and
+`.planning/MILESTONES.md`.
+
+Cross-project GSD automation remains a future tooling enhancement.

@@ -2,9 +2,11 @@
 
 ## Milestones
 
-- ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; submitted to .org, awaiting review) → [archive](milestones/v1.0-ROADMAP.md)
-- ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17)
-- 🚧 **v1.2 Editor UX Polish** — Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 12; Phase 10 is independent research and does not gate the release.**
+**Release binding:** GSD milestones are the system of record for their release artifacts. Historical milestones record shipped tags in `.planning/MILESTONES.md`; the active milestone records `release_target`, `release_tag`, release status, cut condition, pipeline, and release checklist in `.planning/STATE.md`.
+
+- ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; release tag `v1.0.0`) → [archive](milestones/v1.0-ROADMAP.md)
+- ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17; release line `1.1.x`, latest shipped `1.1.1`)
+- 🚧 **v1.2 Editor UX Polish** — target release `1.2.0` / tag `v1.2.0`; Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 12; Phase 10 is independent research and does not gate the release.**
 
 ## Phases
 

@@ -12,6 +12,17 @@ progress:
   total_plans: 28
   completed_plans: 26
   percent: 93
+release_target: "1.2.0"
+release_tag: "v1.2.0"
+release_status: "planned"
+release_cut_after: "Phases 9, 11, 11.1, and 12 complete; Phase 10 is non-blocking research"
+release_pipeline: "GitHub release/tag workflow -> WordPress.org SVN deploy via wp-deploy/prep-release.sh"
+release_checklist:
+  - "Complete Phase 11 gap-closure, including 11-08 full-suite gate"
+  - "Complete Phase 12 release-assets refresh"
+  - "Run milestone audit / zero-regression gate"
+  - "Tag v1.2.0 and publish through the GitHub Actions release pipeline"
+  - "Confirm WordPress.org SVN deploy/tag/assets"
 ---
 
 # Project State
@@ -32,6 +43,18 @@ Status: 11-07 done — ▲/▼ panel reorder buttons (Gap 3/BUG-06), icon-only c
 Last activity: 2026-06-22 — Phase 11 gap-closure 11-07: ▲/▼ reorder buttons + icon-only compression + badge bump — Gaps 2/3/4 closed
 
 Progress: [█████████░] 93%
+
+## Release Binding
+
+This GSD milestone is explicitly pinned to the release artifact it is meant to ship:
+
+- **Milestone:** v1.2 — Editor UX Polish
+- **Target release:** `1.2.0`
+- **Target tag:** `v1.2.0`
+- **Release status:** planned / not cut
+- **Release cut condition:** Phases 9 → 11 → 11.1 → 12 complete and audited; Phase 10 remains non-blocking research.
+- **Pipeline:** GitHub release/tag workflow → WordPress.org SVN deploy via `wp-deploy.yml` / `prep-release.sh`.
+- **Checklist owner:** `$gsd-complete-milestone` / milestone audit should verify the release checklist before the milestone is considered shipped.
 
 ## Performance Metrics
 
@@ -83,6 +106,7 @@ Progress: [█████████░] 93%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
+- [GSD tooling]: Milestones are pinned to release artifacts in STATE.md (`release_target`, `release_tag`, release status, cut condition, pipeline, and checklist) so milestone completion cannot drift from the version tag/publish step.
 - [Phase 07]: Non-color status via ::before glyphs replaced with dashicons; idle dot de-emphasised (BUG-04/BUG-05)
 - [Phase 07]: First-run cue as fixed bar above toolbar, localStorage-gated — same gate pattern applies to UX-03
 - [Phase 07]: BUG-03 toolbar wrap/stack at narrow widths landed — UX-07 continues from this base for denser mobile sizing
@@ -128,13 +152,13 @@ Recent decisions affecting current work:
 
 ### Roadmap Evolution
 
+- GSD milestone release binding added to STATE.md: v1.2 now carries explicit target release `1.2.0`, tag `v1.2.0`, cut condition, pipeline, and release checklist.
 - Phase 11.1 inserted after Phase 11: P1 review hardening — scope `custom_menu_order`, bound config payload, save-race E2E coverage (from the 2026-06-20 code-review follow-up). Lands inside the 9 → 11 → 12 cut path, before the 1.2.0 tag.
 
 ### Pending Todos
 
 - **REL-07/REL-08 (deferred)** — refreshed banner + gallery-optimized screenshots; image work; no blocking dependency on v1.2
 - **V2-15 (backlog)** — role cloning for per-user menu hiding: feasibility note before any build
-- **Pin GSD milestones to releases (backlog/tooling)** — make the milestone the system of record for its release tag + pipeline trigger; see `.planning/todos/pending/2026-06-21-pin-gsd-milestones-to-releases.md`
 
 ### Blockers/Concerns
 

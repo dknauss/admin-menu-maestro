@@ -27,3 +27,29 @@ test-covered, with full .org listing assets, and submitted to the review queue.
 **Archives:** [v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) · [v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md)
 
 ---
+
+## v1.1 — Polish & Accessibility
+
+**Status:** ✅ Shipped 2026-06-17
+**Phases:** 6–8
+**Release line:** `1.1.x`
+**Latest shipped tag:** `v1.1.1`
+
+**Delivered:** Polish and accessibility improvements on top of the v1.0 WordPress.org release: keyboard reordering, modified indicators, per-item reset affordances, solid bundled icons, edit-mode visual polish, documentation/listing updates, and the v1.1.1 compact-control refinements.
+
+**Archives:** v1.1 lives in the active roadmap history for Phases 6–8; v1.0 remains archived under `.planning/milestones/`.
+
+---
+
+## v1.2 — Editor UX Polish
+
+**Status:** 🚧 In progress
+**Phases:** 9–12, plus inserted Phase 11.1 hardening
+**Target release:** `1.2.0`
+**Target tag:** `v1.2.0`
+**Cut condition:** Phases 9, 11, 11.1, and 12 complete and audited; Phase 10 is non-blocking research.
+**Pipeline:** GitHub release/tag workflow → WordPress.org SVN deploy via `wp-deploy.yml` / `prep-release.sh`.
+
+**Release checklist source:** Active release metadata and checklist live in `.planning/STATE.md` while the milestone is in progress. Move final shipped details here when `$gsd-complete-milestone` archives v1.2.
+
+---
