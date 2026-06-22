@@ -45,7 +45,11 @@ async function globalSetup( config: FullConfig ) {
 	const browser = await chromium.launch();
 	const page = await browser.newPage();
 
-	await page.goto( 'http://localhost:8889/wp-login.php', { waitUntil: 'domcontentloaded' } );
+	// Honor WP_ENV_TESTS_PORT so the login matches playwright.config.ts's baseURL
+	// when the tests instance runs on a non-default port (e.g. to dodge a port
+	// collision with another wp-env project).
+	const testsPort = process.env.WP_ENV_TESTS_PORT || '8889';
+	await page.goto( `http://localhost:${ testsPort }/wp-login.php`, { waitUntil: 'domcontentloaded' } );
 	await page.waitForSelector( '#user_login', { state: 'visible' } );
 	await page.fill( '#user_login', 'admin' );
 	await page.fill( '#user_pass', 'password' );
