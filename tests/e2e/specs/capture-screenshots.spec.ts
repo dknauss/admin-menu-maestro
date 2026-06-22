@@ -60,3 +60,40 @@ test.describe( 'UX-08a — mobile editor-entry toggle capture (artifact only)', 
 		} );
 	}
 } );
+
+test.describe( 'UX-08a — mobile editor-ENTER toggle capture (artifact only)', () => {
+	test.skip(
+		! CAPTURE,
+		'Set MAESTRO_CAPTURE=1 (npm run screenshots) to regenerate the committed UX-08a enter-state PNGs.'
+	);
+
+	// ENTER state: the user is NOT yet editing (no maestro_edit param) — the exact
+	// scenario UAT 2026-06-21 found broken on mobile. 11-06 made the toggle reachable
+	// here by enqueuing maestro-admin-bar.css before the is_edit_mode() early return.
+	for ( const width of [ 782, 600 ] ) {
+		test( `capture icon-only ENTER toggle at ${ width }px`, async ( { page } ) => {
+			await page.setViewportSize( { width, height: 800 } );
+			// NO maestro_edit param — the enter (non-edit) state.
+			await page.goto( '/wp-admin/index.php' );
+
+			// Same Maestro-specific anchor the UX-08a enter-state guard asserts, so a wrong
+			// or error page cannot satisfy the wait and capture a misleading screenshot.
+			const toggle = page.locator( '#wp-admin-bar-maestro-toggle' );
+			await expect( toggle ).toBeVisible();
+
+			await expect(
+				page.locator( '#wp-admin-bar-maestro-toggle .ab-icon' )
+			).toBeVisible();
+			const box = await toggle.boundingBox();
+			expect( box, `enter toggle must be in the DOM at ${ width }px` ).not.toBeNull();
+			expect(
+				box!.width,
+				`enter toggle must be icon-only (narrow) at ${ width }px`
+			).toBeLessThanOrEqual( 60 );
+
+			await page.screenshot( {
+				path: path.join( SCREENSHOT_DIR, `ux-08a-enter-${ width }.png` ),
+			} );
+		} );
+	}
+} );
