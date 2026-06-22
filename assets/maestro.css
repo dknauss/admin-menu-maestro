@@ -265,7 +265,13 @@ body.maestro-editing #collapse-menu {
 	z-index: 99999;
 	display: flex;
 	flex-wrap: wrap; /* BUG-03: wrap zones onto extra rows when narrow, never overlap */
-	align-items: center;
+	/* flex-end (not center): the toolbar is fixed to the viewport bottom and grows
+	 * upward. Bottom-aligning the zones keeps the right-side actions (Reset All) and
+	 * status pinned to the bottom row when the panel wraps to a taller layout — e.g.
+	 * when the transient "Saving…" status appears on rename-commit. With center
+	 * alignment the panel growing taller re-centred every child and shifted Reset All
+	 * upward mid-click, swallowing the click (HARD-03 race (b) regression from 11-07). */
+	align-items: flex-end;
 	gap: 8px 16px; /* row-gap when wrapped | inter-zone gap: status | panel | right-actions */
 	padding: 10px 16px;
 	background: #1d2327;
