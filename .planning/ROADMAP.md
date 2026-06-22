@@ -6,7 +6,7 @@
 
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; release tag `v1.0.0`) → [archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17; release line `1.1.x`, latest shipped `1.1.1`)
-- 🚧 **v1.2 Editor UX Polish** — target release `1.2.0` / tag `v1.2.0`; Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 11.2 → 12; Phase 10 is independent research and does not gate the release.**
+- ✅ **v1.2 Editor UX Polish** — Phases 9–12 (shipped 2026-06-22; release tag `v1.2.0`) → [archive](milestones/v1.2-ROADMAP.md)
 
 ## Phases
 
@@ -85,114 +85,25 @@ Full phase details, success criteria, and outcomes are archived in
   - [x] 08-05-PLAN.md — readme.txt copy rewrite (wp-readme-optimizer) + Playground "Try it first" demo link in readme + GitHub README [DOC-02, DOC-03] — **done in PR #28 (1.1.0 release)**
   - [ ] 08-06-PLAN.md — refreshed banner graphic (REL-06 pipeline) + gallery-optimized screenshots & captions; replace public assets after visual review [REL-07, REL-08] — **deferred (image work)**
 
-## Phase Details (v1.2)
+<details>
+<summary>✅ v1.2 Editor UX Polish (Phases 9–12) — SHIPPED 2026-06-22</summary>
 
-### Phase 9: Editor UX Polish
-**Goal**: The edit-mode toolbar is immediately clear on its own purpose, efficiently compact on small and mobile screens, and every behavioral change carries its accessibility guardrail
-**Depends on**: Phase 8
-**Requirements**: UX-03, UX-04, UX-07
-**Status: Complete (2026-06-19)** — all six plans executed; full suite green; UX-03/04/07 Complete in v1.2 traceability.
-**Success Criteria** (what must be TRUE):
-  1. The idle status reads "Edit Mode" *(reconciliation: the user's LOCKED refinement chose "Edit Mode" — shorter, more glanceable than the criterion's literal "Menu Edit Mode" — satisfying the intent: short, glanceable, non-colour-signalled, paired with a dashicon. Same pattern as Phase 8 / REL-06.)* Signals mode by dashicon + text label, not colour alone (WCAG 1.4.1); on first run only, an attention pulse draws the user's eye — localStorage-gated, keyboard-operable, dismissible, screen-reader-announced, dual-cleanup path (animationend + dismiss()), respects `prefers-reduced-motion` ✅
-  2. The rename field shows placeholder "Menu label" that clears on focus; a visually-hidden `<label>` provides the programmatic accessible name for AT; placeholder colour #8c8f94 meets WCAG AA non-text contrast ✅
-  3. At ≤782px the toolbar controls use denser padding/font (4px 8px / 12px) with min-height:44px floor (WCAG 2.5.5 AAA); confirmed by Playwright boundingBox().height ≥ 44 assertion ✅
-  4. All behavioral JS changes covered by red-first node:test (modeStatusLabel, firstRunSeen, placeholderVisible) ✅
-  5. Zero-regression bar holds: JS logic 53/53, PHP unit 44/44, integration 29/29 (+ new localization assertions), e2e 24/24, phpcs clean, Plugin Check 0 errors on shippable source ✅
-**Plans**: 6 plans
-  - [x] 09-01-PLAN.md — TDD seams: modeStatusLabel, firstRunSeen, placeholderVisible (red-first node:test) [UX-03, UX-04]
-  - [x] 09-02-PLAN.md — UX-03 status split: short "Edit Mode" indicator (dashicon + text), separate transient save-status; modeLabel i18n + LocalizationTest [UX-03]
-  - [x] 09-03-PLAN.md — UX-03 first-run one-shot pulse on first editable item (localStorage-gated, reduced-motion fallback, dual cleanup) [UX-03]
-  - [x] 09-04-PLAN.md — UX-04 rename placeholder ("Menu label") + visually-hidden accessible label; renamePlaceholder i18n + LocalizationTest [UX-04]
-  - [x] 09-05-PLAN.md — UX-07 mobile density + 44px tap-target floor at <=782px; 700px screenshot-review checkpoint approved (no restructure needed) [UX-07]
-  - [x] 09-06-PLAN.md — zero-regression gate (full suite + Plugin Check) + flip UX-03/04/07 traceability to Complete [UX-03, UX-04, UX-07]
+Full phase details, success criteria, and outcomes are archived in
+[milestones/v1.2-ROADMAP.md](milestones/v1.2-ROADMAP.md).
 
-### Phase 10: Third-Party Menu Compatibility Research
-**Goal**: A documented, evidence-based picture of how Maestro's sparse-delta replay behaves against the highest-install plugins that build their admin menu in non-standard ways — with a prioritized fix/limitation list, not a build commitment
-**Depends on**: Phase 9
-**Requirements**: V2-16
-**Type**: **Research spike** — pulled forward from the v2 backlog 2026-06-19. Deliverable is a compatibility note + prioritized fix/limitation list; no production menu-handling code is committed in this phase (optional test-harness scaffolding only).
-**Success Criteria** (what must be TRUE):
-  1. **WooCommerce (priority #1)** plus a surveyed set (e.g. Jetpack, Yoast SEO / Rank Math, Elementor or another page builder, WPForms, and an LMS/membership plugin) are each documented: how they register or manipulate the admin menu (custom positions, conditional/late injection, re-registered menus, count/notification badges baked into title strings, custom separators, direct `$menu`/`$submenu` surgery)
-  2. For each surveyed plugin, what breaks under Maestro's rename / reorder / hide / re-icon is recorded with concrete reproduction notes
-  3. Each breakage is classified by fix type — slug-resolution tweak, later/again `admin_menu` hook, special-casing, or documented limitation — and prioritized
-  4. A reproducible test environment is specified — e.g. a `.wp-env.json` (or equivalent) variant that loads WooCommerce and the other offenders, since the current env loads `"plugins": []` and exercises Maestro alone — delivered as a committed harness and/or a clear recommendation
-  5. The research note lands in the repo (e.g. `docs/` or `.planning/`) and feeds the prioritized backlog (relates to V2-01 reparenting, V2-02 separators); no change to the zero-regression bar
-**Plans**: TBD
+- [x] **Phase 9: Editor UX Polish** — Persistent "Edit Mode" indicator + first-run attention pulse, rename placeholder, auto-clearing "Saved" state, mobile-density controls (UX-03, UX-04, UX-07) — complete 2026-06-19
+- [ ] **Phase 10: Third-Party Menu Compatibility Research** — WooCommerce-first compatibility research spike (V2-16); non-blocking, independent of the release cut; not shipped in v1.2 — carry forward
+- [x] **Phase 11: Editor Entry & Reorder Fixes** — Mobile-reachable editor entry (≤782px admin-bar toggle); separator-safe ▲/▼ reorder buttons; modified-state badge on the changed row; 4-plan gap-closure wave after UAT (UX-08, BUG-06, BUG-07) — complete 2026-06-22
+- [x] **Phase 11.1: P1 Review Hardening (INSERTED)** — `custom_menu_order` gated on stored `top_order`; `Config::sanitize()` payload bounded; three save-race e2e scenarios locked in (HARD-01/02/03) — complete 2026-06-20
+- [x] **Phase 11.2: Editor Toolbar Redesign (INSERTED)** — Icon-only unified toolbar with semantic colour; retroactive record-only phase built via interactive design iteration (UX-10) — complete 2026-06-22
+- [x] **Phase 12: Release Assets Refresh** — Balanced banner regenerated via REL-06 pipeline; 6 recaptured directory screenshots against the final v1.2 UI; readme captions synced (REL-07, REL-08) — complete 2026-06-22
 
-### Phase 11: Editor Entry & Reorder Fixes
-**Goal**: The editor is reachable and compact on mobile, keyboard reorder preserves separators, and the modified-state badge sits on the changed row — closing the mobile-access gap and two visual defects surfaced by the 2026-06-19 bot-review audit
-**Depends on**: Phase 9
-**Requirements**: UX-08, BUG-06, BUG-07
-**Scaffolded 2026-06-19** from the Copilot/Codex PR-review audit + hands-on mobile use; **context + research + plans complete 2026-06-21** (UX-08 split into UX-08a mobile visibility + UX-08b compact label; fix approaches locked in CONTEXT/RESEARCH).
-**Success Criteria** (what must be TRUE):
-  1. The Maestro edit-mode toggle is reachable at ≤782px (mobile) — it is no longer hidden along with WP core's top-level admin-bar nodes; confirmed on a narrow viewport
-  2. The toggle's visible label is compact (parity with single-word peer admin-bar toggles) while retaining a programmatic accessible name (the `meta` title / `aria-label`); icon-only forms still expose text to AT
-  3. Keyboard reorder (Alt+Arrow) moves only the selected item by one position and leaves `wp-menu-separator` nodes in place — no menu distortion on a separator-bearing menu; confirmed by e2e on a menu that contains separators (BUG-06)
-  4. The modified-state badge renders on the changed row (next to the label/anchor), including top-level items that have submenus, not after the submenu `<ul>` — confirmed by screenshot/e2e (BUG-07)
-  5. Behavioral JS changes are red-first node:test where a logic seam exists; the full zero-regression bar holds (PHP unit, integration, e2e green; Plugin Check 0 errors; phpcs clean)
-**Plans**: 4 original plans (complete 2026-06-21) + 4 gap-closure plans (UAT 2026-06-21) across 3 waves
-  - [x] 11-01-PLAN.md — Wave 0: land the 3 new e2e tests (UX-08a/BUG-06/BUG-07) + AdminBarTest (integration) for UX-08b
-  - [x] 11-02-PLAN.md — Wave 1: UX-08a CSS responsive override + UX-08b compact label strings (class-admin-bar.php, maestro.css)
-  - [x] 11-03-PLAN.md — Wave 1: BUG-06 single-node insertBefore + BUG-07 badge-on-row (maestro.js)
-  - [x] 11-04-PLAN.md — Wave 2: zero-regression full-suite gate + UX-08a mobile screenshot checkpoint
-
-**Gap closure** (UAT 2026-06-21 found 4 real defects after ship/merge; fix plans `gap_closure: true`, run via `/gsd:execute-phase 11 --gaps-only`):
-  - [x] 11-05-PLAN.md — Wave 0 (tests-first): add UX-08a ENTER-state mobile guard (no maestro_edit) + de-cheat the keyboard-reorder e2e to drive new panel ▲/▼ controls — both RED first [UX-08a, BUG-06]
-  - [x] 11-06-PLAN.md — Wave 1: Gap 1 — enqueue the ≤782px admin-bar override unconditionally (new assets/maestro-admin-bar.css, above the is_edit_mode() early return) so the ENTER toggle is reachable on mobile [UX-08a]
-  - [x] 11-07-PLAN.md — Wave 1: Gaps 2+3+4 (coupled) — explicit ▲/▼ panel reorder buttons (OS-independent, reuse reorderMove/insertBefore) folded into ≤600px icon-only toolbar compression (aria-label + .maestro-btn-label) + modified-badge size bump 10px→15px [BUG-06, UX-08b]
-  - [x] 11-08-PLAN.md — Wave 2: zero-regression full-suite gate (sandbox-disabled) GREEN + enter-state mobile screenshots (ux-08a-enter-{782,600}.png); race(b) HARD-03 hardened against toolbar-reflow click fragility [UX-08a, UX-08b, BUG-06, BUG-07]
-
-### Phase 11.1: P1 Review Hardening (INSERTED)
-
-**Goal**: The three P1 residuals from the 2026-06-20 code-review follow-up are closed before the 1.2.0 cut — Maestro stops claiming core menu-order machinery it isn't using, the stored config payload is bounded against bloat, and the already-shipped save-race hardening is locked in by automated regression coverage
-**Depends on**: Phase 11
-**Requirements**: HARD-01, HARD-02, HARD-03
-**Inserted 2026-06-20** from the code-review follow-up handoff ([`.planning/reviews/code-review-followup-2026-06-20.md`](reviews/code-review-followup-2026-06-20.md)). Backend/test hardening, independent of the Phase 11 editor UX work; lands inside the 9 → 11 → 11.1 → 11.2 → 12 cut path so it ships in 1.2.0. All code items follow strict red-first TDD per [`CLAUDE.md`](../CLAUDE.md).
-**Status: Complete (2026-06-20)** — all four plans executed; full suite green; HARD-01/02/03 Complete in v1.2 traceability. Zero-regression bar held: PHP unit 61/61, JS logic 53/53, PHP integration 33/33 (85 assertions), Playwright e2e 28/28, phpcs clean, PHPStan 0 errors, Plugin Check 0 errors on shippable source.
-**Success Criteria** (what must be TRUE):
-  1. **HARD-01** ✅ — `custom_menu_order` is enabled only when a non-empty `top_order` is stored; with no stored top-level order, Maestro leaves the `custom_menu_order` / `menu_order` machinery untouched (passes through to other plugins). Confirmed by unit tests over the gating predicate and `reorder_top()`, plus an integration assertion that the filter is not forced `true` on an empty config.
-  2. **HARD-02** ✅ — `Config::sanitize()` caps title length, item/`top_order`/`sub_order` entry counts, `hidden_roles` list length, and data-URI byte length; over-limit input is dropped or truncated deterministically rather than stored verbatim. Covered by red-first unit tests on the pure `sanitize()` path (valid input under the caps is unchanged; over-limit input is bounded).
-  3. **HARD-03** ✅ — Playwright E2E covers the three save races and they resolve correctly: (a) slow REST `POST /config` + Exit waits for the in-flight/queued save; (b) pending rename + Reset All cancels the queued autosave and the DELETE wins; (c) in-flight save + Reset All waits for the save to settle before DELETE and only reloads on success. Test-only — no production behaviour change.
-  4. ✅ The full zero-regression bar holds: PHP unit 61/61, PHP integration 33/33 (85 assertions), JS logic 53/53, Playwright e2e 28/28, `phpcs` clean, PHPStan 0 errors, Plugin Check 0 errors on the shippable source.
-**Plans**: 4 plans
-  - [x] 11.1-01-PLAN.md — HARD-01: gate `custom_menu_order` on a stored `top_order` (predicate-gated filter; red-first integration assertions) [HARD-01]
-  - [x] 11.1-02-PLAN.md — HARD-02: bound `Config::sanitize()` payload (title/items/order/roles counts + data-URI bytes as named `MAX_*` constants; red-first unit) [HARD-02]
-  - [x] 11.1-03-PLAN.md — HARD-03: Playwright e2e for the three save races (slow-save+Exit, pending-rename+Reset All, in-flight+Reset All); test-only [HARD-03]
-  - [x] 11.1-04-PLAN.md — zero-regression gate (full suite + PHPStan + Plugin Check 0 errors) + flip HARD-01/02/03 traceability to Complete [HARD-01, HARD-02, HARD-03]
-
-### Phase 11.2: Editor Toolbar Redesign (INSERTED)
-
-**Goal**: The edit-mode toolbar is compact, coherent, and accessible — every control is icon-only at all widths in one outlined gray button system, colour carries meaning (grey/green/amber/red), status indicators read as indicators (not buttons), and the toolbar earns its space (auto-clearing transient state, disabled controls when there is nothing to do)
-**Depends on**: Phase 11
-**Requirements**: UX-10
-**Inserted 2026-06-22** — grew out of user feedback on the Phase 11 mobile toolbar work (UX-08/UX-08b). Built via **interactive design iteration** (live wp-env + Playwright screenshots) rather than the standard plan/execute flow; the retroactive record is [`11.2-SUMMARY.md`](11.2-editor-toolbar-redesign/11.2-SUMMARY.md). Lands before Phase 12 so REL-08 screenshots capture this final UI. (Distinct from the still-open UX-09 toolbar left-edge pin.)
-**Status: Complete (2026-06-22)** — 8 commits; Playwright e2e 32/0, JS logic 53/53, PHP integration 37/37, `node --check` clean; accessibility preserved (aria-label + title + aria-live, WCAG 2.5.5 tap targets). Shipped via its own PR after the Phase 11 gap-closure merge (#49).
-**Success Criteria** (what must be TRUE):
-  1. Every toolbar control is icon-only at all widths in one shared outlined gray button; colour is semantic (grey ordinary / green state / amber caution / red destructive), not per-zone
-  2. The mode + save-status are flat, visibly non-clickable indicators; the "Saved" state auto-clears to idle; Reset Item is disabled when the item is unmodified
-  3. Icon-only stays accessible — every control keeps an accessible name (aria-label + title); the save-status word is announced via an aria-live SR-only span; tap targets ≥44px at ≤782px; destructive red meets non-text contrast
-  4. Zero regressions: full e2e green, JS logic + PHP integration green
-**Plans**: none (retroactive record — see 11.2-SUMMARY.md for the 8-commit breakdown)
-
-### Phase 12: Release Assets Refresh
-**Goal**: The WordPress.org/GitHub banner is refreshed to the REL-07 design target and the directory screenshots are recaptured against the FINAL v1.2 editor UI, so the live listing reflects what 1.2.0 actually ships
-**Depends on**: Phase 9, Phase 11, Phase 11.2
-**Requirements**: REL-07, REL-08
-**Folded into v1.2 2026-06-19** (previously deferred from Phase 8 / plan 08-06). **Sequenced last** so REL-08 screenshots capture the shipped Phase 9 (Edit Mode label, first-run pulse, rename placeholder) + Phase 11 (mobile entry, fixed reorder/badge) + Phase 11.2 (icon-only unified toolbar) UI rather than the pre-1.2 surface. Starting point: the deferred [`08-06-PLAN.md`](08-docs-brand-assets/08-06-PLAN.md). Includes human visual review of image work.
-**Success Criteria** (what must be TRUE):
-  1. The banner is regenerated through the REL-06 pipeline (`npm run assets:banners`) with the REL-07 design goal met — the MAESTRO wordmark, the "THE INLINE ADMIN MENU EDITOR" subtitle, the tagline, and the gold underline rule occupy approximately the same horizontal measure (balanced widths, not the current mismatched lines); `.wordpress-org/banner-*.png` replaced only after visual review
-  2. Screenshots are recaptured against the **final v1.2 editor UI** (post Phase 9 + 11), higher quality, with captions that explain the interface/workflow; the `== Screenshots ==` captions are updated to match
-  3. The screenshot set is visually consistent (uniform grid or deliberately mixed — decided at plan time)
-  4. Assets-only — no code regressions; the build zip and Stable tag are unaffected until the release cut
-**Plans**: 3 plans across 2 waves (REL-07 banner and REL-08 screenshots run in parallel in Wave 1; readme caption sync + final consistency/zero-regression gate in Wave 2). Started from the deferred 08-06-PLAN.md.
-  - [ ] 12-01-PLAN.md — REL-07 banner: constrain the tagline auto-fit to the wordmark width (`maxw`->`ww`) in build_final.py, stage via VARIANT_SUFFIX, visual-review checkpoint, overwrite live banners [REL-07]
-  - [ ] 12-02-PLAN.md — REL-08 screenshots: new MAESTRO_CAPTURE-gated capture-directory-screenshots.spec.ts, recapture against the post-11.2 UI (wp-env), visual-review checkpoint [REL-08]
-  - [ ] 12-03-PLAN.md — sync readme.txt == Screenshots == captions to the recaptured set (count match) + final deterministic asset gate + zero-regression e2e [REL-07, REL-08]
+</details>
 
 ## Progress
 
 **Execution Order:**
-v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 release path: 9 → 11 → 11.1 → 11.2 → 12, then cut 1.2.0. Phase 10 is an independent research spike (may run anytime, does not gate the release). Phase 11 depends on 9; Phase 11.1 (P1 hardening) depends on 11 and ships in the cut; Phase 12 (release assets) depends on 9 + 11 so screenshots reflect the final UI.
+v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 complete (Phases 9–12, archived 2026-06-22; Phase 10 was a non-blocking research spike not shipped in v1.2).
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -204,9 +115,9 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 6. Accessibility & Interaction | v1.1 | 3/3 | Complete | 2026-06-16 |
 | 7. Visual Polish & Icons | v1.1 | 4/4 | Complete | 2026-06-17 |
 | 8. Docs & Brand Assets | v1.1 | 4/4 (executable scope; REL-07/08 deferred) | Complete | 2026-06-17 |
-| 9. Editor UX Polish | v1.2 | 6/6 | Complete | 2026-06-19 |
-| 10. Third-Party Menu Compatibility Research | v1.2 | 0/TBD | Not started (research spike) | - |
-| 11. Editor Entry & Reorder Fixes | v1.2 | 8/8 | Complete | 2026-06-22 |
-| 11.1. P1 Review Hardening | v1.2 | 4/4 | Complete | 2026-06-20 |
-| 11.2. Editor Toolbar Redesign | v1.2 | record | Complete | 2026-06-22 |
-| 12. Release Assets Refresh | 3/3 | Complete    | 2026-06-22 | - |
+| 9. Editor UX Polish | v1.2 | 6/6 | Complete (shipped 2026-06-22) | 2026-06-19 |
+| 10. Third-Party Compatibility Research | v1.2 | 0/TBD | Not shipped (research spike — carry forward) | - |
+| 11. Editor Entry & Reorder Fixes | v1.2 | 8/8 | Complete (shipped 2026-06-22) | 2026-06-22 |
+| 11.1. P1 Review Hardening | v1.2 | 4/4 | Complete (shipped 2026-06-22) | 2026-06-20 |
+| 11.2. Editor Toolbar Redesign | v1.2 | record | Complete (shipped 2026-06-22) | 2026-06-22 |
+| 12. Release Assets Refresh | v1.2 | 3/3 | Complete (shipped 2026-06-22) | 2026-06-22 |
