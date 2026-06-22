@@ -15,11 +15,39 @@ Editing the admin menu happens directly on the menu, with zero ceremony and zero
 risk to access — changes are cosmetic deltas, never a rebuilt menu, and never a
 security boundary.
 
-## Current State: v1.2 — Editor UX Polish — SHIPPED 2026-06-22
+## Current Milestone: R1 — Third-Party Compatibility Research
 
-**1.2.0** shipped to WordPress.org on 2026-06-22 (tag `v1.2.0`). Phases 9, 11, 11.1, 11.2, and 12 complete; Phase 10 (third-party compatibility research spike) was non-blocking and carries forward.
+**Goal:** Document how Maestro's sparse-delta replay behaves against the six
+highest-impact admin-menu-manipulating plugins, and produce a prioritized
+fix/limitation backlog plus a reproducible multi-plugin test harness.
 
-*All three milestones (v1.0, v1.1, v1.2) are now shipped and archived. See `.planning/MILESTONES.md` and `.planning/milestones/` for records.*
+**Track:** Research only — non-version (label `R1`). Produces planning artifacts
+and a committed wp-env harness; **no plugin code, no release tag, no SVN deploy.**
+The `vX.Y` numbering stays reserved for shipped plugin releases; the fixes R1
+surfaces ship in a later versioned milestone.
+
+**Survey set (locked priority order, from V2-16):** WooCommerce → Jetpack →
+Yoast SEO / Rank Math → Elementor (or another page builder) → WPForms → an
+LMS/membership plugin.
+
+**Deliverables:**
+- **Compatibility note** — per-plugin classification of how each registers and
+  manipulates the admin menu (custom positions, conditional/late injection,
+  re-registered menus, count badges baked into titles, custom separators, direct
+  `$menu`/`$submenu` surgery) and what breaks under Maestro's rename / reorder /
+  hide / re-icon.
+- **Prioritized fix/limitation backlog** — each issue classified as a
+  slug-resolution tweak, a later `admin_menu` re-hook, special-casing, or a
+  documented limitation, and ranked.
+- **Reproducible multi-plugin wp-env harness** — a committed env variant that
+  actually loads the offenders (the current `.wp-env.json` loads `plugins: []`
+  and exercises Maestro alone).
+
+## Shipped (v1.0 / v1.1 / v1.2)
+
+**1.2.0** shipped to WordPress.org on 2026-06-22 (tag `v1.2.0`). Phases 9, 11, 11.1, 11.2, and 12 complete; Phase 10 (third-party compatibility research spike) was non-blocking — its scope is now promoted to milestone **R1**.
+
+*All three plugin milestones (v1.0, v1.1, v1.2) are shipped and archived. See `.planning/MILESTONES.md` and `.planning/milestones/` for records.*
 
 ## Requirements
 
@@ -60,7 +88,7 @@ security boundary.
 - [ ] UX-09 — pin the toolbar “Edit Mode” zone to the admin-menu column width (distinct from shipped UX-10)
 - [ ] BUG-08 — first-run banner text/button vertical centering (low cosmetic)
 - [ ] V2-15 — role cloning / per-user menu hiding
-- [ ] V2-16 — WooCommerce-first third-party menu compatibility (Phase 10 research spike, non-blocking, still pending)
+- [→] V2-16 — WooCommerce-first third-party menu compatibility — **active in milestone R1** (research only; full 6-plugin survey)
 - [ ] V2-17 — single-site privileged editor tier (edges toward the Out-of-Scope “page locking” line; enforced tier likely belongs in wp-sudo or a documented bridge)
 
 ### Out of Scope
@@ -106,4 +134,4 @@ security boundary.
 | Screenshot capture runs on an alternate wp-env tests port (8899) | Avoids port collision when the main wp-env instance (8888/8889) is already running; env var `WP_ENV_TESTS_PORT` makes the override explicit | ✓ Good |
 
 ---
-*Last updated: 2026-06-22 after v1.2 milestone*
+*Last updated: 2026-06-22 — milestone R1 (Third-Party Compatibility Research) started*

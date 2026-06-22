@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.2
-milestone_name: Editor UX Polish
-status: verifying
-stopped_at: Completed 12-03-PLAN.md
-last_updated: "2026-06-22T20:33:03.391Z"
-last_activity: "2026-06-22 — Phase 12: 12-01 banner + 12-02 screenshots complete & approved; 12-03 caption sync next"
+milestone: R1
+milestone_name: Third-Party Compatibility Research
+status: defining_requirements
+stopped_at: Milestone R1 started
+last_updated: "2026-06-22T21:00:00.000Z"
+last_activity: "2026-06-22 — Milestone R1 (Third-Party Compatibility Research) started"
 progress:
-  total_phases: 9
-  completed_phases: 7
-  total_plans: 31
-  completed_plans: 32
-  percent: 93
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,25 +25,20 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 
 ## Current Position
 
-Milestone: v1.2 Editor UX Polish — in progress
-Phase: Phase 12 (Release Assets Refresh) — EXECUTING on branch gsd/phase-12-release-assets-refresh. 12-01 + 12-02 complete & human-approved; 12-03 next.
-Plan: 12-01 ✓ REL-07 balanced banner (tagline fit to wordmark width; live banners regenerated, human-approved). 12-02 ✓ REL-08 6 directory screenshots vs post-11.2 UI (overview, icon picker, visibility, rename+saved, group drag, sub-item ▲/▼) — count = 6. 12-03 next: sync readme `== Screenshots ==` to 6 captions + deterministic asset gate + e2e.
-Status: Assets-only; last v1.2 phase. After 12-03 + phase verify, cut 1.2.0 (tag v1.2.0 → wp.org SVN deploy). wp-env is up on :8899 (capture env).
-Last activity: 2026-06-22 — Phase 12: 12-01 banner + 12-02 screenshots complete & approved; 12-03 caption sync next
+Milestone: R1 — Third-Party Compatibility Research — defining requirements
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements — research-only milestone; survey the locked 6-plugin set, produce a compatibility note + prioritized fix/limitation backlog + a committed multi-plugin wp-env harness. No plugin code, no release.
+Last activity: 2026-06-22 — Milestone R1 started
 
-Progress: [█████████░] 93%
+Progress: [░░░░░░░░░░] 0%
 
 ## Release Binding
 
-This GSD milestone is explicitly pinned to the release artifact it is meant to ship:
-
-- **Milestone:** v1.2 — Editor UX Polish
-- **Target release:** `1.2.0`
-- **Target tag:** `v1.2.0`
-- **Release status:** planned / not cut
-- **Release cut condition:** Phases 9 → 11 → 11.1 → 11.2 → 12 complete and audited; Phase 10 remains non-blocking research.
-- **Pipeline:** GitHub release/tag workflow → WordPress.org SVN deploy via `wp-deploy.yml` / `prep-release.sh`.
-- **Checklist owner:** `$gsd-complete-milestone` / milestone audit should verify the release checklist before the milestone is considered shipped.
+**None.** R1 is a **research-only, non-versioned** milestone — it ships no plugin
+code and cuts no release. There is intentionally no target version, tag, or SVN
+deploy. `vX.Y` numbering stays reserved for shipped plugin releases; the fixes R1
+surfaces will be planned and shipped under a later versioned milestone.
 
 ## Performance Metrics
 
