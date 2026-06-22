@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
-status: planning
-stopped_at: Phases 11 + 11.2 merged to main (PR #49, #50); planning Phase 12
-last_updated: "2026-06-22T18:00:00.000Z"
-last_activity: "2026-06-22 — Phases 11 (PR #49) and 11.2 toolbar redesign (PR #50) both merged to main; stale branches pruned. Planning Phase 12 (release assets: REL-07 banner + REL-08 screenshots) on branch gsd/phase-12-release-assets-refresh — RESEARCH + VALIDATION written. Phase 12 is the last gate before cutting 1.2.0."
+status: Last v1.2 phase before the release cut. Assets-only; no plugin code. After Phase 12 ships, cut 1.2.0 (tag v1.2.0 → wp.org SVN deploy).
+stopped_at: Completed 12-01-PLAN.md
+last_updated: "2026-06-22T18:36:30.416Z"
+last_activity: 2026-06-22 — Phases 11 + 11.2 merged; planning Phase 12 (release assets)
 progress:
   total_phases: 9
-  completed_phases: 7
-  total_plans: 28
-  completed_plans: 28
-  percent: 95
+  completed_phases: 6
+  total_plans: 31
+  completed_plans: 30
+  percent: 93
 ---
 
 # Project State
@@ -87,6 +87,7 @@ This GSD milestone is explicitly pinned to the release artifact it is meant to s
 | Phase 11-editor-entry-reorder-fixes P05 (gap-closure) | 10m | 2 tasks | 1 file |
 | Phase 11-editor-entry-reorder-fixes P06 | 2 | 2 tasks | 3 files |
 | Phase 11-editor-entry-reorder-fixes P07 | 24 | 3 tasks | 4 files |
+| Phase 12-release-assets-refresh P01 | 20 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -140,6 +141,7 @@ Recent decisions affecting current work:
 - [Phase 11-editor-entry-reorder-fixes]: 11-07: iconButton() helper routes all five secondary panel buttons through one code path to prevent icon/label drift
 - [Phase 11-editor-entry-reorder-fixes]: 11-08: WP_ENV_TESTS_PORT honored in BOTH playwright.config baseURL AND global-setup login URL — lets e2e run on an alternate tests port when 8889 is taken by another wp-env project (gate ran on 8899)
 - [Phase 11-editor-entry-reorder-fixes]: 11-08: race(b) HARD-03 failure root-caused to e2e click-delivery — 11-07's extra panel buttons enlarged the position:fixed flex-wrap toolbar so the live rename preview reflowed it mid-click; product is correct (genuine Reset-All click cancels the queued autosave, DELETE wins, no persist). Hardened by committing the rename first (settle layout, keep queued autosave) and asserting reset-wins/no-persist; postCount===0 dropped (it only held for a sub-500ms click). No-persist reload assertion retained as anti-masking guard
+- [Phase 12-release-assets-refresh]: Tagline auto-fit loop uses >ww (wordmark width) not >maxw (full column); full tagline string retained — ww constraint produced legible font size without fallback
 
 ### Roadmap Evolution
 
@@ -158,6 +160,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-22T00:24:31.196Z
-Stopped at: Completed 11-07-PLAN.md
+Last session: 2026-06-22T18:36:30.414Z
+Stopped at: Completed 12-01-PLAN.md
 Resume file: None
