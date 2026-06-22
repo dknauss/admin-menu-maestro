@@ -6,7 +6,7 @@
 
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; release tag `v1.0.0`) → [archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17; release line `1.1.x`, latest shipped `1.1.1`)
-- 🚧 **v1.2 Editor UX Polish** — target release `1.2.0` / tag `v1.2.0`; Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 12; Phase 10 is independent research and does not gate the release.**
+- 🚧 **v1.2 Editor UX Polish** — target release `1.2.0` / tag `v1.2.0`; Phases 9–12 (Phase 9 editor polish **complete 2026-06-19** — UX-03/04/07 signed off; Phase 10 a WooCommerce-first third-party menu compatibility **research spike** from V2-16; Phase 11 editor-entry & reorder fixes — UX-08 + BUG-06/07 from the 2026-06-19 bot-review audit; Phase 11.1 P1 review hardening — HARD-01/02/03 **complete 2026-06-20** — custom_menu_order gated, config payload bounded, save-race e2e locked in, zero-regression bar held; Phase 12 release-assets refresh — REL-07/08 folded in from Phase 8). **1.2.0 cuts after Phases 9 → 11 → 11.1 → 11.2 → 12; Phase 10 is independent research and does not gate the release.**
 
 ## Phases
 
@@ -147,7 +147,7 @@ Full phase details, success criteria, and outcomes are archived in
 **Goal**: The three P1 residuals from the 2026-06-20 code-review follow-up are closed before the 1.2.0 cut — Maestro stops claiming core menu-order machinery it isn't using, the stored config payload is bounded against bloat, and the already-shipped save-race hardening is locked in by automated regression coverage
 **Depends on**: Phase 11
 **Requirements**: HARD-01, HARD-02, HARD-03
-**Inserted 2026-06-20** from the code-review follow-up handoff ([`.planning/reviews/code-review-followup-2026-06-20.md`](reviews/code-review-followup-2026-06-20.md)). Backend/test hardening, independent of the Phase 11 editor UX work; lands inside the 9 → 11 → 11.1 → 12 cut path so it ships in 1.2.0. All code items follow strict red-first TDD per [`CLAUDE.md`](../CLAUDE.md).
+**Inserted 2026-06-20** from the code-review follow-up handoff ([`.planning/reviews/code-review-followup-2026-06-20.md`](reviews/code-review-followup-2026-06-20.md)). Backend/test hardening, independent of the Phase 11 editor UX work; lands inside the 9 → 11 → 11.1 → 11.2 → 12 cut path so it ships in 1.2.0. All code items follow strict red-first TDD per [`CLAUDE.md`](../CLAUDE.md).
 **Status: Complete (2026-06-20)** — all four plans executed; full suite green; HARD-01/02/03 Complete in v1.2 traceability. Zero-regression bar held: PHP unit 61/61, JS logic 53/53, PHP integration 33/33 (85 assertions), Playwright e2e 28/28, phpcs clean, PHPStan 0 errors, Plugin Check 0 errors on shippable source.
 **Success Criteria** (what must be TRUE):
   1. **HARD-01** ✅ — `custom_menu_order` is enabled only when a non-empty `top_order` is stored; with no stored top-level order, Maestro leaves the `custom_menu_order` / `menu_order` machinery untouched (passes through to other plugins). Confirmed by unit tests over the gating predicate and `reorder_top()`, plus an integration assertion that the filter is not forced `true` on an empty config.
@@ -160,11 +160,25 @@ Full phase details, success criteria, and outcomes are archived in
   - [x] 11.1-03-PLAN.md — HARD-03: Playwright e2e for the three save races (slow-save+Exit, pending-rename+Reset All, in-flight+Reset All); test-only [HARD-03]
   - [x] 11.1-04-PLAN.md — zero-regression gate (full suite + PHPStan + Plugin Check 0 errors) + flip HARD-01/02/03 traceability to Complete [HARD-01, HARD-02, HARD-03]
 
+### Phase 11.2: Editor Toolbar Redesign (INSERTED)
+
+**Goal**: The edit-mode toolbar is compact, coherent, and accessible — every control is icon-only at all widths in one outlined gray button system, colour carries meaning (grey/green/amber/red), status indicators read as indicators (not buttons), and the toolbar earns its space (auto-clearing transient state, disabled controls when there is nothing to do)
+**Depends on**: Phase 11
+**Requirements**: UX-10
+**Inserted 2026-06-22** — grew out of user feedback on the Phase 11 mobile toolbar work (UX-08/UX-08b). Built via **interactive design iteration** (live wp-env + Playwright screenshots) rather than the standard plan/execute flow; the retroactive record is [`11.2-SUMMARY.md`](11.2-editor-toolbar-redesign/11.2-SUMMARY.md). Lands before Phase 12 so REL-08 screenshots capture this final UI. (Distinct from the still-open UX-09 toolbar left-edge pin.)
+**Status: Complete (2026-06-22)** — 8 commits; Playwright e2e 32/0, JS logic 53/53, PHP integration 37/37, `node --check` clean; accessibility preserved (aria-label + title + aria-live, WCAG 2.5.5 tap targets). Shipped via its own PR after the Phase 11 gap-closure merge (#49).
+**Success Criteria** (what must be TRUE):
+  1. Every toolbar control is icon-only at all widths in one shared outlined gray button; colour is semantic (grey ordinary / green state / amber caution / red destructive), not per-zone
+  2. The mode + save-status are flat, visibly non-clickable indicators; the "Saved" state auto-clears to idle; Reset Item is disabled when the item is unmodified
+  3. Icon-only stays accessible — every control keeps an accessible name (aria-label + title); the save-status word is announced via an aria-live SR-only span; tap targets ≥44px at ≤782px; destructive red meets non-text contrast
+  4. Zero regressions: full e2e green, JS logic + PHP integration green
+**Plans**: none (retroactive record — see 11.2-SUMMARY.md for the 8-commit breakdown)
+
 ### Phase 12: Release Assets Refresh
 **Goal**: The WordPress.org/GitHub banner is refreshed to the REL-07 design target and the directory screenshots are recaptured against the FINAL v1.2 editor UI, so the live listing reflects what 1.2.0 actually ships
-**Depends on**: Phase 9, Phase 11
+**Depends on**: Phase 9, Phase 11, Phase 11.2
 **Requirements**: REL-07, REL-08
-**Folded into v1.2 2026-06-19** (previously deferred from Phase 8 / plan 08-06). **Sequenced last** so REL-08 screenshots capture the shipped Phase 9 (Edit Mode label, first-run pulse, rename placeholder) + Phase 11 (mobile entry, fixed reorder/badge) UI rather than the pre-1.2 surface. Starting point: the deferred [`08-06-PLAN.md`](08-docs-brand-assets/08-06-PLAN.md). Includes human visual review of image work.
+**Folded into v1.2 2026-06-19** (previously deferred from Phase 8 / plan 08-06). **Sequenced last** so REL-08 screenshots capture the shipped Phase 9 (Edit Mode label, first-run pulse, rename placeholder) + Phase 11 (mobile entry, fixed reorder/badge) + Phase 11.2 (icon-only unified toolbar) UI rather than the pre-1.2 surface. Starting point: the deferred [`08-06-PLAN.md`](08-docs-brand-assets/08-06-PLAN.md). Includes human visual review of image work.
 **Success Criteria** (what must be TRUE):
   1. The banner is regenerated through the REL-06 pipeline (`npm run assets:banners`) with the REL-07 design goal met — the MAESTRO wordmark, the "THE INLINE ADMIN MENU EDITOR" subtitle, the tagline, and the gold underline rule occupy approximately the same horizontal measure (balanced widths, not the current mismatched lines); `.wordpress-org/banner-*.png` replaced only after visual review
   2. Screenshots are recaptured against the **final v1.2 editor UI** (post Phase 9 + 11), higher quality, with captions that explain the interface/workflow; the `== Screenshots ==` captions are updated to match
@@ -175,7 +189,7 @@ Full phase details, success criteria, and outcomes are archived in
 ## Progress
 
 **Execution Order:**
-v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 release path: 9 → 11 → 11.1 → 12, then cut 1.2.0. Phase 10 is an independent research spike (may run anytime, does not gate the release). Phase 11 depends on 9; Phase 11.1 (P1 hardening) depends on 11 and ships in the cut; Phase 12 (release assets) depends on 9 + 11 so screenshots reflect the final UI.
+v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 release path: 9 → 11 → 11.1 → 11.2 → 12, then cut 1.2.0. Phase 10 is an independent research spike (may run anytime, does not gate the release). Phase 11 depends on 9; Phase 11.1 (P1 hardening) depends on 11 and ships in the cut; Phase 12 (release assets) depends on 9 + 11 so screenshots reflect the final UI.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -191,4 +205,5 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 10. Third-Party Menu Compatibility Research | v1.2 | 0/TBD | Not started (research spike) | - |
 | 11. Editor Entry & Reorder Fixes | v1.2 | 8/8 | Complete | 2026-06-22 |
 | 11.1. P1 Review Hardening | v1.2 | 4/4 | Complete | 2026-06-20 |
+| 11.2. Editor Toolbar Redesign | v1.2 | record | Complete | 2026-06-22 |
 | 12. Release Assets Refresh | v1.2 | 0/TBD | Scaffolded (REL-07/08 folded in) | - |

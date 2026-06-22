@@ -38,6 +38,7 @@
 	var saveInFlight = false;  // a full-replace POST is currently running
 	var savePending = false;   // another change arrived mid-flight; save again on land
 	var inFlight = null;       // promise that settles when the whole save chain is done
+	var savedClearTimer = null; // reverts the transient "Saved" tile back to idle
 
 	/* ---------- helpers ---------------------------------------------------- */
 
@@ -124,6 +125,9 @@
 			var oldSr = li.querySelector( '.maestro-modified-sr' );
 			if ( oldSr ) { oldSr.remove(); }
 		}
+
+		// Keep the panel Reset button in sync when the change is to the selected item.
+		updateResetButton( slug, result.modified );
 	}
 
 	/* ---------- folded-mode override -------------------------------------- */
@@ -404,6 +408,10 @@
 	 */
 	function iconButton( btn, glyph, label ) {
 		btn.setAttribute( 'aria-label', label );
+		// Visible hover hint for sighted users now that the text label is hidden
+		// at all widths (the .maestro-btn-label span stays in the DOM for the
+		// accessible name fallback, but is display:none via CSS).
+		btn.setAttribute( 'title', label );
 
 		var icon = el( 'span', 'dashicons ' + glyph );
 		icon.setAttribute( 'aria-hidden', 'true' );
@@ -416,21 +424,28 @@
 	function buildToolbar() {
 		var bar = el( 'div', 'maestro-toolbar' );
 
-		// Persistent mode label — NOT a live region, text never changes (UX-03).
-		// The aria-hidden dashicon supplies a non-colour shape cue (WCAG 1.4.1).
+		// Persistent mode indicator — NOT a live region, text never changes (UX-03).
+		// Icon-only (green pencil) to reclaim toolbar width; the accessible name is
+		// carried by aria-label and a hidden .maestro-btn-label span, with a title
+		// tooltip for sighted users. The green pencil is the non-colour shape cue.
 		var modeEl = el( 'div', 'maestro-mode-label' );
+		modeEl.setAttribute( 'aria-label', I.modeLabel );
+		modeEl.setAttribute( 'title', I.modeLabel );
 		var modeIcon = el( 'span', 'dashicons dashicons-edit maestro-mode-icon' );
 		modeIcon.setAttribute( 'aria-hidden', 'true' );
 		modeEl.appendChild( modeIcon );
-		modeEl.appendChild( document.createTextNode( I.modeLabel ) );
+		modeEl.appendChild( el( 'span', 'maestro-btn-label', I.modeLabel ) );
 		bar.appendChild( modeEl );
 
 		// Transient save-status — aria-live, empty at idle so no announcement fires.
+		// Icon-only: the per-state ::before dashicon (spinner/check/warning) is the
+		// visible cue; the word ("Saving…"/"Saved"/…) lives in a screen-reader-only
+		// child so assistive tech still announces it via the live region.
 		statusEl = el( 'span', 'maestro-status maestro-status-idle' );
 		statusEl.setAttribute( 'role', 'status' );
 		statusEl.setAttribute( 'aria-live', 'polite' );
 		statusEl.setAttribute( 'aria-atomic', 'true' );
-		statusEl.textContent = '';   // empty at idle (do NOT set I.idle here)
+		statusEl.appendChild( el( 'span', 'maestro-status-text screen-reader-text' ) );
 		bar.appendChild( statusEl );
 
 		// Shared panel — empty/hidden until something is selected.
@@ -491,7 +506,7 @@
 
 		var iconBtn = el( 'button', 'button maestro-icon-btn' );
 		iconBtn.type = 'button';
-		iconButton( iconBtn, 'dashicons-format-image', I.icon );
+		iconButton( iconBtn, 'dashicons-art', I.icon );
 		iconBtn.addEventListener( 'click', function ( e ) {
 			e.preventDefault();
 			openIconPicker( iconBtn );
@@ -538,11 +553,17 @@
 
 		var right = el( 'div', 'maestro-toolbar-right' );
 
-		var resetAll = el( 'button', 'button maestro-reset-all', I.resetAll );
+		// Icon-only like the panel controls. Distinct glyphs: image-rotate (restore
+		// everything) for Reset All vs the panel's undo (single-item) Reset Item;
+		// no-alt (×) for Exit. aria-label + title carry the name; Reset All is still
+		// guarded by the confirm dialog in doResetAll().
+		var resetAll = el( 'button', 'button maestro-reset-all' );
 		resetAll.type = 'button';
+		iconButton( resetAll, 'dashicons-backup', I.resetAll );
 		resetAll.addEventListener( 'click', doResetAll );
 
-		var exit = el( 'a', 'button maestro-exit', I.exit );
+		var exit = el( 'a', 'button maestro-exit' );
+		iconButton( exit, 'dashicons-arrow-left-alt', I.exit );
 		exit.href = D.exitUrl;
 		exit.addEventListener( 'click', onExit );
 
@@ -568,11 +589,18 @@
 		// Icon picker is top-level only; submenu items have no icon column.
 		panel.iconBtn.style.display = m.isSub ? 'none' : '';
 
-		// Reflect modified state on the reset button so it is discoverable in
-		// context: emphasised when the item is actually modified, subdued otherwise.
+		// Reflect modified state on the reset button: amber + enabled when modified,
+		// dimmed + disabled when there is nothing to reset.
 		var def = m.isSub ? pristineSub( slug ) : pristineTop( slug );
-		var isModified = window.maestroLogic.diffItem( m, def ).modified;
+		updateResetButton( slug, window.maestroLogic.diffItem( m, def ).modified );
+	}
+
+	// Sync the per-item Reset button to the selected item's modified state so its
+	// enabled/amber state means "you have changes to undo".
+	function updateResetButton( slug, isModified ) {
+		if ( ! panel.resetBtn || slug !== selectedSlug ) { return; }
 		panel.resetBtn.classList.toggle( 'is-modified', isModified );
+		panel.resetBtn.disabled = ! isModified;
 	}
 
 	/* ---------- rename (single, idempotent) -------------------------------- */
@@ -1058,10 +1086,16 @@
 
 	function setStatus( state ) {
 		if ( ! statusEl ) { return; }
+		// Class change drives the visible ::before glyph; the word goes into the
+		// SR-only child (not statusEl.textContent, which would wipe that child and
+		// render the word visibly). The live region still announces the change.
 		statusEl.className = 'maestro-status maestro-status-' + state;
-		statusEl.textContent = window.maestroLogic.modeStatusLabel( state, I );
+		var label = window.maestroLogic.modeStatusLabel( state, I );
+		var textEl = statusEl.querySelector( '.maestro-status-text' );
+		if ( textEl ) { textEl.textContent = label; }
+		statusEl.setAttribute( 'title', label ); // hover hint reflects state ('' at idle)
 		if ( state === 'saved' || state === 'error' ) {
-			speak( statusEl.textContent );
+			speak( label );
 		}
 	}
 
@@ -1124,6 +1158,18 @@
 		}
 		setStatus( ok ? 'saved' : 'error' );
 		inFlight = null;
+		// The "Saved" tile is transient — fade it back to idle so the toolbar
+		// settles to just the persistent mode indicator. An error stays put until
+		// the next change. A new save (which sets 'saving') cancels this via the
+		// state guard inside the callback.
+		if ( savedClearTimer ) { clearTimeout( savedClearTimer ); }
+		if ( ok ) {
+			savedClearTimer = setTimeout( function () {
+				if ( statusEl && statusEl.classList.contains( 'maestro-status-saved' ) ) {
+					setStatus( 'idle' );
+				}
+			}, 2000 );
+		}
 		return null;
 	}
 

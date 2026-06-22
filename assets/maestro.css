@@ -89,30 +89,81 @@ body.maestro-editing #collapse-menu {
 	user-select: none;
 }
 
-/* Panel buttons: inline-flex so the aria-hidden dashicon glyph and the
- * .maestro-btn-label text span sit side-by-side, vertically centred.
- * At <=600px the label span is hidden by media query; the icon remains. */
-.maestro-panel button {
+/* ---- Unified toolbar control system -------------------------------------
+ * Every interactive control (panel buttons, Reset All, Exit) AND the two
+ * indicator tiles (mode, active save-status) share one outlined box. Colour is
+ * the ONLY thing that varies, and it carries meaning rather than zone:
+ *   grey  = ordinary, safe controls (move / icon / visibility / exit)
+ *   green = active edit-mode + "saved"
+ *   amber = in-progress saving + "this item is modified" (Reset Item)
+ *   red   = error + destructive Reset All
+ * border:currentColor means a single `color` recolours both glyph and outline. */
+.maestro-toolbar .button,
+.maestro-mode-label,
+.maestro-status:not( .maestro-status-idle ) {
+	box-sizing: border-box;
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: 4px;
+	min-width: 40px;
+	min-height: 36px;
+	padding: 4px 8px;
+	border: 1px solid currentColor;
+	border-radius: 0; /* sharp corners */
+	background: #2c3338; /* gray fill (subtle; the coloured 1px border carries the boundary) */
+	color: #c3c4c7; /* neutral default; role rules below recolour glyph + outline */
+	box-shadow: none;
+	text-decoration: none; /* Exit is an <a class="button"> */
 }
+/* The mode + status are INDICATORS, not buttons — strip the button box so they
+ * read as flat glyphs (no border/fill, not clickable). They keep the 20px glyph
+ * and midline centring; the colour still carries state. */
+.maestro-mode-label,
+.maestro-status:not( .maestro-status-idle ) {
+	cursor: default;
+	border: 0;
+	background: transparent;
+	min-width: 0;
+	min-height: 0;
+	padding: 0 2px;
+}
+.maestro-toolbar .button:hover {
+	background: #50575e; /* lighter gray on hover; glyph keeps its role colour */
+}
+.maestro-toolbar .button:focus-visible {
+	outline: 2px solid #2271b1;
+	outline-offset: 1px;
+}
+/* A control with nothing to do (Reset Item on an unmodified item) is dimmed and
+ * non-interactive, so its enabled/amber state means "you have changes to undo". */
+.maestro-toolbar .button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.maestro-toolbar .button:disabled:hover { background: #2c3338; }
+/* Group the controls: a touch more space before the item-attribute group
+ * (Icon / Visibility / Reset Item) sets it apart from the ▲/▼ reorder pair. */
+.maestro-toolbar .maestro-icon-btn { margin-left: 8px; }
+/* Semantic role colours (recolour glyph + outline via currentColor). Scoped
+ * under .maestro-toolbar (0,2,0) so they out-specify the unified base above. */
+.maestro-toolbar .maestro-reset-all { color: #ff5c5c; } /* stronger, more saturated destructive red */
+
+/* Hide the visible text label of any toolbar control that carries one — the
+ * five panel buttons and the persistent mode indicator. aria-label + title
+ * supply the accessible name and a sighted-user hover hint. (Reset All / Exit
+ * are plain text buttons without a .maestro-btn-label, so they keep their text.) */
+.maestro-toolbar .maestro-btn-label { display: none; }
 
 /* Per-item reset button: focus-visible outline so keyboard users can see focus */
 .maestro-reset-item:focus-visible {
 	outline: 2px solid #2271b1;
 	outline-offset: 2px;
 }
-/* Emphasise the reset button when the selected item is modified */
+/* Caution colour when the selected item is modified — amber glyph + outline
+ * (consistent with the outlined control system; no solid fill). */
 .maestro-reset-item.is-modified {
-	border-color: #dba617;
-	color: #1d2327;
-	background: #dba617;
-}
-.maestro-reset-item.is-modified:hover,
-.maestro-reset-item.is-modified:focus-visible {
-	border-color: #c9961a;
-	background: #c9961a;
+	color: #dba617; /* glyph stays amber on the gray hover */
 }
 
 /* ---------- per-item DOM: selection only -------------------------------- */
@@ -265,13 +316,12 @@ body.maestro-editing #collapse-menu {
 	z-index: 99999;
 	display: flex;
 	flex-wrap: wrap; /* BUG-03: wrap zones onto extra rows when narrow, never overlap */
-	/* flex-end (not center): the toolbar is fixed to the viewport bottom and grows
-	 * upward. Bottom-aligning the zones keeps the right-side actions (Reset All) and
-	 * status pinned to the bottom row when the panel wraps to a taller layout — e.g.
-	 * when the transient "Saving…" status appears on rename-commit. With center
-	 * alignment the panel growing taller re-centred every child and shifted Reset All
-	 * upward mid-click, swallowing the click (HARD-03 race (b) regression from 11-07). */
-	align-items: flex-end;
+	/* Midline alignment: every zone (mode/status tiles, panel buttons, right actions)
+	 * shares a vertical centre. The earlier flex-end workaround for the HARD-03 race(b)
+	 * click-shift is no longer needed — now that all controls are icon-only the toolbar
+	 * stays on one row at normal widths (the tiny status tile can't force the panel to
+	 * wrap the way the old 72px "Saving…" text did), and that test is hardened test-side. */
+	align-items: center;
 	gap: 8px 16px; /* row-gap when wrapped | inter-zone gap: status | panel | right-actions */
 	padding: 10px 16px;
 	background: #1d2327;
@@ -279,6 +329,26 @@ body.maestro-editing #collapse-menu {
 	box-shadow: 0 -2px 10px rgba( 0, 0, 0, 0.25 );
 }
 .maestro-toolbar .button { margin: 0; }
+
+/* Uniform glyph size across the whole toolbar so every icon reads as one set
+ * (panel controls, Reset All / Exit, and the mode/status tiles). Flex-centre the
+ * glyph so it sits dead-centre regardless of its line box. */
+.maestro-toolbar .dashicons {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+	line-height: 1;
+}
+/* WP core's `.wp-core-ui .button .dashicons` (0,3,0) forces a tall line-height
+ * that pushed the in-button glyph off-centre; reclaim 1/20px at equal specificity. */
+.maestro-toolbar .button .dashicons { line-height: 1; }
+
+/* (Mode + active save-status tiles are styled by the unified control system
+ * near the top of this file — same outlined box as the buttons; colour follows
+ * the indicator colour via currentColor.) */
 
 /* Status zone — sits to the left, never overlapped by the panel label. */
 .maestro-status {
@@ -307,9 +377,9 @@ body.maestro-editing #collapse-menu {
 	flex-shrink: 0;
 }
 .maestro-mode-icon {
-	font-size: 16px;
-	width: 16px;
-	height: 16px;
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -326,10 +396,10 @@ body.maestro-editing #collapse-menu {
  * pseudo-element is used only for saving/saved/error save-state feedback. */
 .maestro-status::before {
 	font-family: dashicons;
-	font-size: 16px;
+	font-size: 20px;
 	line-height: 1;
-	width: 16px;
-	height: 16px;
+	width: 20px;
+	height: 20px;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	speak: never; /* presentational; screen reader hears the text label */
@@ -357,9 +427,10 @@ body.maestro-editing #collapse-menu {
 	opacity: 1;
 }
 
-.maestro-status-saving { color: #f0b849; }
-.maestro-status-saved  { color: #6bc187; }
-.maestro-status-error  { color: #f86368; }
+/* 0,2,0 so the state colour beats the unified base's neutral default. */
+.maestro-status.maestro-status-saving { color: #f0b849; }
+.maestro-status.maestro-status-saved  { color: #6bc187; }
+.maestro-status.maestro-status-error  { color: #ff5c5c; } /* matches the destructive red */
 
 .maestro-panel {
 	display: flex;
@@ -368,8 +439,8 @@ body.maestro-editing #collapse-menu {
 	gap: 8px;
 	flex: 1;
 	min-width: 0;
-	padding-left: 16px; /* wider inset reinforces the left-separator as a zone boundary */
-	border-left: 2px solid #3c434a; /* 2px makes the divider more prominent */
+	padding-left: 12px; /* inset reinforces the left-separator as a zone boundary */
+	border-left: 1px solid #3c434a; /* subtle zone divider (matches right-actions) */
 }
 .maestro-panel[hidden] { display: none; }
 .maestro-panel-label {
@@ -392,10 +463,12 @@ body.maestro-editing #collapse-menu {
 .maestro-rename-input {
 	width: 180px;
 	max-width: 100%;
+	box-sizing: border-box;
+	min-height: 36px; /* match the control buttons' height */
 	font-size: 13px;
-	padding: 2px 6px;
-	border-radius: 2px;
-	border: 1px solid #2271b1;
+	padding: 4px 8px; /* match button padding */
+	border-radius: 0; /* square corners to match the buttons */
+	border: 1px solid #c3c4c7; /* neutral, matches the ordinary-control outline; stays white for legibility */
 	background: #fff;
 	color: #1d2327;
 }
@@ -413,9 +486,10 @@ body.maestro-editing #collapse-menu {
 	gap: 8px;
 	margin-left: auto;
 	flex-shrink: 0; /* keeps reset-all/exit reachable; never squeezed */
-	padding-left: 16px;
-	border-left: 2px solid #3c434a; /* mirrors panel zone separator */
+	padding-left: 12px;
+	border-left: 1px solid #3c434a; /* subtle zone divider (mirrors panel separator) */
 }
+/* (Reset All / Exit share the unified control box near the top of this file.) */
 
 /* ---------- first-run cue ----------------------------------------------- */
 
@@ -502,6 +576,11 @@ body.maestro-editing #collapse-menu {
 		font-size: 12px;
 		min-height: 44px; /* tap-target floor — WCAG 2.5.5 AAA */
 	}
+	/* Keep the mode/status tiles the same height as the buttons at mobile widths. */
+	.maestro-mode-label,
+	.maestro-status:not( .maestro-status-idle ) {
+		min-height: 44px;
+	}
 	/* Scope under .maestro-toolbar (specificity 0,2,0) so the 44px floor beats
 	 * WP core's own ≤782px input rule (input[type="text"], 0,1,1 → min-height:40px). */
 	.maestro-toolbar .maestro-rename-input {
@@ -528,23 +607,7 @@ body.maestro-editing #collapse-menu {
 	 * so the ENTER toggle is reachable in the non-edit state too (single source of truth). */
 }
 
-/* ---------- icon-only compression at <=600px (Gap 2 / UX-08b) ----------
- *
- * At mobile widths the toolbar cannot fit all five secondary buttons with
- * their visible text labels plus the rename input. Collapse the text labels
- * while keeping the aria-label (authoritative accessible name at all widths)
- * so no control becomes unlabeled (WCAG 4.1.2).
- *
- * Scope: .maestro-toolbar so specificity (0,2,0) beats WP core's button
- * rules and avoids !important (per project pattern from Phase 09-editor-ux).
- */
-@media screen and ( max-width: 600px ) {
-	/* Hide the visible text span; aria-label remains the accessible name. */
-	.maestro-toolbar .maestro-panel button .maestro-btn-label { display: none; }
-
-	/* Preserve WCAG 2.5.5 tap target when text is gone: square icon button. */
-	.maestro-toolbar .maestro-panel button {
-		min-width: 44px;
-		justify-content: center;
-	}
-}
+/* Note: panel buttons are icon-only at ALL widths (see .maestro-panel button +
+ * .maestro-toolbar .maestro-btn-label above), so the former <=600px-only
+ * compression block (Gap 2 / UX-08b) is no longer needed — the labels never
+ * show on screen; aria-label/title carry the accessible name everywhere. */
