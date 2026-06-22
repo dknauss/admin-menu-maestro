@@ -137,10 +137,10 @@ Full phase details, success criteria, and outcomes are archived in
   - [x] 11-04-PLAN.md — Wave 2: zero-regression full-suite gate + UX-08a mobile screenshot checkpoint
 
 **Gap closure** (UAT 2026-06-21 found 4 real defects after ship/merge; fix plans `gap_closure: true`, run via `/gsd:execute-phase 11 --gaps-only`):
-  - [ ] 11-05-PLAN.md — Wave 0 (tests-first): add UX-08a ENTER-state mobile guard (no maestro_edit) + de-cheat the keyboard-reorder e2e to drive new panel ▲/▼ controls — both RED first [UX-08a, BUG-06]
-  - [ ] 11-06-PLAN.md — Wave 1: Gap 1 — enqueue the ≤782px admin-bar override unconditionally (new assets/maestro-admin-bar.css, above the is_edit_mode() early return) so the ENTER toggle is reachable on mobile [UX-08a]
-  - [ ] 11-07-PLAN.md — Wave 1: Gaps 2+3+4 (coupled) — explicit ▲/▼ panel reorder buttons (OS-independent, reuse reorderMove/insertBefore) folded into ≤600px icon-only toolbar compression (aria-label + .maestro-btn-label) + modified-badge size bump 10px→15px [BUG-06, UX-08b]
-  - [ ] 11-08-PLAN.md — Wave 2: zero-regression full-suite gate (sandbox-disabled) + enter-state mobile screenshot re-capture (ux-08a-enter-{782,600}.png) [UX-08a, UX-08b, BUG-06, BUG-07]
+  - [x] 11-05-PLAN.md — Wave 0 (tests-first): add UX-08a ENTER-state mobile guard (no maestro_edit) + de-cheat the keyboard-reorder e2e to drive new panel ▲/▼ controls — both RED first [UX-08a, BUG-06]
+  - [x] 11-06-PLAN.md — Wave 1: Gap 1 — enqueue the ≤782px admin-bar override unconditionally (new assets/maestro-admin-bar.css, above the is_edit_mode() early return) so the ENTER toggle is reachable on mobile [UX-08a]
+  - [x] 11-07-PLAN.md — Wave 1: Gaps 2+3+4 (coupled) — explicit ▲/▼ panel reorder buttons (OS-independent, reuse reorderMove/insertBefore) folded into ≤600px icon-only toolbar compression (aria-label + .maestro-btn-label) + modified-badge size bump 10px→15px [BUG-06, UX-08b]
+  - [x] 11-08-PLAN.md — Wave 2: zero-regression full-suite gate (sandbox-disabled) GREEN + enter-state mobile screenshots (ux-08a-enter-{782,600}.png); race(b) HARD-03 hardened against toolbar-reflow click fragility [UX-08a, UX-08b, BUG-06, BUG-07]
 
 ### Phase 11.1: P1 Review Hardening (INSERTED)
 

@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Editor UX Polish
 status: executing
-stopped_at: Completed 11-07-PLAN.md
-last_updated: "2026-06-22T00:24:31.199Z"
-last_activity: "2026-06-22 — Phase 11 gap-closure 11-07: ▲/▼ panel reorder buttons + icon-only compression at <=600px + badge 15px — Gaps 2/3/4 closed (BUG-06, UX-08b)"
+stopped_at: Completed 11-08-PLAN.md
+last_updated: "2026-06-22T02:30:00.000Z"
+last_activity: "2026-06-22 — Phase 11 gap-closure 11-08: Wave 2 gate GREEN sandbox-disabled (JS 53/53, PHP integration 37/37, e2e 32 pass/0 fail, screenshots 4/4); both 11-05 RED guards now GREEN; enter-state mobile PNGs captured. race(b) HARD-03 hardened (toolbar-reflow click fragility, product verified correct). All 4 gap-closure plans done — ready for verification"
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 28
-  completed_plans: 26
-  percent: 93
+  completed_plans: 27
+  percent: 96
 release_target: "1.2.0"
 release_tag: "v1.2.0"
 release_status: "planned"
@@ -38,8 +38,8 @@ See: .planning/PROJECT.md (updated 2026-06-14)
 
 Milestone: v1.2 Editor UX Polish — in progress
 Phase: Phase 11 (Editor Entry & Reorder Fixes) — gap-closure in progress on branch gsd/phase-11-gap-closure
-Plan: 11-05, 11-06, 11-07 complete (gap-closure waves 0–1, 2/3/4); 11-08 authored but its Docker gate run is BLOCKED (Docker down) — see Blockers
-Status: 11-07 done — ▲/▼ panel reorder buttons (Gap 3/BUG-06), icon-only compression at <=600px (Gap 2/UX-08b), badge bump to 15px (Gap 4/BUG-07); next: 11-08 (Wave 2 full-suite gate, Docker, sandbox-disabled). 11-05 control-driven reorder guard should now be GREEN; final confirmation at 11-08 Docker run.
+Plan: 11-05, 11-06, 11-07, 11-08 ALL complete (4/4 gap-closure plans); Wave 2 gate GREEN sandbox-disabled; ready for gsd-verifier + phase complete
+Status: Phase 11 gap closure COMPLETE — all 4 UAT defects closed (UX-08a mobile entry toggle, UX-08b/BUG-06 OS-independent ▲/▼ reorder + ≤600px compression, BUG-07 badge). Wave 2 gate GREEN sandbox-disabled. Next: gsd-verifier, then `phase complete`, then Phase 12 → cut 1.2.0.
 Last activity: 2026-06-22 — Phase 11 gap-closure 11-07: ▲/▼ reorder buttons + icon-only compression + badge bump — Gaps 2/3/4 closed
 
 Progress: [█████████░] 93%
@@ -149,6 +149,8 @@ Recent decisions affecting current work:
 - [Phase 11-editor-entry-reorder-fixes]: 11-07: moveSelected(dir,opts) shared function: opts.restoreFocusToAnchor for keyboard path; button path omits (not detached by insertBefore)
 - [Phase 11-editor-entry-reorder-fixes]: 11-07: aria-keyshortcuts dropped entirely — Alt+Arrow retained but undiscoverable; ▲/▼ buttons are OS-independent discoverable affordance
 - [Phase 11-editor-entry-reorder-fixes]: 11-07: iconButton() helper routes all five secondary panel buttons through one code path to prevent icon/label drift
+- [Phase 11-editor-entry-reorder-fixes]: 11-08: WP_ENV_TESTS_PORT honored in BOTH playwright.config baseURL AND global-setup login URL — lets e2e run on an alternate tests port when 8889 is taken by another wp-env project (gate ran on 8899)
+- [Phase 11-editor-entry-reorder-fixes]: 11-08: race(b) HARD-03 failure root-caused to e2e click-delivery — 11-07's extra panel buttons enlarged the position:fixed flex-wrap toolbar so the live rename preview reflowed it mid-click; product is correct (genuine Reset-All click cancels the queued autosave, DELETE wins, no persist). Hardened by committing the rename first (settle layout, keep queued autosave) and asserting reset-wins/no-persist; postCount===0 dropped (it only held for a sub-500ms click). No-persist reload assertion retained as anti-masking guard
 
 ### Roadmap Evolution
 
@@ -162,7 +164,8 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-- **11-08 Wave 2 gate blocked on Docker (2026-06-22):** Phase 11 gap-closure code is complete (11-05/06/07) and 11-08's capture spec + port-config are authored/committed, but the zero-regression gate itself — `npm run test:php` (wp-env), `npm run test:e2e` (Playwright on wp-env :8889), and `npm run screenshots` (enter-state PNGs) — requires Docker, which is not running in this environment (known [Maestro test-execution sandbox gap]). JS logic suite passes 53/53. To close: start Docker + `wp-env start`, then run the full suite sandbox-disabled and capture the enter-state PNGs; only then mark 11-08 complete and run phase verification.
+- **RESOLVED (2026-06-22) — 11-08 Wave 2 gate:** Ran sandbox-disabled on this project's wp-env. Port 8889 was held by another wp-env project, so this stack was started on **dev 8898 / tests 8899** and the gate run via `WP_ENV_TESTS_PORT=8899` (the alternate-port path the 11-08 config change enables); the other project's stack was left untouched. Gate GREEN: JS 53/53, PHP integration 37/37, e2e 32 pass/0 fail, screenshots 4/4. Tear down with `npx wp-env stop` when done.
+- **Hygiene follow-up (non-blocking):** Phase-07 e2e screenshot specs overwrite committed PNGs on every full e2e run (not `MAESTRO_CAPTURE`-gated like the Phase-11 capture spec). Side-effect changes were reverted during the gate; gate the Phase-07 captures the same way to stop the churn.
 
 ## Session Continuity
 
