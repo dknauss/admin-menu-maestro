@@ -4,7 +4,7 @@ Donate link: https://github.com/sponsors/dknauss
 Tags: admin menu, admin menu editor, menu editor, hide menu items, menu icons
 Requires at least: 6.4
 Tested up to: 7.0
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -125,6 +125,15 @@ If Maestro saves you time or brings you or your clients the joy of a tidy admin 
 
 == Changelog ==
 
+= 1.2.0 =
+* Redesigned edit-mode toolbar: every control is now a compact icon button in one consistent system, with colour signalling meaning — green for editing/saved, amber for unsaved changes, red for Reset All. Fully accessible: each control keeps its name for screen readers and shows a tooltip on hover.
+* Mobile: the editor is reachable on phones now — the admin-bar "Edit Menu" toggle stays visible at small screen widths (it was hidden before), and the toolbar and controls are sized for touch.
+* "Edit Mode" indicator: a persistent, glanceable cue that you're editing, plus a one-time first-run hint highlighting the menu.
+* Rename: the field shows a placeholder label, and the transient "Saved" confirmation now clears itself after a moment so the toolbar stays quiet.
+* Reorder: keyboard (Alt+Arrow) and the new ▲/▼ buttons leave menu separators in place; the per-item Reset button is disabled when there's nothing to undo.
+* Robustness: Maestro engages WordPress's menu-order machinery only when you've actually reordered top-level items (otherwise it stays out of other plugins' way); the stored configuration is size-bounded; and concurrent save / reset / exit actions are race-safe.
+* Fix: the "modified" indicator now sits on the changed row's label for items that have submenus.
+
 = 1.1.1 =
 * Editor: the selected item's name is now screen-reader-only — the visible breadcrumb duplicated the rename field and ate horizontal space, and the controls are self-explanatory. Screen-reader users still get the item/submenu context.
 * Editor: shorter reset button labels — "Reset Item" and "Reset All".
@@ -145,6 +154,9 @@ If Maestro saves you time or brings you or your clients the joy of a tidy admin 
 * Editor: click-to-select with a shared panel, debounced single-flight autosave, and folded-mode neutralization.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+A redesigned, compact icon-only edit-mode toolbar; the editor is now reachable and touch-friendly on mobile; clearer "Edit Mode" and save states; separator-safe reordering; and internal hardening (scoped menu-order, bounded config, race-safe saves). No configuration changes required.
 
 = 1.1.1 =
 Minor editor UI tidy: the item-name label is now screen-reader-only, and the reset buttons are "Reset Item" / "Reset All". No configuration changes.
