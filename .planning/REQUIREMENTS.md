@@ -160,8 +160,8 @@ Post-1.0 backlog (from SPEC.md → Roadmap). Tracked, not in this roadmap.
 | HARD-02 | Phase 11.1: P1 Review Hardening | Complete |
 | HARD-03 | Phase 11.1: P1 Review Hardening | Complete |
 | UX-10 | Phase 11.2: Editor Toolbar Redesign | Complete |
-| REL-07 | Phase 12: Release Assets Refresh | Pending (folded in from Phase 8) |
-| REL-08 | Phase 12: Release Assets Refresh | Pending (folded in from Phase 8) |
+| REL-07 | Phase 12: Release Assets Refresh | Complete |
+| REL-08 | Phase 12: Release Assets Refresh | Complete |
 
 **Coverage (v1.2):**
 - v1.2 build requirements: 3 (UX-03, UX-04, UX-07) — all mapped to Phase 9
