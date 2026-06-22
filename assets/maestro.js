@@ -259,83 +259,105 @@
 
 			e.preventDefault();
 
-			var m = model[ selectedSlug ];
 			var dir = e.key === 'ArrowUp' ? 'up' : 'down';
-			var currentSlugs, parentUl;
+			moveSelected( dir, { restoreFocusToAnchor: true } );
+		} );
+	}
 
-			if ( m.isSub ) {
-				// Submenu scope: siblings under the same parent.
-				var parentLi = liForSlug( m.parent );
-				parentUl = parentLi ? parentLi.querySelector( '.wp-submenu' ) : null;
-				if ( ! parentUl ) { return; }
-				currentSlugs = Array.prototype.map.call(
-					parentUl.querySelectorAll( 'li.maestro-subitem[data-maestro-slug]' ),
-					function ( n ) { return n.dataset.maestroSlug; }
-				);
-			} else {
-				// Top-level scope.
-				parentUl = menu;
-				currentSlugs = Array.prototype.map.call(
-					menu.querySelectorAll( 'li.menu-top.maestro-item[data-maestro-slug]' ),
-					function ( n ) { return n.dataset.maestroSlug; }
-				);
-			}
+	/**
+	 * Move the currently selected item one position up or down.
+	 *
+	 * Shared by both the ▲/▼ panel buttons and the keyboard accelerator. Reuses
+	 * the existing reorderMove/insertBefore path (BUG-06 separator-preserving
+	 * single-node move).
+	 *
+	 * opts.restoreFocusToAnchor — when true (keyboard path), restores focus to
+	 * the moved row's anchor so the next keypress chains. When false/omitted
+	 * (button path), focus stays on the button naturally (it is not detached by
+	 * insertBefore) so repeated clicks chain.
+	 *
+	 * @param {'up'|'down'} dir
+	 * @param {{ restoreFocusToAnchor?: boolean }} [opts]
+	 */
+	function moveSelected( dir, opts ) {
+		opts = opts || {};
+		if ( ! selectedSlug || ! model[ selectedSlug ] ) { return; }
 
-			var newOrder = window.maestroLogic.reorderMove( currentSlugs, selectedSlug, dir );
+		var m = model[ selectedSlug ];
+		var menu = document.getElementById( 'adminmenu' );
+		var currentSlugs, parentUl;
 
-			// Detect boundary clamp: order unchanged means the item is already at the edge.
-			if ( newOrder.join( '\n' ) === currentSlugs.join( '\n' ) ) {
-				var boundaryMsg = dir === 'up'
-					? I.moveAtTop.replace( '%s', m.title )
-					: I.moveAtBottom.replace( '%s', m.title );
-				speak( boundaryMsg, 'assertive' );
-				return;
-			}
-
-			// Physically move ONLY the selected node by one position. All other nodes —
-			// including li.wp-menu-separator and any non-maestro-item children — stay put.
-			var selectedNode = liForSlug( selectedSlug );
-			var maestroChildren = Array.prototype.slice.call(
-				parentUl.querySelectorAll(
-					m.isSub
-						? 'li.maestro-subitem[data-maestro-slug]'
-						: 'li.menu-top.maestro-item[data-maestro-slug]'
-				)
+		if ( m.isSub ) {
+			// Submenu scope: siblings under the same parent.
+			var parentLi = liForSlug( m.parent );
+			parentUl = parentLi ? parentLi.querySelector( '.wp-submenu' ) : null;
+			if ( ! parentUl ) { return; }
+			currentSlugs = Array.prototype.map.call(
+				parentUl.querySelectorAll( 'li.maestro-subitem[data-maestro-slug]' ),
+				function ( n ) { return n.dataset.maestroSlug; }
 			);
-			var currentIdx = maestroChildren.indexOf( selectedNode );
-			if ( dir === 'up' && currentIdx > 0 ) {
-				parentUl.insertBefore( selectedNode, maestroChildren[ currentIdx - 1 ] );
-			} else if ( dir === 'down' && currentIdx < maestroChildren.length - 1 ) {
-				var afterNode = maestroChildren[ currentIdx + 1 ];
-				parentUl.insertBefore( selectedNode, afterNode.nextSibling ); // nextSibling null => appendChild semantics
-			}
+		} else {
+			// Top-level scope.
+			parentUl = menu;
+			currentSlugs = Array.prototype.map.call(
+				menu.querySelectorAll( 'li.menu-top.maestro-item[data-maestro-slug]' ),
+				function ( n ) { return n.dataset.maestroSlug; }
+			);
+		}
 
-			// CRITICAL: Re-appending nodes detaches them, dropping focus to <body>.
-			// Restore focus to the moved item's anchor so the next Alt+Arrow chains.
+		var newOrder = window.maestroLogic.reorderMove( currentSlugs, selectedSlug, dir );
+
+		// Detect boundary clamp: order unchanged means the item is already at the edge.
+		if ( newOrder.join( '\n' ) === currentSlugs.join( '\n' ) ) {
+			var boundaryMsg = dir === 'up'
+				? I.moveAtTop.replace( '%s', m.title )
+				: I.moveAtBottom.replace( '%s', m.title );
+			speak( boundaryMsg, 'assertive' );
+			return;
+		}
+
+		// Physically move ONLY the selected node by one position. All other nodes —
+		// including li.wp-menu-separator and any non-maestro-item children — stay put.
+		var selectedNode = liForSlug( selectedSlug );
+		var maestroChildren = Array.prototype.slice.call(
+			parentUl.querySelectorAll(
+				m.isSub
+					? 'li.maestro-subitem[data-maestro-slug]'
+					: 'li.menu-top.maestro-item[data-maestro-slug]'
+			)
+		);
+		var currentIdx = maestroChildren.indexOf( selectedNode );
+		if ( dir === 'up' && currentIdx > 0 ) {
+			parentUl.insertBefore( selectedNode, maestroChildren[ currentIdx - 1 ] );
+		} else if ( dir === 'down' && currentIdx < maestroChildren.length - 1 ) {
+			var afterNode = maestroChildren[ currentIdx + 1 ];
+			parentUl.insertBefore( selectedNode, afterNode.nextSibling ); // nextSibling null => appendChild semantics
+		}
+
+		// Keyboard path: re-appending nodes detaches them, dropping focus to <body>.
+		// Restore focus to the moved item's anchor so the next Alt+Arrow chains.
+		// Button path: the button lives in the fixed toolbar panel (not in #adminmenu),
+		// so insertBefore does not detach it — focus stays on the button naturally.
+		if ( opts.restoreFocusToAnchor ) {
 			var movedLi = liForSlug( selectedSlug );
 			if ( movedLi ) {
 				var focusTarget = movedLi.querySelector( 'a' ) || movedLi;
 				focusTarget.focus( { preventScroll: true } );
 			}
+		}
 
-			// Announce the new position politely.
-			var newIndex = newOrder.indexOf( selectedSlug ) + 1;
-			var total = newOrder.length;
-			var movedMsg = I.moved
-				.replace( '%1$s', m.title )
-				.replace( '%2$s', dir === 'down' ? I.dirDown : I.dirUp )
-				.replace( '%3$d', String( newIndex ) )
-				.replace( '%4$d', String( total ) );
-			speak( movedMsg );
+		// Announce the new position politely.
+		var newIndex = newOrder.indexOf( selectedSlug ) + 1;
+		var total = newOrder.length;
+		var movedMsg = I.moved
+			.replace( '%1$s', m.title )
+			.replace( '%2$s', dir === 'down' ? I.dirDown : I.dirUp )
+			.replace( '%3$d', String( newIndex ) )
+			.replace( '%4$d', String( total ) );
+		speak( movedMsg );
 
-			// Set aria-keyshortcuts on the selected row to aid AT discovery.
-			if ( movedLi ) {
-				movedLi.setAttribute( 'aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown' );
-			}
-
-			// Reuse the existing debounced autosave: buildConfig() reads the new DOM order.
-			scheduleAutosave();
-		} );
+		// Reuse the existing debounced autosave: buildConfig() reads the new DOM order.
+		scheduleAutosave();
 	}
 
 	function selectItem( li, opts ) {
@@ -349,7 +371,8 @@
 		} );
 		selectedSlug = slug;
 		li.classList.add( 'maestro-selected' );
-		li.setAttribute( 'aria-keyshortcuts', 'Alt+ArrowUp Alt+ArrowDown' );
+		// The ▲/▼ panel buttons are the discoverable reorder affordance (OS-independent,
+		// Tab-reachable). No aria-keyshortcuts advertised — Alt+Arrow was macOS-broken.
 		populatePanel( slug );
 		closePopovers();
 		if ( opts.focusPanel && panel.rename ) {
@@ -362,6 +385,33 @@
 	}
 
 	/* ---------- toolbar + shared controls panel --------------------------- */
+
+	/**
+	 * Give a button the icon-only-ready structure required by Gap-2 compression.
+	 *
+	 * Appends to the button:
+	 *   1. An aria-hidden dashicon <span> (the visual glyph).
+	 *   2. A <span class="maestro-btn-label"> holding the visible text.
+	 *
+	 * Sets `aria-label` to the full human-readable label as the authoritative
+	 * accessible name at ALL widths (WCAG 4.1.2). At <=600px the CSS hides
+	 * .maestro-btn-label so only the dashicon shows; aria-label still provides
+	 * the name to AT.
+	 *
+	 * @param {HTMLButtonElement} btn    The button element to populate.
+	 * @param {string}            glyph  A dashicons-* class name.
+	 * @param {string}            label  The full human-readable label.
+	 */
+	function iconButton( btn, glyph, label ) {
+		btn.setAttribute( 'aria-label', label );
+
+		var icon = el( 'span', 'dashicons ' + glyph );
+		icon.setAttribute( 'aria-hidden', 'true' );
+		btn.appendChild( icon );
+
+		var labelSpan = el( 'span', 'maestro-btn-label', label );
+		btn.appendChild( labelSpan );
+	}
 
 	function buildToolbar() {
 		var bar = el( 'div', 'maestro-toolbar' );
@@ -417,9 +467,31 @@
 		} );
 		rename.addEventListener( 'blur', commitRename );
 
+		// ▲/▼ reorder buttons — Tab-reachable from the rename input, OS-independent.
+		// These are the primary reorder affordance; the existing Alt+Arrow path remains
+		// in the keyboard handler for backward-compat but is no longer advertised via
+		// aria-keyshortcuts (it was macOS-broken). Focus stays on the button after a
+		// move (the button lives in the fixed toolbar, not in #adminmenu, so insertBefore
+		// does not detach it) — repeated clicks chain correctly.
+		var moveUp   = el( 'button', 'button maestro-move-up' );
+		moveUp.type  = 'button';
+		iconButton( moveUp, 'dashicons-arrow-up-alt2', I.moveUp );
+		moveUp.addEventListener( 'click', function ( e ) {
+			e.preventDefault();
+			moveSelected( 'up' );
+		} );
+
+		var moveDown   = el( 'button', 'button maestro-move-down' );
+		moveDown.type  = 'button';
+		iconButton( moveDown, 'dashicons-arrow-down-alt2', I.moveDown );
+		moveDown.addEventListener( 'click', function ( e ) {
+			e.preventDefault();
+			moveSelected( 'down' );
+		} );
+
 		var iconBtn = el( 'button', 'button maestro-icon-btn' );
 		iconBtn.type = 'button';
-		iconBtn.textContent = I.icon;
+		iconButton( iconBtn, 'dashicons-format-image', I.icon );
 		iconBtn.addEventListener( 'click', function ( e ) {
 			e.preventDefault();
 			openIconPicker( iconBtn );
@@ -427,7 +499,7 @@
 
 		var visBtn = el( 'button', 'button maestro-vis-btn' );
 		visBtn.type = 'button';
-		visBtn.textContent = I.visibility;
+		iconButton( visBtn, 'dashicons-visibility', I.visibility );
 		visBtn.addEventListener( 'click', function ( e ) {
 			e.preventDefault();
 			openVisibilityPicker( visBtn );
@@ -435,15 +507,19 @@
 
 		var resetItemBtn = el( 'button', 'button maestro-reset-item' );
 		resetItemBtn.type = 'button';
-		resetItemBtn.textContent = I.resetItem;
+		iconButton( resetItemBtn, 'dashicons-undo', I.resetItem );
 		resetItemBtn.addEventListener( 'click', resetSelected );
 
 		// BUG-02: the rename input comes first so its left edge is fixed and never
 		// shifts as the selected item's name length changes; the breadcrumb label
 		// (kept for "what is targeted" context) sits to its right.
+		// Move buttons come last in DOM order — after rename input — so Tab order is:
+		// rename → ▲ → ▼ → Icon → Visibility → Reset Item.
 		p.appendChild( renameLabel );
 		p.appendChild( rename );
 		p.appendChild( label );
+		p.appendChild( moveUp );
+		p.appendChild( moveDown );
 		p.appendChild( iconBtn );
 		p.appendChild( visBtn );
 		p.appendChild( resetItemBtn );
@@ -453,6 +529,8 @@
 			root:     p,
 			label:    label,
 			rename:   rename,
+			moveUp:   moveUp,
+			moveDown: moveDown,
 			iconBtn:  iconBtn,
 			visBtn:   visBtn,
 			resetBtn: resetItemBtn,

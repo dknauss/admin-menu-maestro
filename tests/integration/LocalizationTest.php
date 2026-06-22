@@ -73,6 +73,8 @@ class LocalizationTest extends WP_UnitTestCase {
 			'hideFrom',
 			'confirmAll',
 			'drag',
+			'moveUp',
+			'moveDown',
 		);
 	}
 
