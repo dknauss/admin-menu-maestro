@@ -110,8 +110,8 @@ body.maestro-editing #collapse-menu {
 	min-height: 36px;
 	padding: 4px 8px;
 	border: 1px solid currentColor;
-	border-radius: 3px;
-	background: transparent;
+	border-radius: 0; /* sharp corners */
+	background: #3c434a; /* gray fill so each control reads clearly as a button */
 	color: #c3c4c7; /* neutral default; role rules below recolour glyph + outline */
 	box-shadow: none;
 	text-decoration: none; /* Exit is an <a class="button"> */
@@ -120,8 +120,7 @@ body.maestro-editing #collapse-menu {
 .maestro-mode-label,
 .maestro-status:not( .maestro-status-idle ) { cursor: default; }
 .maestro-toolbar .button:hover {
-	background: rgba( 255, 255, 255, 0.08 );
-	color: #f0f0f1;
+	background: #50575e; /* lighter gray on hover; glyph keeps its role colour */
 }
 .maestro-toolbar .button:focus-visible {
 	outline: 2px solid #2271b1;
@@ -129,8 +128,7 @@ body.maestro-editing #collapse-menu {
 }
 /* Semantic role colours (recolour glyph + outline via currentColor). Scoped
  * under .maestro-toolbar (0,2,0) so they out-specify the unified base above. */
-.maestro-toolbar .maestro-reset-all { color: #f86368; }
-.maestro-toolbar .maestro-reset-all:hover { background: rgba( 248, 99, 104, 0.14 ); color: #f86368; }
+.maestro-toolbar .maestro-reset-all { color: #f86368; } /* glyph stays red on the gray hover */
 
 /* Hide the visible text label of any toolbar control that carries one — the
  * five panel buttons and the persistent mode indicator. aria-label + title
@@ -146,11 +144,7 @@ body.maestro-editing #collapse-menu {
 /* Caution colour when the selected item is modified — amber glyph + outline
  * (consistent with the outlined control system; no solid fill). */
 .maestro-reset-item.is-modified {
-	color: #dba617;
-}
-.maestro-reset-item.is-modified:hover {
-	background: rgba( 219, 166, 23, 0.14 );
-	color: #dba617;
+	color: #dba617; /* glyph stays amber on the gray hover */
 }
 
 /* ---------- per-item DOM: selection only -------------------------------- */
