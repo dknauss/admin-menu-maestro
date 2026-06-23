@@ -121,7 +121,7 @@ Full phase details, success criteria, and outcomes are archived in
 **Depends on**: Nothing (first R1 phase)
 **Requirements**: HARN-01, HARN-02, SCHM-01
 **Success Criteria** (what must be TRUE):
-  1. Running a single documented command (e.g. `WP_ENV_JSON=.wp-env.compat.json npx wp-env start`) boots WordPress with all six survey plugins loaded at recorded pinned versions — confirmed by `wp plugin list` output in the running environment
+  1. Running a single documented command (`cd tests/compat && npx wp-env start`, optionally wrapped as an `npm run compat:start` script) boots WordPress with all six survey plugins loaded at recorded pinned versions — confirmed by `wp plugin list` output in the running environment
   2. The harness provisions at least two users: an admin and at least one lower-privilege role user (e.g. Editor or Shop Manager) — confirmed by `wp user list` in the running environment
   3. A committed schema document defines all six manipulation dimensions (custom positions, conditional/late injection, re-registered menus, count badges in titles, custom separators, direct `$menu`/`$submenu` surgery) and a matrix template with columns for each Maestro operation (rename / reorder / hide / re-icon) and cells for safe/degraded/broken classification — confirmed by the committed file
   4. The schema template is committed before any SURV-xx file is authored, establishing a shared format all surveys will fill in
