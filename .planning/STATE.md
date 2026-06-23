@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
-status: defining_requirements
-stopped_at: Milestone R1 started
-last_updated: "2026-06-22T21:00:00.000Z"
-last_activity: "2026-06-22 — Milestone R1 (Third-Party Compatibility Research) started"
+status: roadmap_complete
+stopped_at: Roadmap created — Phase 13 next
+last_updated: "2026-06-22T21:30:00.000Z"
+last_activity: "2026-06-22 — R1 roadmap created (Phases 13–16); Phase 13 ready to plan"
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -18,18 +18,18 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-14)
+See: .planning/PROJECT.md (updated 2026-06-22)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** v1.2 "Editor UX polish" — Phases 9, 11, 11.1, 11.2 done; Phase 12 next, then cut 1.2.0
+**Current focus:** R1 — Third-Party Compatibility Research; Phase 13 (Compatibility Harness + Classification Schema) next
 
 ## Current Position
 
-Milestone: R1 — Third-Party Compatibility Research — defining requirements
-Phase: Not started (defining requirements)
+Milestone: R1 — Third-Party Compatibility Research
+Phase: 13 of 16 (Compatibility Harness + Classification Schema) — not started
 Plan: —
-Status: Defining requirements — research-only milestone; survey the locked 6-plugin set, produce a compatibility note + prioritized fix/limitation backlog + a committed multi-plugin wp-env harness. No plugin code, no release.
-Last activity: 2026-06-22 — Milestone R1 started
+Status: Roadmap complete — ready to plan Phase 13
+Last activity: 2026-06-22 — R1 roadmap created; 11/11 requirements mapped across Phases 13–16
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -145,6 +145,7 @@ Recent decisions affecting current work:
 
 - GSD milestone release binding added to STATE.md: v1.2 now carries explicit target release `1.2.0`, tag `v1.2.0`, cut condition, pipeline, and release checklist.
 - Phase 11.1 inserted after Phase 11: P1 review hardening — scope `custom_menu_order`, bound config payload, save-race E2E coverage (from the 2026-06-20 code-review follow-up). Lands inside the 9 → 11 → 12 cut path, before the 1.2.0 tag.
+- R1 roadmap created 2026-06-22: 4 phases (13–16), 11 requirements mapped; non-versioned research track, no release.
 
 ### Pending Todos
 
@@ -158,6 +159,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-22T19:35:25.843Z
-Stopped at: Completed 12-03-PLAN.md
+Last session: 2026-06-22T21:30:00.000Z
+Stopped at: R1 roadmap created — Phases 13–16 defined, all 11 requirements mapped
 Resume file: None

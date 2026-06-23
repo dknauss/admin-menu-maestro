@@ -64,23 +64,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HARN-01 | TBD | Pending |
-| HARN-02 | TBD | Pending |
-| SCHM-01 | TBD | Pending |
-| SURV-01 | TBD | Pending |
-| SURV-02 | TBD | Pending |
-| SURV-03 | TBD | Pending |
-| SURV-04 | TBD | Pending |
-| SURV-05 | TBD | Pending |
-| SURV-06 | TBD | Pending |
-| DELV-01 | TBD | Pending |
-| DELV-02 | TBD | Pending |
+| HARN-01 | Phase 13 | Pending |
+| HARN-02 | Phase 13 | Pending |
+| SCHM-01 | Phase 13 | Pending |
+| SURV-01 | Phase 14 | Pending |
+| SURV-02 | Phase 15 | Pending |
+| SURV-03 | Phase 15 | Pending |
+| SURV-04 | Phase 15 | Pending |
+| SURV-05 | Phase 15 | Pending |
+| SURV-06 | Phase 15 | Pending |
+| DELV-01 | Phase 16 | Pending |
+| DELV-02 | Phase 16 | Pending |
 
 **Coverage:**
 - R1 requirements: 11 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 11 ⚠️
+- Mapped to phases: 11
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-06-22*
-*Last updated: 2026-06-22 after R1 milestone definition*
+*Last updated: 2026-06-22 — traceability filled in after roadmap creation*
