@@ -15,8 +15,12 @@ A requirement is **Complete** when its artifact exists, is committed, and contai
 
 ### Test Harness
 
-- [ ] **HARN-01**: A committed, reproducible wp-env configuration loads all six survey plugins alongside Maestro from a single documented command (the default `.wp-env.json` loads `plugins: []` and exercises Maestro alone).
+- [ ] **HARN-01**: A committed, reproducible wp-env configuration loads all six survey plugins alongside Maestro from a single documented command (the default `.wp-env.json` loads `plugins: []` and exercises Maestro alone). **Plugin versions are pinned** (and recorded) so findings are reproducible and dated.
 - [ ] **HARN-02**: The harness provisions the admin + at least one lower-privilege role/user so each plugin's menu can be observed and Maestro's per-role hide behavior checked against it.
+
+### Classification Schema
+
+- [ ] **SCHM-01**: A consistent classification schema is defined and committed **before any survey** — the manipulation dimensions (custom positions, conditional/late injection, re-registered menus, count badges in titles, custom separators, direct `$menu`/`$submenu` surgery) plus a safe/degraded/broken matrix for each Maestro operation (rename / reorder / hide / re-icon). Every survey fills in this template so DELV-01 synthesis is mechanical.
 
 ### Per-Plugin Survey
 
@@ -25,9 +29,9 @@ Each survey requirement documents, for that plugin: **how** it registers/manipul
 - [ ] **SURV-01**: WooCommerce surveyed and documented (first priority — heaviest menu manipulator; own top-level + submenus).
 - [ ] **SURV-02**: Jetpack surveyed and documented.
 - [ ] **SURV-03**: Yoast SEO / Rank Math surveyed and documented.
-- [ ] **SURV-04**: Elementor (or another page builder) surveyed and documented.
+- [ ] **SURV-04**: Elementor (free; own top-level Elementor + Templates menus) surveyed and documented.
 - [ ] **SURV-05**: WPForms surveyed and documented.
-- [ ] **SURV-06**: An LMS / membership plugin surveyed and documented.
+- [ ] **SURV-06**: LifterLMS (free LMS; own top-level + submenus) surveyed and documented.
 
 ### Synthesized Deliverables
 
@@ -62,6 +66,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | HARN-01 | TBD | Pending |
 | HARN-02 | TBD | Pending |
+| SCHM-01 | TBD | Pending |
 | SURV-01 | TBD | Pending |
 | SURV-02 | TBD | Pending |
 | SURV-03 | TBD | Pending |
@@ -72,9 +77,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DELV-02 | TBD | Pending |
 
 **Coverage:**
-- R1 requirements: 10 total
+- R1 requirements: 11 total
 - Mapped to phases: 0 (roadmap pending)
-- Unmapped: 10 ⚠️
+- Unmapped: 11 ⚠️
 
 ---
 *Requirements defined: 2026-06-22*
