@@ -33,6 +33,14 @@ expand its scope.
   Maestro's stored config (WP-CLI / option) and inspecting the replayed globals for deterministic
   full-matrix coverage, then spot-check notable items through the real in-place editor UI. Planner
   may adjust the mix for reliability.
+- **Top-level reorder is the one exception to the `$menu`-dump method.** `Replay::replay()`
+  (admin_menu @ `PHP_INT_MAX`) applies rename / icon / visibility / submenu-order to the globals,
+  but top-level ordering is applied separately via the `custom_menu_order` + `menu_order` filters
+  at render time (`includes/class-replay.php:58-60`). So a `$menu` dump taken right after the
+  `admin_menu` replay will NOT show the reordered top-level sequence. Classify top-level Reorder
+  cells from the **effective rendered order** — the admin sidebar order in the UI/DOM, or by
+  explicitly applying the `menu_order` filter in `wp eval` — not from the raw post-replay global.
+  (Rename, icon, hide, and submenu reorder ARE visible in the raw dump.)
 - **Roles observed:** `admin` + `compat_editor` + `compat_shop_manager` (all three provisioned
   users). `shop_manager` is WooCommerce's own role and exercises Woo role-specific items; `editor`
   is the generic baseline. Matters specifically for the Hide operation's per-role behavior.
