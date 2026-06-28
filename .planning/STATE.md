@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
 status: executing
-stopped_at: Completed 14-01-PLAN.md
-last_updated: "2026-06-28T18:51:14.267Z"
-last_activity: 2026-06-28 — Executed 14-01 (WooCommerce survey HOW + natural baseline)
+stopped_at: Completed 14-02-PLAN.md
+last_updated: "2026-06-28T19:13:42.211Z"
+last_activity: 2026-06-28 — Executed 14-02 (WooCommerce Part 2 classification matrix)
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
-  percent: 60
+  completed_plans: 4
+  percent: 80
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 ## Current Position
 
 Milestone: R1 — Third-Party Compatibility Research
-Phase: 14 of 16 (WooCommerce Survey) — executing (1 of 3 plans complete)
-Plan: 14-01 complete (SURV-01 HOW + Method header + natural baseline); next `14-02` (Part 2 matrix)
-Status: 14-01 executed — SURV-01-woocommerce.md has front fields, reproducible Method header, complete Part 1 (all six dimensions), natural-state baselines (admin fresh/completed, editor, shop_manager), affected-item inventory, and schema-change scratch list. SCHEMA.md remains pristine. Compat harness left RUNNING (http://localhost:8890) for 14-02; maestro_config + onboarding reset to fresh natural baseline.
-Last activity: 2026-06-28 — Executed 14-01 (WooCommerce survey HOW + natural baseline)
+Phase: 14 of 16 (WooCommerce Survey) — executing (2 of 3 plans complete)
+Plan: 14-02 complete (SURV-01 Part 2 full classification matrix); next `14-03` (Part 3 classified fixes + SCHEMA.md finalize)
+Status: 14-02 executed — SURV-01-woocommerce.md Part 2 has the full 34-row classification matrix (top-level + all submenus + injected items), each of rename/reorder/hide/re-icon classified safe/degraded/broken with runtime evidence, per-cell persistence, and timing cause. Hide observed per-role (admin/editor/shop_manager) with cosmetic-vs-access (loads-200 vs cap-403). Top-level reorder classified from effective render order via new reorder-probe.php. Interaction Scenarios sub-section added. No broken cells; degraded patterns: badge-loss-on-rename, WC separator re-cluster, encoded Products slugs, N/A submenu re-icon. SCHEMA.md remains pristine; six schema-change candidates in scratch list. Compat harness left RUNNING (http://localhost:8890); maestro_config + onboarding deleted (clean natural state). NOTE: docker socket access requires sandbox-disabled in this env.
+Last activity: 2026-06-28 — Executed 14-02 (WooCommerce Part 2 classification matrix)
 
-Progress: [██████░░░░] 60% (R1: 3 of 5 plans complete; Phase 13 + 14-01) — WooCommerce Part 1 + reproducible Method established
+Progress: [████████░░] 80% (R1: 4 of 5 plans complete; Phase 13 + 14-01 + 14-02) — WooCommerce Part 2 matrix complete; only 14-03 (Part 3 + SCHEMA finalize) remains
 
 ## Release Binding
 
@@ -86,6 +86,7 @@ surfaces will be planned and shipped under a later versioned milestone.
 | Phase 12-release-assets-refresh P03 | 4 | 2 tasks | 2 files |
 | Phase 13-compatibility-harness-classification-schema P02 | 1m | 1 tasks | 1 files |
 | Phase 14-woocommerce-survey P01 | 50m | 2 tasks | 6 files |
+| Phase 14-woocommerce-survey P02 | 40m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -146,6 +147,8 @@ Recent decisions affecting current work:
 - [Phase 13-compatibility-harness-classification-schema]: Fix-category labels include the requirement wording and the automated-verification plain-text alias for later admin_menu re-hook.
 - [Phase 14-woocommerce-survey]: SURV-01 dump method hooks admin_menu @ PHP_INT_MAX (Maestro's replay priority) and exits before WP priv-filtering; WP_ADMIN must be force-defined via --exec or WC_Admin_Menus never loads and the dump silently omits the top-level WooCommerce item
 - [Phase 14-woocommerce-survey]: WooCommerce exhibits all six manipulation dimensions; key collision surface for Maestro is top-level reorder (both hook custom_menu_order/menu_order) and badge-in-title loss on rename (degraded)
+- [Phase 14-woocommerce-survey]: SURV-01 Part 2: top-level Reorder is degraded not broken — item order honored+persists, but WC's menu_order filter (prio 10, after Maestro) re-clusters separator-woocommerce against the woocommerce item (cosmetic separator override)
+- [Phase 14-woocommerce-survey]: SURV-01 Part 2: Hide is always degraded (cosmetic per-role unset, never strips a cap; page LOADS by URL); hide-parent does NOT cascade to children; submenu re-icon is N/A. No broken cells across 34 rows
 
 ### Roadmap Evolution
 
@@ -166,6 +169,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-28T18:51:14.186Z
-Stopped at: Completed 14-01-PLAN.md
+Last session: 2026-06-28T19:13:32.761Z
+Stopped at: Completed 14-02-PLAN.md
 Resume file: None
