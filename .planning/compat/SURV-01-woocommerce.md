@@ -453,7 +453,7 @@ template. (Decision deferred to Plan 14-03's batched refinement; logged in the s
 
 ## Part 3 — Classified-Fix List
 
-Every surfaced issue from the matrix gets one classified fix using exactly one R1 category. These entries feed DELV-02's prioritized backlog in Phase 16.
+Every surfaced issue from the matrix gets one classified fix using exactly one R1 category. These entries feed DELV-02's prioritized backlog in Phase 16. **No orphans:** every degraded cell and every degraded interaction-scenario finding in Part 2 maps to exactly one row below.
 
 Allowed R1 fix categories:
 
@@ -462,18 +462,39 @@ Allowed R1 fix categories:
 3. **special-casing**
 4. **documented limitation**
 
-| Issue summary | Affected operation(s) | Chosen classification | One-line rationale |
-| --- | --- | --- | --- |
-| TODO: summarize the surfaced issue | Rename / Reorder / Hide / Re-icon | slug-resolution tweak / later `admin_menu` re-hook (later admin_menu re-hook) / special-casing / documented limitation | TODO: explain why this category is the right R1 classification |
+> **Coverage note.** Part 2 surfaced **no `broken` cells** across 34 matrix rows + 3 interaction scenarios. Every classified fix below therefore addresses a `degraded` (cosmetic/recoverable) pattern. The recurring patterns are indexed by their cross-cutting finding ID (F1–F5) or the slug-encoding caveat, so each fix traces directly to the matrix cells that exhibit it.
+
+| # | Issue summary | Affected operation(s) | Affected items / source | Chosen classification | One-line rationale |
+| --- | --- | --- | --- | --- | --- |
+| I1 | **Badge-in-title span lost on rename (F1)** — renaming a title that carries a baked-in count-badge `<span>` overwrites `$menu/$submenu[..][0]` wholesale, dropping the badge | Rename | Payments (`wcpay-menu-badge`), Extensions (`update-plugins count`), Home in fresh state (`remaining-tasks-badge`), Orders (processing-count when >0) — matrix rows + F1 | **documented limitation** | Loss is purely cosmetic, recoverable on reset, and intrinsic to WooCommerce baking dynamic counts into the static title string; preserving every plugin's badge HTML generically is not an R1-scoped slug/timing fix. (Could be revisited as **special-casing** in a later milestone if badge preservation is prioritized — noted for DELV-02.) |
+| I2 | **`separator-woocommerce` re-clustering on top-level reorder (F4)** — WC's own `menu_order` filter (prio 10, runs after Maestro at the same prio) re-anchors its separator immediately before the `woocommerce` item, overriding Maestro's separator placement | Reorder | `separator-woocommerce`, and any top-level item placed adjacent to the WooCommerce cluster — matrix rows + F4 | **documented limitation** | The requested *item* order is honored and persists; only the separator's slot is overridden, which is cosmetic and never affects access. WC claims `custom_menu_order` unconditionally, so this is inherent co-existence behavior, not a Maestro defect. (A **later `admin_menu` re-hook** would not help — the collision is at render-time `menu_order`, not `admin_menu`; re-asserting separator order would mean fighting WC's filter every load, out of R1 scope.) |
+| I3 | **Entity-encoded Products-taxonomy slugs** — taxonomy submenus render with `&amp;`-encoded slugs (e.g. `edit-tags.php?taxonomy=product_brand&amp;post_type=product`); a stored override only lands if its slug string matches the rendered (entity-encoded) form | Rename, Reorder, Hide | Products → Brands / Categories / Tags — matrix rows + slug-encoding caveat | **slug-resolution tweak** | The override is correct but the match key diverges between the captured form and the rendered form; normalizing slug comparison (decode/encode-insensitive matching) is exactly a slug-resolution tweak in how Maestro resolves the target row. |
+| I4 | **Submenu re-icon is a silent no-op (F2)** — replay only writes the icon to the top-level `$menu[pos][6]`; submenu rows have no icon index, so `{"icon":...}` on a submenu slug changes nothing | Re-icon | Every submenu row (29 rows) — matrix N/A cells + F2 | **documented limitation** | The operation does not exist for submenus in WordPress's menu model (submenu rows carry no icon slot); it never breaks anything. Correct and safe by design — accepted as-is. |
+| I5 | **Cosmetic per-role Hide; page still loads by direct URL (F3)** — Maestro's Hide is a per-role `unset()` that never strips a capability, so a hidden page still LOADS (200) by direct URL for any role that holds the page cap | Hide | All hideable items, per-role (admin / editor / shop_manager) — matrix Hide cells + F3 | **documented limitation** | This is the intended, safe Maestro semantic: Hide is a sidebar-visibility convenience, not an access-control mechanism (R1's core value is "zero risk to access"). Any 403 a user hits is WordPress's own cap gate, not Maestro. Documented so it is never mistaken for a security boundary. |
+| I6 | **Parent-hide does not cascade to children (Interaction S1)** — hiding the top-level `woocommerce` item from a role leaves all 8 child `$submenu` rows populated; the subtree is cosmetically orphaned (parent anchor gone) but every child page still LOADS by URL | Hide (parent + children interaction) | `woocommerce` parent + its submenu subtree — Interaction Scenario S1 | **documented limitation** | Non-cascading is the safe default — children remain reachable, so hiding a parent never silently severs access. Cascading-on-parent-hide would be a behavior change with access implications, out of R1's research-only scope. Flagged for DELV-02 as a potential **special-casing** UX option (optional subtree-hide) in a later milestone. |
+
+**Interaction scenarios S2 (rename+reorder) and S3 (re-icon+reorder-across-separator)** surfaced no new failure mode: each is the clean sum of independent degradations already classified above (S2 = I1 + I2; S3 = safe re-icon + I2). They are therefore covered by I1/I2 and need no separate fix row.
+
+## Success-Criterion Traceability
+
+This section maps survey sections to the four Phase 14 success criteria and the SURV-01 requirement, so the gsd-verifier and Phase 16 (DELV-01/DELV-02) confirm coverage without inference. (The Method header above also carries a per-plan traceability table; this is the consolidated end-of-survey view.)
+
+| Phase 14 success criterion | Where addressed in this survey | Status |
+| --- | --- | --- |
+| 1. Survey covers HOW WooCommerce registers/manipulates the menu (all six manipulation dimensions) | Part 1 — Manipulation-Dimensions Checklist (all six checked with source + runtime evidence) + the Method / baseline header + `SURV-01-assets/baseline-*.txt` (Plan 14-01) | ✅ Met |
+| 2. Every Maestro op classified safe/degraded/broken per affected item, with observable evidence + persistence + timing cause | Part 2 — Classification Matrix (34 rows × rename/reorder/hide/re-icon), cross-cutting findings F1–F5, per-role Hide, top-level reorder from effective render order, + Interaction Scenarios S1–S3 (Plan 14-02) | ✅ Met |
+| 3. Every surfaced issue gets exactly one classified R1 fix | Part 3 — Classified-Fix List above (I1–I6; every degraded matrix cell + interaction finding mapped to one of the four categories, no orphans) (Plan 14-03) | ✅ Met |
+| 4. Schema gaps resolved; SCHEMA.md committed in final form before Phase 15 | `SCHEMA.md` "## Schema changes (Phase 14)" changelog + this SURV-01 copy reconciled to the final schema shape (Plan 14-03) | ✅ Met |
+| Requirement **SURV-01** (WooCommerce surveyed and documented) | This entire file — HOW (Part 1) + what breaks (Part 2) + classified fixes (Part 3) | ✅ Met |
 
 ## Survey Completion Check
 
-- [ ] All six manipulation dimensions above are checked or left unchecked with `Notes:` evidence.
-- [ ] Every affected top-level menu item has a matrix row.
-- [ ] Every affected submenu has a matrix row.
-- [ ] Every Rename cell is classified `safe`, `degraded`, or `broken` with evidence.
-- [ ] Every Reorder cell is classified `safe`, `degraded`, or `broken` with evidence.
-- [ ] Every Hide cell is classified `safe`, `degraded`, or `broken` with evidence.
-- [ ] Every Re-icon cell is classified `safe`, `degraded`, or `broken` with evidence.
-- [ ] Every issue has exactly one classified fix: slug-resolution tweak, later `admin_menu` re-hook (later admin_menu re-hook), special-casing, or documented limitation.
-- [ ] The filled survey copy remains under `.planning/compat/SURV-NN-<plugin>.md`; this `SCHEMA.md` template remains pristine.
+- [x] All six manipulation dimensions above are checked or left unchecked with `Notes:` evidence. — All six checked in Part 1, each with source citation + runtime-baseline evidence.
+- [x] Every affected top-level menu item has a matrix row. — WooCommerce, separator-woocommerce, Payments, Analytics, Marketing (5 top-level rows).
+- [x] Every affected submenu has a matrix row. — All 9 `woocommerce` submenus, 2 Marketing, 11 Analytics, and 8 Products-injected submenus (29 submenu rows; 34 rows total with top-level).
+- [x] Every Rename cell is classified `safe`, `degraded`, or `broken` with evidence. — Every row's Rename cell classified with observable evidence + persistence.
+- [x] Every Reorder cell is classified `safe`, `degraded`, or `broken` with evidence. — Top-level from effective render order (reorder-probe.php); submenu via `sub_order`; each cell classified.
+- [x] Every Hide cell is classified `safe`, `degraded`, or `broken` with evidence. — Per-role (admin / editor / shop_manager) with cosmetic-vs-access (loads-200 vs WP cap-403) noted per F3.
+- [x] Every Re-icon cell is classified `safe`, `degraded`, or `broken` with evidence. — Top-level safe; submenu N/A→degraded (F2), rationale stated.
+- [x] Every issue has exactly one classified fix: slug-resolution tweak, later `admin_menu` re-hook (later admin_menu re-hook), special-casing, or documented limitation. — Part 3 I1–I6: each surfaced degraded pattern + interaction finding mapped to exactly one category; no orphans; S2/S3 covered by I1/I2.
+- [x] The filled survey copy remains under `.planning/compat/SURV-NN-<plugin>.md`; this `SCHEMA.md` template remains pristine. — This copy is `.planning/compat/SURV-01-woocommerce.md`. NOTE: `SCHEMA.md` is intentionally refined in Plan 14-03 (the one allowed edit point) and now carries a "Schema changes (Phase 14)" changelog; it is no longer pristine **by design** per 14-CONTEXT's batched-refinement workflow.
