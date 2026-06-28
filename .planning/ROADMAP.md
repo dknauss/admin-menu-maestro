@@ -138,7 +138,10 @@ Full phase details, success criteria, and outcomes are archived in
   2. Every Maestro operation (rename / reorder / hide / re-icon) against WooCommerce menu items is classified as safe, degraded, or broken in the schema matrix, with observable evidence noted
   3. Every identified issue has a classified fix (slug-resolution tweak / later `admin_menu` re-hook / special-casing / documented limitation)
   4. Any gaps or ambiguities in the SCHM-01 template surfaced by WooCommerce's complexity are resolved and the schema committed in its final form before Phase 15 begins
-**Plans**: TBD
+**Plans**: 3 plans
+  - [ ] 14-01-PLAN.md — boot harness, characterize HOW Woo manipulates the menu (Part 1 dimensions) + reproducible Method header + natural-state $menu/$submenu baseline [SURV-01]
+  - [ ] 14-02-PLAN.md — full Part 2 classification matrix (rename/reorder/hide/re-icon × every affected item, per-role hide, persistence+timing) + interaction scenarios [SURV-01]
+  - [ ] 14-03-PLAN.md — Part 3 classified-fix list + success-criterion traceability + batched SCHEMA.md refinement/changelog + reconcile SURV-01 [SURV-01]
 
 ### Phase 15: Remaining Survey Set
 **Goal**: All five remaining survey plugins (Jetpack, Yoast SEO / Rank Math, Elementor, WPForms, LifterLMS) are surveyed using the proven schema from Phases 13–14
