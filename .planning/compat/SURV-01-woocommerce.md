@@ -62,6 +62,17 @@ so it observes the globals in exactly the fully-registered state Maestro sees, t
 WordPress's per-user privilege filtering in `wp-admin/includes/menu.php` (which `wp_die()`s under
 WP-CLI). Run it per role:
 
+> **CRITICAL — these dumps capture Maestro's REPLAY STATE, not the WP-rendered sidebar.** The script
+> exits *before* `wp-admin/includes/menu.php` applies WordPress's own per-capability filtering, so the
+> dumped `$menu`/`$submenu` are the post-replay globals Maestro mutates — they still contain rows the
+> current user will never actually see. For `compat_editor` / `compat_shop_manager` the dump therefore
+> shows admin-only rows (e.g. `plugins.php`, or Woo rows the role lacks the cap for) that WordPress
+> strips at render time. **WP applies its capability gate at render INDEPENDENTLY of Maestro**: a row
+> present in this dump may be cap-gated away for a given role regardless of any Maestro hide. The raw
+> dump is the right tool for rename / icon / submenu-order (which mutate the replay globals), but it is
+> **NOT** the per-role rendered sidebar. Per-role Hide evidence below is therefore taken from a separate
+> **rendered/post-cap-filter check** (see "Per-role observation"), never from this raw dump alone.
+
 ```bash
 cd tests/compat
 npx wp-env run cli -- php -d memory_limit=512M /usr/local/bin/wp \
@@ -74,7 +85,9 @@ npx wp-env run cli -- php -d memory_limit=512M /usr/local/bin/wp \
 WooCommerce's classic `WC_Admin_Menus` class never instantiates and the dump is silently
 incomplete — the top-level `woocommerce` item, `separator-woocommerce`, the Products → Attributes
 submenu, and the Reports/Settings/Status/Add-ons submenus all vanish. With it, the admin-context
-init paths fire and the dump matches the rendered sidebar. (The `.planning` tree is inside the repo,
+init paths fire and the dump captures the full post-replay globals (for the `admin` role these
+coincide with the rendered sidebar since admin passes every cap gate; for editor/shop_manager they do
+NOT — the dump is replay-state, see the CRITICAL note above). (The `.planning` tree is inside the repo,
 which the harness maps to `wp-content/plugins/maestro-menu-editor`, so `eval-file` can reach the
 script.) Each row prints `pos⇥slug⇥title⇥icon⇥css` for top-level and `pos⇥slug⇥title⇥cap` for
 submenus. Captured baselines live in `SURV-01-assets/baseline-*.txt`.
@@ -129,8 +142,40 @@ Each of the three provisioned users is dumped separately via the `--user=` flag 
 Maestro's Hide is **per-role** (`Replay::is_hidden_for_current_user()` only `unset()`s an item when
 the current user's roles intersect `hidden_roles`). `admin` (administrator) sees everything;
 `compat_shop_manager` (WooCommerce's own role) exercises the Woo-specific caps; `compat_editor`
-(generic editor) is the baseline that lacks WooCommerce caps. Differences are noted in Part 1 and
-will drive the Hide column in Part 2.
+(generic editor) is the baseline that lacks WooCommerce caps.
+
+**Two independent gates, evaluated separately.** A role's effective sidebar is the result of TWO
+independent filters: (1) **WordPress's own capability gate** at render time (`current_user_can()` on
+each row's required cap in `wp-admin/includes/menu.php`) — this runs whether or not Maestro is active;
+and (2) **Maestro's cosmetic per-role `unset()`** (a row whose `hidden_roles` intersects the user's
+roles). The raw `$menu`/`$submenu` dump only reflects gate (2)'s input (replay state) and **omits
+gate (1) entirely** (it exits first). So a row present in a role's dump is NOT proof the role sees it.
+
+To make the per-role Hide evidence rigorous, gate (1) was measured **separately** with a rendered /
+post-cap-filter check: for each role, after the full `admin_menu` pass, evaluate `current_user_can()`
+on every surviving row's cap (the same test core applies at render). Observed (natural state, no
+Maestro hide):
+
+- **`admin`** — passes every cap gate; all WooCommerce top-level rows and all `woocommerce` /
+  Products submenus render. (Dump == rendered sidebar for admin.)
+- **`compat_shop_manager`** — Products top-level renders (`edit_products` ✓); under `woocommerce`,
+  Home/Orders/Customers/Reports/Settings/Status/Add-ons/Extensions render but **`coupons-moved` does
+  NOT** (lacks `manage_options`); all default + injected Products submenus render (`edit_products`,
+  `manage_product_terms`, `moderate_comments`, `import`, `export` all held). Marketing, Payments,
+  Analytics top-level render (`manage_woocommerce` / `view_woocommerce_reports` held).
+- **`compat_editor`** — Products top-level does **NOT** render (`edit_products` ✗); **no** `woocommerce`
+  submenu renders (every Woo submenu cap is unmet) and the `woocommerce` top-level itself is cap-gated
+  away; the ONLY Woo-owned row editor actually sees is **Products → Reviews** (`product-reviews`, cap
+  `moderate_comments`, which editor holds). i.e. for editor, WP's gate (1) removes almost the entire
+  WooCommerce surface *before* Maestro's hide is ever consulted.
+
+**Consequence for the Hide column.** Each per-role Hide cell below is therefore stated as the
+composition of the two gates: **what Maestro does** (cosmetic `unset()` in replay state, never strips
+a cap) **+ what WP independently does** (cap-gate the row away, or let the page LOAD/403 by direct
+URL). Where WP's gate (1) already removes a row for a role, Maestro's hide is a **moot no-op** for that
+role (there is nothing left to unset) — called out explicitly so Phase 16 never reads "row present in
+dump" as "visible to role". Where the role DOES hold the cap, Maestro's hide removes the sidebar entry
+cosmetically while the page still **LOADS (200)** by direct URL (F3).
 
 ### Two setup states surveyed
 
@@ -337,14 +382,24 @@ Use one row per affected menu item, including both top-level items and submenus.
   cosmetic)** on every submenu row, leaning to the "degraded" column purely so the matrix stays
   mechanical — the operation does not exist for submenus and never breaks anything.
 - **F3 — Hide is a cosmetic per-role `unset()`; it never removes a capability, so the page still
-  loads by direct URL.** `is_hidden_for_current_user()` only `unset()`s the `$menu`/`$submenu` row
-  when the current user's roles intersect `hidden_roles` (`class-replay.php:113-115,133-135`).
-  Observed: hiding Orders from `shop_manager` removed the menu item but the Orders page still
-  **LOADS (200)** for shop_manager (cap `edit_shop_orders` intact). Per-role: admin (not in
-  `hidden_roles`) keeps seeing the item; editor/shop_manager lose it cosmetically. Where a role
-  also lacks the page cap (e.g. `compat_editor` has no `edit_shop_orders`), a direct hit 403s — but
-  that is WordPress's own cap gate, **not** Maestro's hide. Cosmetic + access intact → **degraded**
-  (never broken). Persists across reload.
+  loads by direct URL — and it composes with WP's INDEPENDENT cap gate.** `is_hidden_for_current_user()`
+  only `unset()`s the `$menu`/`$submenu` **replay-state** row when the current user's roles intersect
+  `hidden_roles` (`class-replay.php:113-115,133-135`). This is gate (2) in the "Per-role observation"
+  two-gate model; WordPress's own `current_user_can()` render gate (gate 1) runs separately. Each
+  per-role Hide cell is read as **{what Maestro does} + {what WP independently does}**:
+    - **Maestro side:** removes the sidebar entry from the replay globals for roles in `hidden_roles`;
+      purely cosmetic, the cap is untouched.
+    - **WP side:** if the role HOLDS the page cap, the page still **LOADS (200)** by direct URL even
+      while hidden (observed: hiding Orders from `shop_manager` removed the menu item but the Orders
+      page LOADS — `edit_shop_orders` intact). If the role LACKS the page cap, WP **already cap-gates
+      the row away at render** (so it was never in the role's sidebar to begin with — Maestro's hide is
+      a **moot no-op**) and a direct hit **403s** — that 403 is WP's gate, **not** Maestro's hide.
+  Concretely: `compat_editor` lacks `edit_shop_orders` / `manage_woocommerce` / `edit_products` /
+  `view_woocommerce_reports`, so WP gate (1) removes Orders, Settings, Products, Analytics-reports, etc.
+  from editor's rendered sidebar regardless of Maestro; the editor Hide sub-cells below therefore read
+  **"WP cap-gated away (Maestro hide moot)"**, NOT "editor loses it cosmetically". `compat_shop_manager`
+  holds the Woo caps, so its Hide sub-cells are genuine cosmetic Maestro hides over a page that LOADS.
+  Cosmetic + access intact → **degraded** (never broken). Persists across reload.
 - **F4 — Top-level Reorder: item order is honored and persists, but WooCommerce's own
   `menu_order` filter (priority 10, runs AFTER Maestro at the same priority) re-clusters
   `separator-woocommerce` against the `woocommerce` item.** Both `Maestro\Replay::reorder_top` and
@@ -381,6 +436,17 @@ Use one row per affected menu item, including both top-level items and submenus.
 ### Maestro Operation Matrix
 
 Legend: **safe** / **degraded** / **broken** per the rubric; **[state]** = behavior is setup/feature/role-dependent. Re-icon on submenu rows = **N/A** (F2). All cells persist across reload unless noted.
+
+> **Reading the Hide column (per F3's two-gate model).** Each Hide sub-cell is **{Maestro's cosmetic
+> per-role `unset()` on the replay state} + {WP's independent render-time cap gate}**. Where a role
+> lacks the page cap, WP removes the row at render *before* Maestro's hide applies, so Maestro's hide is
+> a **moot no-op** for that role — the sub-cell says "WP cap-gated away (Maestro hide moot)", which is
+> NOT the same as "hidden by Maestro". Where the role holds the cap, Maestro's hide removes the sidebar
+> entry cosmetically and the page still **LOADS (200)** by direct URL. Per-role render outcomes
+> (which role actually sees each item before any Maestro hide) are recorded in the Method header's
+> "Per-role observation". For `compat_editor` specifically, WP cap-gates away essentially the entire
+> WooCommerce surface (the only Woo row editor renders is Products → Reviews), so most editor Hide
+> sub-cells are "WP cap-gated away (Maestro hide moot)".
 
 | Menu item | Level | Slug / parent slug | Rename | Reorder | Hide (admin / editor / shop_manager) | Re-icon |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -511,7 +577,7 @@ This section maps survey sections to the four Phase 14 success criteria and the 
 - [x] Every affected submenu has a matrix row. — All 9 `woocommerce` submenus, 2 Marketing, 11 Analytics, and 10 Products submenus (All Products + Add New defaults, plus Brands/Categories/Tags/Attributes/Reviews/Import/Export injected) (31 submenu rows; 37 rows total with top-level).
 - [x] Every Rename cell is classified `safe`, `degraded`, or `broken` with evidence. — Every row's Rename cell classified with observable evidence + persistence.
 - [x] Every Reorder cell is classified `safe`, `degraded`, or `broken` with evidence. — Top-level from effective render order (reorder-probe.php); submenu via `sub_order`; each cell classified.
-- [x] Every Hide cell is classified `safe`, `degraded`, or `broken` with evidence. — Per-role (admin / editor / shop_manager) with cosmetic-vs-access (loads-200 vs WP cap-403) noted per F3.
+- [x] Every Hide cell is classified `safe`, `degraded`, or `broken` with evidence. — Per-role (admin / editor / shop_manager) with cosmetic-vs-access (loads-200 vs WP cap-403) noted per F3, using the two-gate model: each sub-cell = Maestro's cosmetic `unset()` on replay state + WP's independent render-time cap gate (with "moot no-op" where WP already gates the role away). Per-role render outcomes measured via a separate post-cap-filter check (Method header, "Per-role observation"), not read off the raw replay-state dump.
 - [x] Every Re-icon cell is classified `safe`, `degraded`, or `broken` with evidence. — Top-level safe; submenu N/A→degraded (F2), rationale stated.
 - [x] Every issue has exactly one classified fix: slug-resolution tweak, later `admin_menu` re-hook (later admin_menu re-hook), special-casing, or documented limitation. — Part 3 I1–I6: each surfaced degraded pattern + interaction finding mapped to exactly one category; no orphans; S2/S3 covered by I1/I2.
 - [x] The filled survey copy remains under `.planning/compat/SURV-NN-<plugin>.md`; this `SCHEMA.md` template remains pristine. — This copy is `.planning/compat/SURV-01-woocommerce.md`. NOTE: `SCHEMA.md` is intentionally refined in Plan 14-03 (the one allowed edit point) and now carries a "Schema changes (Phase 14)" changelog; it is no longer pristine **by design** per 14-CONTEXT's batched-refinement workflow.
