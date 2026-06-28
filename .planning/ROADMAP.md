@@ -187,6 +187,6 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 11.2. Editor Toolbar Redesign | v1.2 | record | Complete (shipped 2026-06-22) | 2026-06-22 |
 | 12. Release Assets Refresh | v1.2 | 3/3 | Complete (shipped 2026-06-22) | 2026-06-22 |
 | 13. Compatibility Harness + Classification Schema | R1 | 2/2 | Complete | 2026-06-26 |
-| 14. WooCommerce Survey | 3/3 | Complete   | 2026-06-28 | - |
+| 14. WooCommerce Survey | 3/3 | Complete    | 2026-06-28 | - |
 | 15. Remaining Survey Set | R1 | 0/TBD | Not started | - |
 | 16. Synthesis | R1 | 0/TBD | Not started | - |

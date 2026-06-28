@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
-status: executing
-stopped_at: Completed 14-03-PLAN.md
-last_updated: "2026-06-28T19:33:10.270Z"
-last_activity: 2026-06-28 — Executed 14-03 (WooCommerce Part 3 classified fixes + SCHEMA.md finalization)
+status: planning
+stopped_at: Phase 14 complete and verified (4/4); ready to plan Phase 15
+last_updated: "2026-06-28T19:37:29.294Z"
+last_activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 5
   completed_plans: 5
-  percent: 100
+  percent: 50
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 ## Current Position
 
 Milestone: R1 — Third-Party Compatibility Research
-Phase: 14 of 16 (WooCommerce Survey) — all 3 plans executed (awaiting orchestrator phase-complete + verification)
-Plan: 14-03 complete (SURV-01 Part 3 classified fixes + Success-Criterion Traceability + Completion Check + SCHEMA.md finalized); Phase 14 is the last plan
-Status: 14-03 executed — SURV-01 is COMPLETE. Part 3 maps all 6 surfaced issues (I1-I6) to exactly one R1 fix category (5 documented-limitation + 1 slug-resolution tweak for entity-encoded Products slugs); 0 broken cells across 34 matrix rows + 3 interaction scenarios, so no later-admin_menu-re-hook fix is warranted in R1 (I1/I6 flagged to DELV-02 as potential later-milestone special-casing). Success-Criterion Traceability section added (4 criteria + SURV-01, all Met); Survey Completion Check fully ticked. SCHEMA.md FINALIZED with 6 batched additive refinements + a promoted Interaction Scenarios section under a "## Schema changes (Phase 14)" changelog; SURV-01 reconciled to the final shape; scratch list consumed. SCHEMA.md is now in final form for Phase 15 (intentionally no longer pristine). R1 boundary held: fixes classified, never implemented. Compat harness was not queried this plan (all evidence pre-collected); left RUNNING (http://localhost:8890) from Plan 02 — stop with `npm run compat:stop` if no further work (docker needs sandbox-disabled). NOTE: STATE.md status left as "executing"; the execute-phase orchestrator handles phase-complete marking + verification.
-Last activity: 2026-06-28 — Executed 14-03 (WooCommerce Part 3 classified fixes + SCHEMA.md finalization)
+Phase: 15 of 16 (Remaining Survey Set) — next; Phase 14 complete and verified (4/4 success criteria)
+Plan: none yet for Phase 15 — next step `/gsd:plan-phase 15` (now unblocked: SCHEMA.md is finalized for Phase 15)
+Status: Phase 14 (WooCommerce Survey) verified 4/4 — ready to plan Phase 15. SURV-01 delivered: full 34-row classification matrix (top-level reorder = degraded/separator-only; hide = cosmetic-degraded per-role; 0 broken cells), Part 3 maps all surfaced issues to one R1 fix category each (5 documented-limitation + 1 slug-resolution tweak), SCHEMA.md finalized with a "Schema changes (Phase 14)" changelog + promoted Interaction Scenarios. R1 boundary held: fixes classified, never implemented. Compat harness may still be RUNNING (http://localhost:8890) — stop with `npm run compat:stop` (docker needs sandbox-disabled).
+Last activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
 
-Progress: [██████████] 100% (R1 Phase 13 + Phase 14 all plans complete: 5 of 5; Phases 15-16 remain in the milestone) — WooCommerce survey SURV-01 fully closed out; SCHEMA.md finalized for Phase 15
+Progress: [█████░░░░░] 50% (R1: 2 of 4 phases complete — Phases 13, 14 done; 15, 16 remain) — WooCommerce survey SURV-01 closed; SCHEMA.md finalized for Phase 15
 
 ## Release Binding
 
