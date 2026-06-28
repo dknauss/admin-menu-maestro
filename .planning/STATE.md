@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
 status: planning
-stopped_at: Phase 14 complete and verified (4/4); ready to plan Phase 15
-last_updated: "2026-06-28T19:37:29.294Z"
+stopped_at: Completed 15-01-PLAN.md
+last_updated: "2026-06-28T23:14:03.997Z"
 last_activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 10
+  completed_plans: 6
   percent: 50
 ---
 
@@ -88,6 +88,7 @@ surfaces will be planned and shipped under a later versioned milestone.
 | Phase 14-woocommerce-survey P01 | 50m | 2 tasks | 6 files |
 | Phase 14-woocommerce-survey P02 | 40m | 2 tasks | 2 files |
 | Phase 14-woocommerce-survey P03 | 12m | 2 tasks | 2 files |
+| Phase 15-remaining-survey-set P01 | 12m | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -152,6 +153,7 @@ Recent decisions affecting current work:
 - [Phase 14-woocommerce-survey]: SURV-01 Part 2: Hide is always degraded (cosmetic per-role unset, never strips a cap; page LOADS by URL); hide-parent does NOT cascade to children; submenu re-icon is N/A. No broken cells across 34 rows
 - [Phase 14-woocommerce-survey]: SURV-01 Part 3: all 6 surfaced issues classified (5 documented-limitation + 1 slug-resolution tweak for entity-encoded Products slugs); 0 broken cells so no later-admin_menu-re-hook fix warranted in R1
 - [Phase 14-woocommerce-survey]: SCHEMA.md finalized with 6 batched additive refinements + promoted Interaction Scenarios section under a Phase 14 changelog; no restructuring needed; SURV-01 reconciled. Template now in final form for Phase 15 (no longer pristine by design)
+- [Phase 15-remaining-survey-set]: SURV-02: WP_ADMIN=true required for Jetpack dump too; jetpack_admin_page grants admin-only in disconnected state; Settings submenu slug is absolute URL requiring slug-resolution tweak; 0 broken cells across all rows; S2/S3 interaction scenarios safe
 
 ### Roadmap Evolution
 
@@ -172,6 +174,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-28T19:31:36Z
-Stopped at: Completed 14-03-PLAN.md
+Last session: 2026-06-28T23:14:03.994Z
+Stopped at: Completed 15-01-PLAN.md
 Resume file: None
