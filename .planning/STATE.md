@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
-status: planning
-stopped_at: Phase 14 planned
-last_updated: "2026-06-28T17:59:16.802Z"
-last_activity: 2026-06-28 — Phase 14 plans created and verified; ready to execute
+status: executing
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-06-28T18:51:14.267Z"
+last_activity: 2026-06-28 — Executed 14-01 (WooCommerce survey HOW + natural baseline)
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 5
-  completed_plans: 2
-  percent: 25
+  completed_plans: 3
+  percent: 60
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-06-22)
 ## Current Position
 
 Milestone: R1 — Third-Party Compatibility Research
-Phase: 14 of 16 (WooCommerce Survey) — planned, ready to execute
-Plan: 3 plans created + verified (14-01/02/03); next step `/gsd:execute-phase 14`
-Status: Planning complete for Phase 14 (WooCommerce Survey). Phase 13 complete (4/4 must-haves passed; HARN-01/HARN-02 confirmed via wp-env boot 2026-06-26); harness + schema ready for surveys; 3 survey plans verified (plan-checker passed first pass).
-Last activity: 2026-06-28 — Phase 14 plans created and verified; ready to execute
+Phase: 14 of 16 (WooCommerce Survey) — executing (1 of 3 plans complete)
+Plan: 14-01 complete (SURV-01 HOW + Method header + natural baseline); next `14-02` (Part 2 matrix)
+Status: 14-01 executed — SURV-01-woocommerce.md has front fields, reproducible Method header, complete Part 1 (all six dimensions), natural-state baselines (admin fresh/completed, editor, shop_manager), affected-item inventory, and schema-change scratch list. SCHEMA.md remains pristine. Compat harness left RUNNING (http://localhost:8890) for 14-02; maestro_config + onboarding reset to fresh natural baseline.
+Last activity: 2026-06-28 — Executed 14-01 (WooCommerce survey HOW + natural baseline)
 
-Progress: [██░░░░░░░░] 25% (R1: 1 of 4 phases complete) — harness + schema committed; survey work begins at Phase 14
+Progress: [██████░░░░] 60% (R1: 3 of 5 plans complete; Phase 13 + 14-01) — WooCommerce Part 1 + reproducible Method established
 
 ## Release Binding
 
@@ -85,6 +85,7 @@ surfaces will be planned and shipped under a later versioned milestone.
 | Phase 12-release-assets-refresh P01 | 20 | 2 tasks | 3 files |
 | Phase 12-release-assets-refresh P03 | 4 | 2 tasks | 2 files |
 | Phase 13-compatibility-harness-classification-schema P02 | 1m | 1 tasks | 1 files |
+| Phase 14-woocommerce-survey P01 | 50m | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -143,6 +144,8 @@ Recent decisions affecting current work:
 - [Phase 12-release-assets-refresh]: 12-03 caption copy reflects v1.2 UX changes: auto-clearing Saved state, unified icon-only toolbar, sortable group drag, accessible ▲/▼ sub-item move controls
 - [Phase 13-compatibility-harness-classification-schema]: SCHEMA.md remains pristine; future surveys copy it to SURV-NN files and fill in the copies.
 - [Phase 13-compatibility-harness-classification-schema]: Fix-category labels include the requirement wording and the automated-verification plain-text alias for later admin_menu re-hook.
+- [Phase 14-woocommerce-survey]: SURV-01 dump method hooks admin_menu @ PHP_INT_MAX (Maestro's replay priority) and exits before WP priv-filtering; WP_ADMIN must be force-defined via --exec or WC_Admin_Menus never loads and the dump silently omits the top-level WooCommerce item
+- [Phase 14-woocommerce-survey]: WooCommerce exhibits all six manipulation dimensions; key collision surface for Maestro is top-level reorder (both hook custom_menu_order/menu_order) and badge-in-title loss on rename (degraded)
 
 ### Roadmap Evolution
 
@@ -163,6 +166,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-28T17:59:16.799Z
-Stopped at: Phase 14 planned
-Resume file: .planning/phases/14-woocommerce-survey/14-01-PLAN.md
+Last session: 2026-06-28T18:51:14.186Z
+Stopped at: Completed 14-01-PLAN.md
+Resume file: None

@@ -26,7 +26,7 @@ A requirement is **Complete** when its artifact exists, is committed, and contai
 
 Each survey requirement documents, for that plugin: **how** it registers/manipulates the admin menu (custom positions, conditional/late injection, re-registered menus, count badges baked into titles, custom separators, direct `$menu`/`$submenu` surgery); **what breaks** under Maestro's rename / reorder / hide / re-icon; and a **classified fix** (slug-resolution tweak / later `admin_menu` re-hook / special-casing / documented limitation).
 
-- [ ] **SURV-01**: WooCommerce surveyed and documented (first priority — heaviest menu manipulator; own top-level + submenus).
+- [x] **SURV-01**: WooCommerce surveyed and documented (first priority — heaviest menu manipulator; own top-level + submenus).
 - [ ] **SURV-02**: Jetpack surveyed and documented.
 - [ ] **SURV-03**: Yoast SEO / Rank Math surveyed and documented.
 - [ ] **SURV-04**: Elementor (free; own top-level Elementor + Templates menus) surveyed and documented.
@@ -67,7 +67,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HARN-01 | Phase 13 | Complete |
 | HARN-02 | Phase 13 | Complete |
 | SCHM-01 | Phase 13 | Complete |
-| SURV-01 | Phase 14 | Pending |
+| SURV-01 | Phase 14 | Complete |
 | SURV-02 | Phase 15 | Pending |
 | SURV-03 | Phase 15 | Pending |
 | SURV-04 | Phase 15 | Pending |
