@@ -285,8 +285,18 @@ Collected while surveying; applied **batched** to `SCHEMA.md` in Plan 14-03 with
    `degraded` pattern; consider a standard Notes phrase or a dedicated dimension cross-reference so
    each survey classifies it identically.
 4. **Interaction-scenarios section.** 14-CONTEXT calls for testing op interactions
-   (hide-parent-with-visible-children, rename+reorder). Provisionally add an "Interaction notes"
-   subsection in SURV-01 (Plan 02); promote to SCHEMA.md only if generally useful.
+   (hide-parent-with-visible-children, rename+reorder). **Resolved in Plan 02:** the "Interaction
+   Scenarios" sub-section was added to SURV-01 and proved broadly useful (S1's non-cascading
+   parent-hide is a finding the single-op matrix could not surface). **Recommendation: promote** a
+   canonical three-probe "## Interaction Scenarios" template into `SCHEMA.md` (Plan 14-03).
+5. **Entity-encoded slug matching (slug-resolution).** The Products taxonomy submenus render with
+   `&amp;`-encoded slugs in the dump (e.g. `edit-tags.php?taxonomy=product_brand&amp;post_type=product`).
+   Maestro matches overrides by exact `$row[2]` slug, so a stored override only lands if its slug
+   string matches the rendered (entity-encoded) form. Consider a SCHEMA note / a slug-normalization
+   convention so surveys flag this consistently and Part 3 can classify it (slug-resolution tweak).
+6. **Cosmetic-vs-access "loads vs 403" column.** 14-CONTEXT requires the cosmetic-vs-access-break
+   distinction per Hide cell; this survey records it inline (F3 + per-cell "LOADS (200) by URL").
+   Consider a dedicated Hide sub-note convention so every survey states loads-vs-403 mechanically.
 
 (Decision on each is deferred to Plan 14-03's batched refinement.)
 
@@ -419,6 +429,27 @@ Legend: **safe** / **degraded** / **broken** per the rubric; **[state]** = behav
 - Where a cell is genuinely not applicable (submenu re-icon, separator rename/hide), it is marked
   **N/A** with the closest column classification so Phase 16 synthesis stays mechanical, and the
   rationale (F2 / separator-skip) is named.
+
+## Interaction Scenarios
+
+Beyond the per-op matrix, a few deliberate **op-combinations** were applied together in a single
+`maestro_config` payload and classified the same way (safe / degraded / broken + observable evidence
++ persistence + timing cause). These probe whether degraded patterns *compound* — the question the
+single-op matrix cannot answer. All scenarios reset config afterward.
+
+| # | Scenario | Payload (shape) | Observed result | Classification |
+| --- | --- | --- | --- | --- |
+| S1 | **Hide-parent-with-visible-children** — hide the top-level `woocommerce` item from a role that still has the child caps | `{"items":{"woocommerce":{"hidden_roles":["shop_manager"]}}}` | shop_manager: the top-level `$menu` row is `unset()` (parent gone from sidebar), but **all 8 child rows remain fully populated in `$submenu['woocommerce']`** (Home, Orders, Customers, Reports, Settings, Status, Add-ons, Extensions). Maestro's parent-hide does **not** cascade to children at the data level — it only removes the parent anchor. Each child page still **LOADS (200)** by direct URL (caps intact: e.g. `manage_woocommerce` for Settings). The subtree is cosmetically orphaned, not access-broken. Persists across reload. | **degraded** — cosmetic subtree-orphaning, no access break. Timing: pure Maestro `PHP_INT_MAX` `unset()`, no Woo-timing interaction. |
+| S2 | **Rename + reorder the same item together** — rename Payments AND move it to the top via `top_order` | `{"items":{"<payments>":{"title":"Money"}},"top_order":["<payments>","woocommerce"]}` | Both effects apply and **compound cleanly**: title becomes "Money" with the `wcpay-menu-badge` span LOST (F1), AND the effective rendered order places Payments at position 0, then `separator-woocommerce`, then `woocommerce` (F4 — WC re-clusters its separator). The two degradations are independent; neither worsens the other; both persist across reload. | **degraded** — sum of F1 (badge loss) + F4 (separator re-cluster); no new failure mode from combining. Timing: badge loss is Maestro-overwrite-after-Woo; separator slot is Woo's render-time `menu_order`. |
+| S3 | **Re-icon a feature-gated item + reorder across the custom separator** — re-icon Marketing AND move it ahead of `woocommerce` (crossing `separator-woocommerce`) | `{"items":{"woocommerce-marketing":{"icon":"dashicons-money-alt"}},"top_order":["woocommerce-marketing","woocommerce"]}` | Marketing's icon swaps to `dashicons-money-alt` (top-level re-icon, **safe**, persists) AND the effective order renders `woocommerce-marketing` at position 0, then `separator-woocommerce`, then `woocommerce` — i.e. Maestro successfully moves Marketing across/ahead of the WooCommerce cluster, and WC's filter only re-anchors its own separator to `woocommerce` (does not drag Marketing back). Persists across reload. | **degraded** (overall) — the re-icon is safe; the reorder honors the requested item slot but inherits the F4 separator caveat. No broken behavior crossing the separator. Timing: Woo render-time `menu_order` separator anchoring. |
+
+**Promote-to-schema worthiness:** **Yes — recommend promoting.** The interaction-scenarios section
+proved genuinely revealing (S1's non-cascading parent-hide is a finding the single-op matrix could
+not surface), and the pattern is plugin-agnostic — every Phase 15 plugin with a parent/child menu or
+a custom separator benefits from the same three probes. Recommendation for Plan 14-03: add an
+optional **"## Interaction Scenarios"** section to `SCHEMA.md` with these three canonical probes
+(hide-parent-with-visible-children, rename+reorder, re-icon+reorder-across-separator) as a reusable
+template. (Decision deferred to Plan 14-03's batched refinement; logged in the scratch list.)
 
 ## Part 3 — Classified-Fix List
 
