@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
 status: executing
-stopped_at: Completed 14-02-PLAN.md
-last_updated: "2026-06-28T19:13:42.211Z"
-last_activity: 2026-06-28 — Executed 14-02 (WooCommerce Part 2 classification matrix)
+stopped_at: Completed 14-03-PLAN.md
+last_updated: "2026-06-28T19:33:10.270Z"
+last_activity: 2026-06-28 — Executed 14-03 (WooCommerce Part 3 classified fixes + SCHEMA.md finalization)
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
-  percent: 80
+  completed_plans: 5
+  percent: 100
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-22)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** R1 — Third-Party Compatibility Research; Phase 14 (WooCommerce Survey) next
+**Current focus:** R1 — Third-Party Compatibility Research; Phase 14 (WooCommerce Survey) all plans executed — Phase 15 (SURV-02..06) next
 
 ## Current Position
 
 Milestone: R1 — Third-Party Compatibility Research
-Phase: 14 of 16 (WooCommerce Survey) — executing (2 of 3 plans complete)
-Plan: 14-02 complete (SURV-01 Part 2 full classification matrix); next `14-03` (Part 3 classified fixes + SCHEMA.md finalize)
-Status: 14-02 executed — SURV-01-woocommerce.md Part 2 has the full 34-row classification matrix (top-level + all submenus + injected items), each of rename/reorder/hide/re-icon classified safe/degraded/broken with runtime evidence, per-cell persistence, and timing cause. Hide observed per-role (admin/editor/shop_manager) with cosmetic-vs-access (loads-200 vs cap-403). Top-level reorder classified from effective render order via new reorder-probe.php. Interaction Scenarios sub-section added. No broken cells; degraded patterns: badge-loss-on-rename, WC separator re-cluster, encoded Products slugs, N/A submenu re-icon. SCHEMA.md remains pristine; six schema-change candidates in scratch list. Compat harness left RUNNING (http://localhost:8890); maestro_config + onboarding deleted (clean natural state). NOTE: docker socket access requires sandbox-disabled in this env.
-Last activity: 2026-06-28 — Executed 14-02 (WooCommerce Part 2 classification matrix)
+Phase: 14 of 16 (WooCommerce Survey) — all 3 plans executed (awaiting orchestrator phase-complete + verification)
+Plan: 14-03 complete (SURV-01 Part 3 classified fixes + Success-Criterion Traceability + Completion Check + SCHEMA.md finalized); Phase 14 is the last plan
+Status: 14-03 executed — SURV-01 is COMPLETE. Part 3 maps all 6 surfaced issues (I1-I6) to exactly one R1 fix category (5 documented-limitation + 1 slug-resolution tweak for entity-encoded Products slugs); 0 broken cells across 34 matrix rows + 3 interaction scenarios, so no later-admin_menu-re-hook fix is warranted in R1 (I1/I6 flagged to DELV-02 as potential later-milestone special-casing). Success-Criterion Traceability section added (4 criteria + SURV-01, all Met); Survey Completion Check fully ticked. SCHEMA.md FINALIZED with 6 batched additive refinements + a promoted Interaction Scenarios section under a "## Schema changes (Phase 14)" changelog; SURV-01 reconciled to the final shape; scratch list consumed. SCHEMA.md is now in final form for Phase 15 (intentionally no longer pristine). R1 boundary held: fixes classified, never implemented. Compat harness was not queried this plan (all evidence pre-collected); left RUNNING (http://localhost:8890) from Plan 02 — stop with `npm run compat:stop` if no further work (docker needs sandbox-disabled). NOTE: STATE.md status left as "executing"; the execute-phase orchestrator handles phase-complete marking + verification.
+Last activity: 2026-06-28 — Executed 14-03 (WooCommerce Part 3 classified fixes + SCHEMA.md finalization)
 
-Progress: [████████░░] 80% (R1: 4 of 5 plans complete; Phase 13 + 14-01 + 14-02) — WooCommerce Part 2 matrix complete; only 14-03 (Part 3 + SCHEMA finalize) remains
+Progress: [██████████] 100% (R1 Phase 13 + Phase 14 all plans complete: 5 of 5; Phases 15-16 remain in the milestone) — WooCommerce survey SURV-01 fully closed out; SCHEMA.md finalized for Phase 15
 
 ## Release Binding
 
@@ -87,6 +87,7 @@ surfaces will be planned and shipped under a later versioned milestone.
 | Phase 13-compatibility-harness-classification-schema P02 | 1m | 1 tasks | 1 files |
 | Phase 14-woocommerce-survey P01 | 50m | 2 tasks | 6 files |
 | Phase 14-woocommerce-survey P02 | 40m | 2 tasks | 2 files |
+| Phase 14-woocommerce-survey P03 | 12m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -149,6 +150,8 @@ Recent decisions affecting current work:
 - [Phase 14-woocommerce-survey]: WooCommerce exhibits all six manipulation dimensions; key collision surface for Maestro is top-level reorder (both hook custom_menu_order/menu_order) and badge-in-title loss on rename (degraded)
 - [Phase 14-woocommerce-survey]: SURV-01 Part 2: top-level Reorder is degraded not broken — item order honored+persists, but WC's menu_order filter (prio 10, after Maestro) re-clusters separator-woocommerce against the woocommerce item (cosmetic separator override)
 - [Phase 14-woocommerce-survey]: SURV-01 Part 2: Hide is always degraded (cosmetic per-role unset, never strips a cap; page LOADS by URL); hide-parent does NOT cascade to children; submenu re-icon is N/A. No broken cells across 34 rows
+- [Phase 14-woocommerce-survey]: SURV-01 Part 3: all 6 surfaced issues classified (5 documented-limitation + 1 slug-resolution tweak for entity-encoded Products slugs); 0 broken cells so no later-admin_menu-re-hook fix warranted in R1
+- [Phase 14-woocommerce-survey]: SCHEMA.md finalized with 6 batched additive refinements + promoted Interaction Scenarios section under a Phase 14 changelog; no restructuring needed; SURV-01 reconciled. Template now in final form for Phase 15 (no longer pristine by design)
 
 ### Roadmap Evolution
 
@@ -169,6 +172,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-28T19:13:32.761Z
-Stopped at: Completed 14-02-PLAN.md
+Last session: 2026-06-28T19:31:36Z
+Stopped at: Completed 14-03-PLAN.md
 Resume file: None

@@ -110,7 +110,7 @@ Full phase details, success criteria, and outcomes are archived in
 **Track:** Non-versioned research. Deliverables are committed planning artifacts and a harness/test scaffolding only.
 
 - [x] **Phase 13: Compatibility Harness + Classification Schema** — Committed multi-plugin wp-env config loading all six survey plugins at pinned versions, provisioned with admin and a lower-privilege user; plus the classification schema and safe/degraded/broken matrix template committed before any survey runs (completed 2026-06-26)
-- [ ] **Phase 14: WooCommerce Survey** — Survey WooCommerce (locked first priority, heaviest manipulator) using the Phase 13 schema; stress-test and refine the schema against the hardest case
+- [x] **Phase 14: WooCommerce Survey** — Survey WooCommerce (locked first priority, heaviest manipulator) using the Phase 13 schema; stress-test and refine the schema against the hardest case (completed 2026-06-28)
 - [ ] **Phase 15: Remaining Survey Set** — Apply the proven schema to survey Jetpack, Yoast SEO / Rank Math, Elementor, WPForms, and LifterLMS
 - [ ] **Phase 16: Synthesis** — Consolidated compatibility note presenting all six findings under one schema plus the safe/degraded/broken matrix; prioritized fix/limitation backlog with forward IDs seeded for a later versioned milestone
 
@@ -187,6 +187,6 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 11.2. Editor Toolbar Redesign | v1.2 | record | Complete (shipped 2026-06-22) | 2026-06-22 |
 | 12. Release Assets Refresh | v1.2 | 3/3 | Complete (shipped 2026-06-22) | 2026-06-22 |
 | 13. Compatibility Harness + Classification Schema | R1 | 2/2 | Complete | 2026-06-26 |
-| 14. WooCommerce Survey | 2/3 | In Progress|  | - |
+| 14. WooCommerce Survey | 3/3 | Complete   | 2026-06-28 | - |
 | 15. Remaining Survey Set | R1 | 0/TBD | Not started | - |
 | 16. Synthesis | R1 | 0/TBD | Not started | - |
