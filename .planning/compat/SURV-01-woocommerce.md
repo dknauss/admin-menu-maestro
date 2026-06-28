@@ -1,14 +1,16 @@
 # SURV-01 — WooCommerce Compatibility Survey
 
 R1 compatibility classification survey for **WooCommerce**, the locked first-priority plugin and
-the heaviest admin-menu manipulator in the compat set. This file is a filled copy of the pristine
-`.planning/compat/SCHEMA.md` template (which remains untouched until Plan 03's batched
-end-of-phase refinement). It characterizes HOW WooCommerce registers and manipulates the WordPress
-admin menu (Part 1), classifies every Maestro operation against every affected item (Part 2), and
-assigns each surfaced issue one classified R1 fix (Part 3).
+the heaviest admin-menu manipulator in the compat set. This file is a filled copy of the
+`.planning/compat/SCHEMA.md` template. It characterizes HOW WooCommerce registers and manipulates
+the WordPress admin menu (Part 1), classifies every Maestro operation against every affected item
+(Part 2), and assigns each surfaced issue one classified R1 fix (Part 3). The survey is **complete**
+and reconciled to the final schema shape (the Phase 14 batched refinement applied in Plan 14-03 —
+see `SCHEMA.md`'s "Schema changes (Phase 14)" changelog).
 
-> **Status:** Part 1 + Method header + natural-state baseline complete (Plan 14-01). Parts 2 and 3
-> are filled by Plans 14-02 and 14-03.
+> **Status:** Complete. Part 1 + Method header + natural-state baseline (Plan 14-01); Part 2
+> classification matrix + Interaction Scenarios (Plan 14-02); Part 3 classified-fix list +
+> traceability + completion check + SCHEMA.md finalization (Plan 14-03).
 
 ## Survey Front Fields
 
@@ -158,7 +160,7 @@ The visible difference between states is recorded in Part 1 (the Home submenu's
 | 1. HOW WooCommerce registers/manipulates the menu, all six dimensions | Part 1 + this Method header + baseline dumps (Plan 14-01) |
 | 2. Every Maestro op classified per affected item with evidence | Part 2 matrix (Plan 14-02) |
 | 3. Every surfaced issue gets exactly one classified fix | Part 3 fix list (Plan 14-03) |
-| 4. SCHEMA.md stress-tested and finalized | "Schema-change candidates" scratch list (this plan) → batched into SCHEMA.md (Plan 14-03) |
+| 4. SCHEMA.md stress-tested and finalized | Refinements batched into `SCHEMA.md`'s "Schema changes (Phase 14)" changelog; this copy reconciled (Plan 14-03) |
 | Requirement SURV-01 | This entire file |
 
 ## Part 1 — Manipulation-Dimensions Checklist
@@ -269,36 +271,16 @@ Settings. WooCommerce also injects into the **Products** menu (parent `edit.php?
 items. (Plan 02 adds one matrix row per affected item, flagging the state/feature/role-dependent
 ones above.)
 
-### Schema-change candidates (Phase 14) — scratch list
+### Schema refinements — consumed into SCHEMA.md (Phase 14)
 
-Collected while surveying; applied **batched** to `SCHEMA.md` in Plan 14-03 with a changelog (per
-14-CONTEXT). Nothing is changed in `SCHEMA.md` during this plan.
-
-1. **Per-cell persistence/timing column.** 14-CONTEXT requires per-cell persistence + timing-cause
-   notes; the current Part 2 evidence cell is free-text. Consider a dedicated "Persists?" / "Timing
-   cause" sub-note convention (or columns) so Phase 16 synthesis is mechanical.
-2. **Setup/feature/role state-dependence flag.** Several items only appear in certain setup states
-   (Home badge), feature states (Analytics/Marketing), or for certain roles (`coupons-moved`).
-   A per-row "State-dependent" marker would make the matrix self-documenting. (Candidate: an extra
-   column or a `Level` value extension.)
-3. **Count-badge handling note.** Badge-in-title loss on rename is a recurring, predictable
-   `degraded` pattern; consider a standard Notes phrase or a dedicated dimension cross-reference so
-   each survey classifies it identically.
-4. **Interaction-scenarios section.** 14-CONTEXT calls for testing op interactions
-   (hide-parent-with-visible-children, rename+reorder). **Resolved in Plan 02:** the "Interaction
-   Scenarios" sub-section was added to SURV-01 and proved broadly useful (S1's non-cascading
-   parent-hide is a finding the single-op matrix could not surface). **Recommendation: promote** a
-   canonical three-probe "## Interaction Scenarios" template into `SCHEMA.md` (Plan 14-03).
-5. **Entity-encoded slug matching (slug-resolution).** The Products taxonomy submenus render with
-   `&amp;`-encoded slugs in the dump (e.g. `edit-tags.php?taxonomy=product_brand&amp;post_type=product`).
-   Maestro matches overrides by exact `$row[2]` slug, so a stored override only lands if its slug
-   string matches the rendered (entity-encoded) form. Consider a SCHEMA note / a slug-normalization
-   convention so surveys flag this consistently and Part 3 can classify it (slug-resolution tweak).
-6. **Cosmetic-vs-access "loads vs 403" column.** 14-CONTEXT requires the cosmetic-vs-access-break
-   distinction per Hide cell; this survey records it inline (F3 + per-cell "LOADS (200) by URL").
-   Consider a dedicated Hide sub-note convention so every survey states loads-vs-403 mechanically.
-
-(Decision on each is deferred to Plan 14-03's batched refinement.)
+The six schema-refinement candidates collected here during Plans 01–02 were applied **batched** to
+`SCHEMA.md` in Plan 14-03 and are documented in its "## Schema changes (Phase 14)" changelog (all
+six accepted as additive conventions; the Interaction Scenarios section was promoted into the
+template). This scratch list is therefore consumed; see `SCHEMA.md` for the authoritative record.
+This survey copy is reconciled to that final schema shape — its Part 2 already carries the per-cell
+persistence/timing notes, the `[state]` marker, per-role Hide with loads-vs-403, the F-numbered
+cross-cutting findings, and the Interaction Scenarios section, so it remains a faithful instance of
+the finalized template.
 
 ## Part 2 — Classification Matrix
 
@@ -443,13 +425,13 @@ single-op matrix cannot answer. All scenarios reset config afterward.
 | S2 | **Rename + reorder the same item together** — rename Payments AND move it to the top via `top_order` | `{"items":{"<payments>":{"title":"Money"}},"top_order":["<payments>","woocommerce"]}` | Both effects apply and **compound cleanly**: title becomes "Money" with the `wcpay-menu-badge` span LOST (F1), AND the effective rendered order places Payments at position 0, then `separator-woocommerce`, then `woocommerce` (F4 — WC re-clusters its separator). The two degradations are independent; neither worsens the other; both persist across reload. | **degraded** — sum of F1 (badge loss) + F4 (separator re-cluster); no new failure mode from combining. Timing: badge loss is Maestro-overwrite-after-Woo; separator slot is Woo's render-time `menu_order`. |
 | S3 | **Re-icon a feature-gated item + reorder across the custom separator** — re-icon Marketing AND move it ahead of `woocommerce` (crossing `separator-woocommerce`) | `{"items":{"woocommerce-marketing":{"icon":"dashicons-money-alt"}},"top_order":["woocommerce-marketing","woocommerce"]}` | Marketing's icon swaps to `dashicons-money-alt` (top-level re-icon, **safe**, persists) AND the effective order renders `woocommerce-marketing` at position 0, then `separator-woocommerce`, then `woocommerce` — i.e. Maestro successfully moves Marketing across/ahead of the WooCommerce cluster, and WC's filter only re-anchors its own separator to `woocommerce` (does not drag Marketing back). Persists across reload. | **degraded** (overall) — the re-icon is safe; the reorder honors the requested item slot but inherits the F4 separator caveat. No broken behavior crossing the separator. Timing: Woo render-time `menu_order` separator anchoring. |
 
-**Promote-to-schema worthiness:** **Yes — recommend promoting.** The interaction-scenarios section
+**Promote-to-schema worthiness:** **Promoted (Plan 14-03).** The interaction-scenarios section
 proved genuinely revealing (S1's non-cascading parent-hide is a finding the single-op matrix could
 not surface), and the pattern is plugin-agnostic — every Phase 15 plugin with a parent/child menu or
-a custom separator benefits from the same three probes. Recommendation for Plan 14-03: add an
-optional **"## Interaction Scenarios"** section to `SCHEMA.md` with these three canonical probes
-(hide-parent-with-visible-children, rename+reorder, re-icon+reorder-across-separator) as a reusable
-template. (Decision deferred to Plan 14-03's batched refinement; logged in the scratch list.)
+a custom separator benefits from the same three probes. Accordingly, an optional **"## Interaction
+Scenarios"** section with these three canonical probes (hide-parent-with-visible-children,
+rename+reorder, re-icon+reorder-across-separator) was promoted into `SCHEMA.md` so SURV-02..06
+inherit it (see the SCHEMA.md "Schema changes (Phase 14)" changelog, change #4).
 
 ## Part 3 — Classified-Fix List
 
