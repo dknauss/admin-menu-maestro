@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
 status: planning
-stopped_at: Phase 14 planned
-last_updated: "2026-06-28T17:59:16.802Z"
-last_activity: 2026-06-28 — Phase 14 plans created and verified; ready to execute
+stopped_at: Phase 14 complete and verified (4/4); ready to plan Phase 15
+last_updated: "2026-06-28T19:37:29.294Z"
+last_activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 2
-  percent: 25
+  completed_plans: 5
+  percent: 50
 ---
 
 # Project State
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-22)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** R1 — Third-Party Compatibility Research; Phase 14 (WooCommerce Survey) next
+**Current focus:** R1 — Third-Party Compatibility Research; Phase 14 (WooCommerce Survey) all plans executed — Phase 15 (SURV-02..06) next
 
 ## Current Position
 
 Milestone: R1 — Third-Party Compatibility Research
-Phase: 14 of 16 (WooCommerce Survey) — planned, ready to execute
-Plan: 3 plans created + verified (14-01/02/03); next step `/gsd:execute-phase 14`
-Status: Planning complete for Phase 14 (WooCommerce Survey). Phase 13 complete (4/4 must-haves passed; HARN-01/HARN-02 confirmed via wp-env boot 2026-06-26); harness + schema ready for surveys; 3 survey plans verified (plan-checker passed first pass).
-Last activity: 2026-06-28 — Phase 14 plans created and verified; ready to execute
+Phase: 15 of 16 (Remaining Survey Set) — next; Phase 14 complete and verified (4/4 success criteria)
+Plan: none yet for Phase 15 — next step `/gsd:plan-phase 15` (now unblocked: SCHEMA.md is finalized for Phase 15)
+Status: Phase 14 (WooCommerce Survey) verified 4/4 — ready to plan Phase 15. SURV-01 delivered: full 34-row classification matrix (top-level reorder = degraded/separator-only; hide = cosmetic-degraded per-role; 0 broken cells), Part 3 maps all surfaced issues to one R1 fix category each (5 documented-limitation + 1 slug-resolution tweak), SCHEMA.md finalized with a "Schema changes (Phase 14)" changelog + promoted Interaction Scenarios. R1 boundary held: fixes classified, never implemented. Compat harness may still be RUNNING (http://localhost:8890) — stop with `npm run compat:stop` (docker needs sandbox-disabled).
+Last activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
 
-Progress: [██░░░░░░░░] 25% (R1: 1 of 4 phases complete) — harness + schema committed; survey work begins at Phase 14
+Progress: [█████░░░░░] 50% (R1: 2 of 4 phases complete — Phases 13, 14 done; 15, 16 remain) — WooCommerce survey SURV-01 closed; SCHEMA.md finalized for Phase 15
 
 ## Release Binding
 
@@ -85,6 +85,9 @@ surfaces will be planned and shipped under a later versioned milestone.
 | Phase 12-release-assets-refresh P01 | 20 | 2 tasks | 3 files |
 | Phase 12-release-assets-refresh P03 | 4 | 2 tasks | 2 files |
 | Phase 13-compatibility-harness-classification-schema P02 | 1m | 1 tasks | 1 files |
+| Phase 14-woocommerce-survey P01 | 50m | 2 tasks | 6 files |
+| Phase 14-woocommerce-survey P02 | 40m | 2 tasks | 2 files |
+| Phase 14-woocommerce-survey P03 | 12m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -143,6 +146,12 @@ Recent decisions affecting current work:
 - [Phase 12-release-assets-refresh]: 12-03 caption copy reflects v1.2 UX changes: auto-clearing Saved state, unified icon-only toolbar, sortable group drag, accessible ▲/▼ sub-item move controls
 - [Phase 13-compatibility-harness-classification-schema]: SCHEMA.md remains pristine; future surveys copy it to SURV-NN files and fill in the copies.
 - [Phase 13-compatibility-harness-classification-schema]: Fix-category labels include the requirement wording and the automated-verification plain-text alias for later admin_menu re-hook.
+- [Phase 14-woocommerce-survey]: SURV-01 dump method hooks admin_menu @ PHP_INT_MAX (Maestro's replay priority) and exits before WP priv-filtering; WP_ADMIN must be force-defined via --exec or WC_Admin_Menus never loads and the dump silently omits the top-level WooCommerce item
+- [Phase 14-woocommerce-survey]: WooCommerce exhibits all six manipulation dimensions; key collision surface for Maestro is top-level reorder (both hook custom_menu_order/menu_order) and badge-in-title loss on rename (degraded)
+- [Phase 14-woocommerce-survey]: SURV-01 Part 2: top-level Reorder is degraded not broken — item order honored+persists, but WC's menu_order filter (prio 10, after Maestro) re-clusters separator-woocommerce against the woocommerce item (cosmetic separator override)
+- [Phase 14-woocommerce-survey]: SURV-01 Part 2: Hide is always degraded (cosmetic per-role unset, never strips a cap; page LOADS by URL); hide-parent does NOT cascade to children; submenu re-icon is N/A. No broken cells across 34 rows
+- [Phase 14-woocommerce-survey]: SURV-01 Part 3: all 6 surfaced issues classified (5 documented-limitation + 1 slug-resolution tweak for entity-encoded Products slugs); 0 broken cells so no later-admin_menu-re-hook fix warranted in R1
+- [Phase 14-woocommerce-survey]: SCHEMA.md finalized with 6 batched additive refinements + promoted Interaction Scenarios section under a Phase 14 changelog; no restructuring needed; SURV-01 reconciled. Template now in final form for Phase 15 (no longer pristine by design)
 
 ### Roadmap Evolution
 
@@ -163,6 +172,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-28T17:59:16.799Z
-Stopped at: Phase 14 planned
-Resume file: .planning/phases/14-woocommerce-survey/14-01-PLAN.md
+Last session: 2026-06-28T19:31:36Z
+Stopped at: Completed 14-03-PLAN.md
+Resume file: None
