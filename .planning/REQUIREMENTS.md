@@ -15,8 +15,8 @@ A requirement is **Complete** when its artifact exists, is committed, and contai
 
 ### Test Harness
 
-- [ ] **HARN-01**: A committed, reproducible wp-env configuration loads all six survey plugins alongside Maestro from a single documented command (the default `.wp-env.json` loads `plugins: []` and exercises Maestro alone). **Plugin versions are pinned** (and recorded) so findings are reproducible and dated.
-- [ ] **HARN-02**: The harness provisions the admin + at least one lower-privilege role/user so each plugin's menu can be observed and Maestro's per-role hide behavior checked against it.
+- [x] **HARN-01**: A committed, reproducible wp-env configuration loads all six survey plugins alongside Maestro from a single documented command (the default `.wp-env.json` loads `plugins: []` and exercises Maestro alone). **Plugin versions are pinned** (and recorded) so findings are reproducible and dated.
+- [x] **HARN-02**: The harness provisions the admin + at least one lower-privilege role/user so each plugin's menu can be observed and Maestro's per-role hide behavior checked against it.
 
 ### Classification Schema
 
@@ -64,8 +64,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HARN-01 | Phase 13 | Pending |
-| HARN-02 | Phase 13 | Pending |
+| HARN-01 | Phase 13 | Complete |
+| HARN-02 | Phase 13 | Complete |
 | SCHM-01 | Phase 13 | Complete |
 | SURV-01 | Phase 14 | Pending |
 | SURV-02 | Phase 15 | Pending |
@@ -83,4 +83,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-06-22*
-*Last updated: 2026-06-22 — traceability filled in after roadmap creation*
+*Last updated: 2026-06-27 — HARN-01/HARN-02 marked Complete after Phase 13 verification (4/4)*
