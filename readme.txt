@@ -125,6 +125,9 @@ If Maestro saves you time or brings you or your clients the joy of a tidy admin 
 
 == Changelog ==
 
+= 1.3.0 =
+* Saved overrides now keep applying even when your site moves to a new host, when a plugin updates and changes a version number in its menu URL, when UTM tracking parameters drift on external-tool links, and when a taxonomy slug is stored with `&amp;` encoding instead of `&` (or vice versa) — no manual re-save needed.
+
 = 1.2.0 =
 * Redesigned edit-mode toolbar: every control is now a compact icon button in one consistent system, with colour signalling meaning — green for editing/saved, amber for unsaved changes, red for Reset All. Fully accessible: each control keeps its name for screen readers and shows a tooltip on hover.
 * Mobile: the editor is reachable on phones now — the admin-bar "Edit Menu" toggle stays visible at small screen widths (it was hidden before), and the toolbar and controls are sized for touch.
