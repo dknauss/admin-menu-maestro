@@ -193,5 +193,5 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 12. Release Assets Refresh | v1.2 | 3/3 | Complete (shipped 2026-06-22) | 2026-06-22 |
 | 13. Compatibility Harness + Classification Schema | R1 | 2/2 | Complete | 2026-06-26 |
 | 14. WooCommerce Survey | R1 | 3/3 | Complete | 2026-06-28 |
-| 15. Remaining Survey Set | 5/5 | Complete   | 2026-06-29 | - |
+| 15. Remaining Survey Set | 5/5 | Complete    | 2026-06-29 | - |
 | 16. Synthesis | R1 | 0/TBD | Not started | - |
