@@ -207,12 +207,57 @@ class Replay {
 				}
 
 				// Reorder this parent's surviving children.
-				if ( ! empty( $cfg['sub_order'][ $parent ] ) ) {
-					// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: reordering $submenu entries via admin_menu hook is the documented WP API for submenu ordering.
-					$submenu[ $parent ] = Ordering::submenu(
-						$submenu[ $parent ],
-						$cfg['sub_order'][ $parent ]
-					);
+				// Normalize the sub_order parent key so an absolute/encoded stored
+				// key resolves against the (possibly different form) rendered parent.
+				$norm_parent   = Slug::normalize( (string) $parent, $base );
+				$desired_order = null;
+				if ( ! empty( $cfg['sub_order'] ) ) {
+					foreach ( $cfg['sub_order'] as $sp => $sd ) {
+						if ( Slug::normalize( (string) $sp, $base ) === $norm_parent ) {
+							$desired_order = $sd;
+							break;
+						}
+					}
+				}
+
+				if ( ! empty( $desired_order ) ) {
+					// Normalize desired child slug list.
+					$norm_desired = array();
+					foreach ( $desired_order as $ds ) {
+						$norm_desired[] = Slug::normalize( (string) $ds, $base );
+					}
+
+					// Build normalized-slug copies of children for Ordering::submenu
+					// matching, and maintain a map from normalized slug → original row
+					// (first occurrence) so we can restore original rows afterwards.
+					$norm_children = array();
+					$orig_by_norm  = array(); // normalized_child_slug => original row.
+					foreach ( $submenu[ $parent ] as $cr ) {
+						if ( ! empty( $cr[2] ) ) {
+							$cnk = Slug::normalize( (string) $cr[2], $base );
+							if ( ! isset( $orig_by_norm[ $cnk ] ) ) {
+								$orig_by_norm[ $cnk ] = $cr;
+							}
+							$cr[2]           = $cnk; // Temporarily normalize for Ordering.
+							$norm_children[] = $cr;
+						} else {
+							$norm_children[] = $cr;
+						}
+					}
+
+					// Let Ordering::submenu sort the normalized copies (its resilience
+					// contract: desired-in-order first, newcomers appended, orphans skipped,
+					// dup honoured once).
+					$norm_ordered = Ordering::submenu( $norm_children, $norm_desired );
+
+					// Map returned rows back to originals (non-destructive: keep raw slugs).
+					$restored = array();
+					foreach ( $norm_ordered as $nr ) {
+						$cnk        = isset( $nr[2] ) ? $nr[2] : '';
+						$restored[] = isset( $orig_by_norm[ $cnk ] ) ? $orig_by_norm[ $cnk ] : $nr;
+					}
+
+					$submenu[ $parent ] = $restored; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional: reordering $submenu entries via admin_menu hook is the documented WP API for submenu ordering.
 				}
 			}
 		}
