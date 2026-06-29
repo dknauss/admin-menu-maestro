@@ -256,4 +256,269 @@ class ReplayTest extends WP_UnitTestCase {
 			'custom_menu_order must return true when top_order is non-empty.'
 		);
 	}
+
+	// -----------------------------------------------------------------------
+	// FIX-01/02/03: Normalized slug resolution — acceptance tests
+	// (17-02 Wave 2; full Docker run executes in 17-03)
+	// -----------------------------------------------------------------------
+
+	/**
+	 * FIX-01 host move: a Jetpack Settings submenu slug registered under one host
+	 * (e.g. example.com) is renamed when the override is stored under a different
+	 * host (e.g. localhost:8890), because both normalize to the same admin-relative key.
+	 *
+	 * Rendered slug:  https://example.com/wp-admin/admin.php?page=jetpack#/settings
+	 * Stored key:     http://localhost:8890/wp-admin/admin.php?page=jetpack#/settings
+	 * Normalized:     admin.php?page=jetpack#/settings (both)
+	 */
+	public function test_fix01_host_move_submenu_rename_resolves() {
+		global $submenu;
+
+		$rendered_slug = 'https://example.com/wp-admin/admin.php?page=jetpack#/settings';
+		$stored_key    = 'http://localhost:8890/wp-admin/admin.php?page=jetpack#/settings';
+
+		$submenu['jetpack'] = array(
+			5 => array( 'Jetpack Settings', 'manage_options', $rendered_slug, '' ),
+		);
+
+		( new Config() )->save(
+			array( 'items' => array( $stored_key => array( 'title' => 'Connectivity' ) ) )
+		);
+
+		$this->run_replay();
+
+		$this->assertSame(
+			'Connectivity',
+			$submenu['jetpack'][5][0],
+			'FIX-01: rename must land even when host differs between stored key and rendered slug.'
+		);
+	}
+
+	/**
+	 * FIX-01 ver bump: an Elementor Website Templates slug with ver=4.2.0 is renamed
+	 * when the override was stored with ver=4.1.4 — ver param is volatile and dropped
+	 * during normalization.
+	 *
+	 * Rendered slug (ver bumped):  …?page=elementor-app&ver=4.2.0&return_to&source=…#/kit-library
+	 * Stored key (old ver):        …?page=elementor-app&ver=4.1.4&return_to&source=…#/kit-library
+	 * Normalized:                  admin.php?page=elementor-app&return_to&source=wp_db_templates_menu#/kit-library
+	 */
+	public function test_fix01_ver_bump_submenu_rename_resolves() {
+		global $menu, $submenu;
+
+		$base           = admin_url( '' );
+		$rendered_slug  = $base . 'admin.php?page=elementor-app&ver=4.2.0&return_to&source=wp_db_templates_menu#/kit-library';
+		$stored_key     = $base . 'admin.php?page=elementor-app&ver=4.1.4&return_to&source=wp_db_templates_menu#/kit-library';
+
+		$submenu['elementor'] = array(
+			10 => array( 'Website Templates', 'manage_options', $rendered_slug, '' ),
+		);
+
+		( new Config() )->save(
+			array( 'items' => array( $stored_key => array( 'title' => 'Templates Library' ) ) )
+		);
+
+		$this->run_replay();
+
+		$this->assertSame(
+			'Templates Library',
+			$submenu['elementor'][10][0],
+			'FIX-01: rename must land even when ver= param has changed.'
+		);
+	}
+
+	/**
+	 * FIX-02 UTM drift: a WPForms external upgrade URL with drifted utm_* params is
+	 * renamed when the override was stored with the original utm_* values — all utm_*
+	 * params are volatile and dropped during normalization.
+	 *
+	 * Rendered slug (drifted UTM):  https://wpforms.com/lite-upgrade/?utm_campaign=other&utm_source=elsewhere
+	 * Stored key (original UTM):    https://wpforms.com/lite-upgrade/?utm_campaign=liteplugin&utm_source=WordPress&…
+	 * Normalized:                   wpforms.com/lite-upgrade/ (both)
+	 */
+	public function test_fix02_utm_drift_submenu_rename_resolves() {
+		global $submenu;
+
+		$rendered_slug = 'https://wpforms.com/lite-upgrade/?utm_campaign=other&utm_source=elsewhere';
+		$stored_key    = 'https://wpforms.com/lite-upgrade/?utm_campaign=liteplugin&utm_source=WordPress&utm_medium=admin-menu&utm_locale=en_US';
+
+		$submenu['wpforms-overview'] = array(
+			50 => array( 'Upgrade to Pro', 'manage_options', $rendered_slug, '' ),
+		);
+
+		( new Config() )->save(
+			array( 'items' => array( $stored_key => array( 'title' => 'Go Pro' ) ) )
+		);
+
+		$this->run_replay();
+
+		$this->assertSame(
+			'Go Pro',
+			$submenu['wpforms-overview'][50][0],
+			'FIX-02: rename must land even when utm_* params have drifted.'
+		);
+	}
+
+	/**
+	 * FIX-03 entity encoding — &amp; rendered, & stored:
+	 * A WooCommerce taxonomy slug rendered with &amp; is renamed when the override
+	 * is stored with plain & (and vice-versa).
+	 *
+	 * Rendered slug: edit-tags.php?taxonomy=product_cat&amp;post_type=product
+	 * Stored key:    edit-tags.php?taxonomy=product_cat&post_type=product
+	 * Normalized:    edit-tags.php?post_type=product&taxonomy=product_cat (both, after sort)
+	 */
+	public function test_fix03_ampamp_rendered_plain_stored_submenu_rename_resolves() {
+		global $submenu;
+
+		$rendered_slug = 'edit-tags.php?taxonomy=product_cat&amp;post_type=product';
+		$stored_key    = 'edit-tags.php?taxonomy=product_cat&post_type=product';
+
+		$submenu['woocommerce'] = array(
+			10 => array( 'Product Categories', 'manage_woocommerce', $rendered_slug, '' ),
+		);
+
+		( new Config() )->save(
+			array( 'items' => array( $stored_key => array( 'title' => 'Categories' ) ) )
+		);
+
+		$this->run_replay();
+
+		$this->assertSame(
+			'Categories',
+			$submenu['woocommerce'][10][0],
+			'FIX-03: rename must land when rendered slug has &amp; and stored key has &.'
+		);
+	}
+
+	/**
+	 * FIX-03 entity encoding — & rendered, &amp; stored (reverse direction).
+	 *
+	 * Rendered slug: edit-tags.php?taxonomy=product_cat&post_type=product
+	 * Stored key:    edit-tags.php?taxonomy=product_cat&amp;post_type=product
+	 * Normalized:    edit-tags.php?post_type=product&taxonomy=product_cat (both)
+	 */
+	public function test_fix03_plain_rendered_ampamp_stored_submenu_rename_resolves() {
+		global $submenu;
+
+		$rendered_slug = 'edit-tags.php?taxonomy=product_cat&post_type=product';
+		$stored_key    = 'edit-tags.php?taxonomy=product_cat&amp;post_type=product';
+
+		$submenu['woocommerce'] = array(
+			10 => array( 'Product Categories', 'manage_woocommerce', $rendered_slug, '' ),
+		);
+
+		( new Config() )->save(
+			array( 'items' => array( $stored_key => array( 'title' => 'Cat Items' ) ) )
+		);
+
+		$this->run_replay();
+
+		$this->assertSame(
+			'Cat Items',
+			$submenu['woocommerce'][10][0],
+			'FIX-03: rename must land when rendered slug has & and stored key has &amp;.'
+		);
+	}
+
+	/**
+	 * sub_order reorder on encoded child slugs: a sub_order desired list using plain
+	 * & separator against &amp;-rendered child slugs still reorders correctly, because
+	 * both sides are normalized before comparison.
+	 */
+	public function test_sub_order_reorder_on_encoded_child_slugs() {
+		global $submenu;
+
+		// Children with &amp;-encoded slugs in their natural order.
+		$submenu['woocommerce'] = array(
+			5  => array( 'Product Categories', 'manage_woocommerce', 'edit-tags.php?taxonomy=product_cat&amp;post_type=product', '' ),
+			10 => array( 'Product Tags', 'manage_woocommerce', 'edit-tags.php?taxonomy=product_tag&amp;post_type=product', '' ),
+			15 => array( 'All Products', 'manage_woocommerce', 'edit.php?post_type=product', '' ),
+		);
+
+		// Desired order using plain & (without entity encoding).
+		( new Config() )->save(
+			array(
+				'sub_order' => array(
+					'woocommerce' => array(
+						'edit.php?post_type=product',
+						'edit-tags.php?taxonomy=product_cat&post_type=product',
+						'edit-tags.php?taxonomy=product_tag&post_type=product',
+					),
+				),
+			)
+		);
+
+		$this->run_replay();
+
+		$slugs = wp_list_pluck( array_values( $submenu['woocommerce'] ), 2 );
+		$this->assertSame(
+			array(
+				'edit.php?post_type=product',
+				'edit-tags.php?taxonomy=product_cat&amp;post_type=product',
+				'edit-tags.php?taxonomy=product_tag&amp;post_type=product',
+			),
+			$slugs,
+			'sub_order must reorder children even when desired list uses different entity-encoding than rendered rows.'
+		);
+	}
+
+	/**
+	 * Collision no-op (Axis-1 fail-safe): two distinct stored keys that normalize to
+	 * the same key → neither override is applied; items stay at natural title.
+	 *
+	 * Both keys normalize to the same form (both represent the same WooCommerce
+	 * Categories slug, one &amp;-encoded and one &-encoded). The collision guard
+	 * must detect this and apply NOTHING.
+	 */
+	public function test_collision_noop_ambiguous_stored_keys_apply_nothing() {
+		global $submenu;
+
+		$slug_amp    = 'edit-tags.php?taxonomy=product_cat&amp;post_type=product';
+		$slug_plain  = 'edit-tags.php?taxonomy=product_cat&post_type=product';
+		// Both normalize to: edit-tags.php?post_type=product&taxonomy=product_cat
+
+		$submenu['woocommerce'] = array(
+			10 => array( 'Product Categories', 'manage_woocommerce', $slug_plain, '' ),
+		);
+
+		// Store two DISTINCT keys that normalize to the same key.
+		( new Config() )->save(
+			array(
+				'items' => array(
+					$slug_amp   => array( 'title' => 'Ambiguous A' ),
+					$slug_plain => array( 'title' => 'Ambiguous B' ),
+				),
+			)
+		);
+
+		$this->run_replay();
+
+		// Neither override should be applied — fail-safe no-op.
+		$this->assertSame(
+			'Product Categories',
+			$submenu['woocommerce'][10][0],
+			'Collision no-op: ambiguous normalized keys must leave the item at its natural title.'
+		);
+	}
+
+	/**
+	 * Anti-regression guard: a plain already-simple slug (edit.php) with a stored
+	 * override still renames exactly as before — normalize() is a no-op on simple slugs
+	 * (idempotency guarantees zero behavior change for existing overrides).
+	 */
+	public function test_simple_slug_override_still_renames_after_normalization() {
+		( new Config() )->save(
+			array( 'items' => array( 'edit.php' => array( 'title' => 'Articles' ) ) )
+		);
+
+		$this->run_replay();
+
+		global $menu;
+		$this->assertSame(
+			'Articles',
+			$menu[5][0],
+			'Anti-regression: plain slug overrides must still apply unchanged after normalization wiring.'
+		);
+	}
 }
