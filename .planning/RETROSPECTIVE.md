@@ -90,6 +90,33 @@ The edit-mode surface was redesigned from the ground up for clarity, compactness
 
 ---
 
+## Milestone: R1 — Third-Party Compatibility Research
+
+**Completed:** 2026-06-29 (non-versioned research — no release tag, no SVN deploy)
+**Phases:** 4 (13–16) | **Plans:** 12
+
+### What Was Built
+A committed reproducible six-plugin wp-env harness, a shared classification schema, six per-plugin admin-menu manipulation surveys (WooCommerce, Jetpack, Yoast SEO, Elementor, WPForms, LifterLMS), a consolidated compatibility note, and a ranked forward-ID'd COMPAT-xx fix/limitation backlog. Headline finding: 0 broken cells across six plugins × four Maestro operations.
+
+### What Worked
+- **Schema-first, stress-test-second sequencing** — committing SCHEMA.md before any survey (Phase 13), then hardening it against the worst case (WooCommerce, Phase 14) before the other five, made Phase 15 surveys and Phase 16 synthesis mechanical. The 6×4 matrix matched every source survey with zero contradictions.
+- **Research boundary discipline** — fixes were classified and ranked but never implemented; the COMPAT-xx → FIX-xx seed link keeps the forward work tracked without scope creep into code.
+- **Wave-based parallel synthesis** — Phase 16's two plans (note, then backlog) ran cleanly in dependency order; the backlog's 42→13 dedup with a 0-orphan traceability table held up under adversarial integration check.
+
+### What Was Inefficient
+- **SUMMARY frontmatter hygiene** — several plan SUMMARYs left `requirements_completed` empty (HARN-01/02, SURV-02/04/05, DELV-02), so the milestone audit had to resolve those to satisfied via manual artifact verification rather than trusting the frontmatter.
+- **Requirement label drift** — the SURV-03 label kept "Yoast SEO / Rank Math" after Rank Math was scoped out in Phase 15; caught and corrected only at audit time.
+- **Cold-boot cost** — the six-plugin compat harness cold-boots ~15 min, with a transient Elementor ZIP CRC error and interrupted-run PHPUnit clone debris as recurring friction.
+
+### Patterns Established
+- **Non-versioned research milestone** (label `R1`, no tag/SVN) — keeps `vX.Y` reserved for shipped releases while still using the full plan→execute→verify→audit→archive lifecycle.
+- **Forward-ID backlog with no-renumber contract** — COMPAT-xx IDs assigned once in rank order, cited later by FIX-xx without churn.
+- **Source-survey-governs rule** — on synthesis classification disputes, the underlying survey evidence wins over pre-extracted inputs.
+
+### Key Lessons
+- Lock the schema against the hardest case early; everything downstream becomes mechanical and synthesis stays contradiction-free.
+- Treat SUMMARY `requirements_completed` frontmatter as a first-class audit input — empty fields turn an automated 3-source cross-reference into manual verification.
+
 ## Cross-Milestone Trends
 
 | Milestone | Phases | Plans | Shipped | Test posture at close |
@@ -97,5 +124,6 @@ The edit-mode surface was redesigned from the ground up for clarity, compactness
 | v1.0 | 5 | 10 | 2026-06-14 | unit 44/44 · integration 29/29 · e2e 9/9 · Plugin Check clean |
 | v1.1 | 3 | 11 | 2026-06-17 | unit 44/44 · integration 29/29 · e2e 9/9 · Plugin Check clean |
 | v1.2 | 6 (+2 inserted) | 31 | 2026-06-22 | PHP unit 61/61 · PHP integration 37/37 · e2e 32/32 · phpcs + PHPStan + Plugin Check clean |
+| R1 | 4 | 12 | 2026-06-29 (research) | N/A — research milestone (planning artifacts + harness); verification via phase VERIFICATIONs (4+4+4+9 must-haves) + audit 11/11 |
 
 *Trends accumulate as milestones complete.*

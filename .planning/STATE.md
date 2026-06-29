@@ -2,36 +2,36 @@
 gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
-status: planning
-stopped_at: Completed 16-02-PLAN.md
-last_updated: "2026-06-29T16:51:58.471Z"
-last_activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
+status: complete
+stopped_at: R1 milestone complete and archived (audit passed 11/11)
+last_updated: "2026-06-29T18:00:00.000Z"
+last_activity: 2026-06-29 — R1 complete, audited (11/11), and archived to milestones/
 progress:
   total_phases: 4
   completed_phases: 4
   total_plans: 12
   completed_plans: 12
-  percent: 50
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-22)
+See: .planning/PROJECT.md (updated 2026-06-29)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** R1 — Third-Party Compatibility Research; Phase 14 (WooCommerce Survey) all plans executed — Phase 15 (SURV-02..06) next
+**Current focus:** No active milestone. R1 complete and archived. Next: `/gsd:new-milestone` — natural candidate is a versioned milestone scoping FIX-xx from the COMPAT-xx backlog (COMPAT-01/02/03 slug-resolution tweaks first).
 
 ## Current Position
 
-Milestone: R1 — Third-Party Compatibility Research
-Phase: 15 of 16 (Remaining Survey Set) — next; Phase 14 complete and verified (4/4 success criteria)
-Plan: none yet for Phase 15 — next step `/gsd:plan-phase 15` (now unblocked: SCHEMA.md is finalized for Phase 15)
-Status: Phase 14 (WooCommerce Survey) verified 4/4 — ready to plan Phase 15. SURV-01 delivered: full 34-row classification matrix (top-level reorder = degraded/separator-only; hide = cosmetic-degraded per-role; 0 broken cells), Part 3 maps all surfaced issues to one R1 fix category each (5 documented-limitation + 1 slug-resolution tweak), SCHEMA.md finalized with a "Schema changes (Phase 14)" changelog + promoted Interaction Scenarios. R1 boundary held: fixes classified, never implemented. Compat harness may still be RUNNING (http://localhost:8890) — stop with `npm run compat:stop` (docker needs sandbox-disabled).
-Last activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
+Milestone: R1 — Third-Party Compatibility Research — **COMPLETE 2026-06-29** (audit passed 11/11)
+Phase: all 4 of 4 complete (13, 14, 15, 16) and archived to `.planning/milestones/R1-*`
+Plan: none pending — milestone closed
+Status: R1 delivered all five artifact classes (harness, schema, six surveys, compatibility note, COMPAT-xx backlog). Headline: 0 broken cells across six plugins × four operations; worst case cosmetic "degraded". 42 survey issues → 13 ranked COMPAT-xx items (COMPAT-01..03 actionable slug-resolution; rest documented limitations), 0 orphans. R1 boundary held: fixes classified and ranked, never implemented. Forward production fixes tracked as FIX-xx for a later versioned milestone. Phase 16 work squash-merged to `main`; feature branches deleted. Compat harness may still be RUNNING (http://localhost:8890) — stop with `npm run compat:stop` (docker needs sandbox-disabled).
+Last activity: 2026-06-29 — R1 complete, audited, and archived
 
-Progress: [█████░░░░░] 50% (R1: 2 of 4 phases complete — Phases 13, 14 done; 15, 16 remain) — WooCommerce survey SURV-01 closed; SCHEMA.md finalized for Phase 15
+Progress: [██████████] 100% (R1: 4 of 4 phases complete — Phases 13–16 done and archived)
 
 ## Release Binding
 

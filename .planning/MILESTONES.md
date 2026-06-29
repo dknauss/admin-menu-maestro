@@ -5,6 +5,29 @@ A historical record of shipped versions. Full details for each milestone live in
 
 ---
 
+## R1 — Third-Party Compatibility Research
+
+**Status:** ✅ Complete 2026-06-29 (non-versioned research milestone — **no release tag, no SVN deploy**)
+**Phases:** 13–16 (4 phases, 12 plans)
+**Tag:** none (research only; `vX.Y` numbering stays reserved for shipped plugin releases)
+
+**Delivered:** Characterized how Maestro's sparse-delta replay behaves against the six highest-impact admin-menu-manipulating plugins, end to end — a committed reproducible six-plugin wp-env harness, a shared classification schema, six per-plugin surveys, a consolidated compatibility note, and a ranked forward-ID'd fix/limitation backlog. The R1 boundary held: every fix is classified and ranked but none implemented.
+
+**Key accomplishments:**
+1. **Reproducible six-plugin harness (HARN-01/02)** — `tests/compat/` wp-env loads WooCommerce, Jetpack, Yoast SEO, Elementor, WPForms, and LifterLMS at pinned versions plus Maestro, with admin + `compat_editor` + `compat_shop_manager` users; `npm run compat:start`.
+2. **Classification schema (SCHM-01)** — `SCHEMA.md`: six manipulation dimensions + a rename/reorder/hide/re-icon × safe/degraded/broken matrix, committed before any survey and finalized after WooCommerce stress-tested it.
+3. **Six per-plugin surveys (SURV-01..06)** — each filling the identical schema; Rank Math scoped out of SURV-03.
+4. **Consolidated compatibility note (DELV-01)** — `COMPATIBILITY-NOTE.md`: all six findings under one schema, fully-populated 6×4 matrix. **Headline: 0 broken cells; worst case cosmetic "degraded".**
+5. **Prioritized COMPAT-xx backlog (DELV-02)** — `BACKLOG.md`: 42 survey issues → 13 ranked forward-ID'd items (COMPAT-01..03 actionable slug-resolution tweaks; rest documented limitations), 0 orphans, ID-stability contract; REQUIREMENTS.md FIX-xx seed link.
+
+**Audit:** [R1-MILESTONE-AUDIT.md](milestones/R1-MILESTONE-AUDIT.md) — passed, 11/11 requirements satisfied.
+
+**Forward work:** The COMPAT-01..13 backlog seeds FIX-xx in a later versioned milestone. COMPAT-01/02/03 (slug-resolution) are the highest-priority candidates.
+
+**Archives:** [R1-ROADMAP.md](milestones/R1-ROADMAP.md) · [R1-REQUIREMENTS.md](milestones/R1-REQUIREMENTS.md)
+
+---
+
 ## v1.2 — Editor UX Polish
 
 **Status:** ✅ Shipped 2026-06-22

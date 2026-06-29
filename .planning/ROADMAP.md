@@ -7,7 +7,7 @@
 - ✅ **v1.0 WordPress.org Release Readiness** — Phases 1–5 (shipped 2026-06-14; release tag `v1.0.0`) → [archive](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Polish & Accessibility** — Phases 6–8 (shipped 2026-06-17; release line `1.1.x`, latest shipped `1.1.1`)
 - ✅ **v1.2 Editor UX Polish** — Phases 9–12 (shipped 2026-06-22; release tag `v1.2.0`) → [archive](milestones/v1.2-ROADMAP.md)
-- 🚧 **R1 Third-Party Compatibility Research** — Phases 13–16 (non-versioned; research only — no plugin code, no release tag, no SVN deploy)
+- ✅ **R1 Third-Party Compatibility Research** — Phases 13–16 (completed 2026-06-29; non-versioned research — no plugin code, no release tag, no SVN deploy) → [archive](milestones/R1-ROADMAP.md)
 
 ## Phases
 
@@ -103,79 +103,27 @@ Full phase details, success criteria, and outcomes are archived in
 
 ---
 
-## R1 — Third-Party Compatibility Research (Phases 13–16)
+<details>
+<summary>✅ R1 Third-Party Compatibility Research (Phases 13–16) — COMPLETE 2026-06-29</summary>
 
-**Milestone Goal:** Document how Maestro's sparse-delta replay behaves against the six highest-impact admin-menu-manipulating plugins. Produce a committed reproducible wp-env harness, a consistent classification schema, per-plugin survey findings, a consolidated compatibility note, and a prioritized fix/limitation backlog. **No plugin code is committed. No release tag. No SVN deploy.**
+Full phase details, success criteria, and outcomes are archived in
+[milestones/R1-ROADMAP.md](milestones/R1-ROADMAP.md). Audit: [milestones/R1-MILESTONE-AUDIT.md](milestones/R1-MILESTONE-AUDIT.md) (passed, 11/11).
 
-**Track:** Non-versioned research. Deliverables are committed planning artifacts and a harness/test scaffolding only.
+**Milestone Goal:** Document how Maestro's sparse-delta replay behaves against the six highest-impact admin-menu-manipulating plugins; produce a reproducible wp-env harness, a classification schema, per-plugin surveys, a consolidated compatibility note, and a prioritized fix/limitation backlog. **No plugin code, no release tag, no SVN deploy.**
 
-- [x] **Phase 13: Compatibility Harness + Classification Schema** — Committed multi-plugin wp-env config loading all six survey plugins at pinned versions, provisioned with admin and a lower-privilege user; plus the classification schema and safe/degraded/broken matrix template committed before any survey runs (completed 2026-06-26)
-- [x] **Phase 14: WooCommerce Survey** — Survey WooCommerce (locked first priority, heaviest manipulator) using the Phase 13 schema; stress-test and refine the schema against the hardest case (completed 2026-06-28)
-- [x] **Phase 15: Remaining Survey Set** — Apply the proven schema to survey Jetpack, Yoast SEO / Rank Math, Elementor, WPForms, and LifterLMS (completed 2026-06-29)
-- [x] **Phase 16: Synthesis** — Consolidated compatibility note presenting all six findings under one schema plus the safe/degraded/broken matrix; prioritized fix/limitation backlog with forward IDs seeded for a later versioned milestone (completed 2026-06-29)
+**Headline:** 0 broken cells across all six plugins × four Maestro operations; worst case is cosmetic "degraded". 42 survey issues collapsed into 13 forward COMPAT-xx items (COMPAT-01..03 actionable slug-resolution tweaks; the rest documented limitations).
 
-## Phase Details (R1)
+- [x] **Phase 13: Compatibility Harness + Classification Schema** — six-plugin wp-env config at pinned versions + admin/lower-privilege users + schema + matrix template (completed 2026-06-26)
+- [x] **Phase 14: WooCommerce Survey** — heaviest manipulator surveyed; schema stress-tested and finalized (completed 2026-06-28)
+- [x] **Phase 15: Remaining Survey Set** — Jetpack, Yoast SEO, Elementor, WPForms, LifterLMS surveyed (Rank Math deferred) (completed 2026-06-29)
+- [x] **Phase 16: Synthesis** — COMPATIBILITY-NOTE.md (DELV-01) + COMPAT-xx BACKLOG.md (DELV-02) (completed 2026-06-29)
 
-### Phase 13: Compatibility Harness + Classification Schema
-**Goal**: A committed, reproducible multi-plugin test environment and a consistent survey template exist before any survey work begins
-**Depends on**: Nothing (first R1 phase)
-**Requirements**: HARN-01, HARN-02, SCHM-01
-**Success Criteria** (what must be TRUE):
-  1. Running a single documented command (`cd tests/compat && npx wp-env start`, optionally wrapped as an `npm run compat:start` script) boots WordPress with all six survey plugins loaded at recorded pinned versions — confirmed by `wp plugin list` output in the running environment
-  2. The harness provisions at least two users: an admin and at least one lower-privilege role user (e.g. Editor or Shop Manager) — confirmed by `wp user list` in the running environment
-  3. A committed schema document defines all six manipulation dimensions (custom positions, conditional/late injection, re-registered menus, count badges in titles, custom separators, direct `$menu`/`$submenu` surgery) and a matrix template with columns for each Maestro operation (rename / reorder / hide / re-icon) and cells for safe/degraded/broken classification — confirmed by the committed file
-  4. The schema template is committed before any SURV-xx file is authored, establishing a shared format all surveys will fill in
-**Plans**: 2 plans
-  - [x] 13-01-PLAN.md — compat wp-env harness: six pinned ZIP plugins + Maestro via ../.. + ports 8890/8891 + afterStart admin/Editor/Shop Manager provisioning + VERSIONS.md + compat:* scripts [HARN-01, HARN-02]
-  - [x] 13-02-PLAN.md — classification-schema template at .planning/compat/SCHEMA.md (6 dimensions + rename/reorder/hide/re-icon × safe/degraded/broken matrix + classified-fix list) [SCHM-01]
-
-### Phase 14: WooCommerce Survey
-**Goal**: WooCommerce's menu-manipulation behavior is fully characterized using the Phase 13 schema, and the schema is refined against the hardest test case before the remaining five surveys run
-**Depends on**: Phase 13
-**Requirements**: SURV-01
-**Success Criteria** (what must be TRUE):
-  1. A committed survey document covers how WooCommerce registers and manipulates the admin menu (custom positions, conditional/late injection, re-registered menus, count badges baked into titles, custom separators, direct `$menu`/`$submenu` surgery)
-  2. Every Maestro operation (rename / reorder / hide / re-icon) against WooCommerce menu items is classified as safe, degraded, or broken in the schema matrix, with observable evidence noted
-  3. Every identified issue has a classified fix (slug-resolution tweak / later `admin_menu` re-hook / special-casing / documented limitation)
-  4. Any gaps or ambiguities in the SCHM-01 template surfaced by WooCommerce's complexity are resolved and the schema committed in its final form before Phase 15 begins
-**Plans**: 3 plans
-  - [ ] 14-01-PLAN.md — boot harness, characterize HOW Woo manipulates the menu (Part 1 dimensions) + reproducible Method header + natural-state $menu/$submenu baseline [SURV-01]
-  - [ ] 14-02-PLAN.md — full Part 2 classification matrix (rename/reorder/hide/re-icon × every affected item, per-role hide, persistence+timing) + interaction scenarios [SURV-01]
-  - [ ] 14-03-PLAN.md — Part 3 classified-fix list + success-criterion traceability + batched SCHEMA.md refinement/changelog + reconcile SURV-01 [SURV-01]
-
-### Phase 15: Remaining Survey Set
-**Goal**: All five remaining survey plugins (Jetpack, Yoast SEO / Rank Math, Elementor, WPForms, LifterLMS) are surveyed using the proven schema from Phases 13–14
-**Depends on**: Phase 14
-**Requirements**: SURV-02, SURV-03, SURV-04, SURV-05, SURV-06
-**Success Criteria** (what must be TRUE):
-  1. Five committed survey documents exist — one each for Jetpack, Yoast SEO / Rank Math, Elementor, WPForms, and LifterLMS — each filling in the SCHM-01 template consistently
-  2. Every Maestro operation against each plugin's menu items is classified as safe, degraded, or broken with observable evidence
-  3. Every identified issue across all five surveys carries a classified fix (slug-resolution tweak / later `admin_menu` re-hook / special-casing / documented limitation)
-  4. All five surveys use identical schema structure, making mechanical synthesis in Phase 16 possible
-**Plans**: 5 plans
-  - [ ] 15-01-PLAN.md — Survey Jetpack (SURV-02): disconnected-state menu, classify ops, classified fixes
-  - [ ] 15-02-PLAN.md — Survey Yoast SEO (SURV-03): SEO menu, classify ops, classified fixes (Rank Math out-of-scope)
-  - [ ] 15-03-PLAN.md — Survey Elementor (SURV-04): own Elementor + Templates top-levels, classify ops, classified fixes
-  - [ ] 15-04-PLAN.md — Survey WPForms Lite (SURV-05): WPForms menu, classify ops, classified fixes
-  - [ ] 15-05-PLAN.md — Survey LifterLMS (SURV-06): own top-level + submenus + llms-separator, classify ops, classified fixes
-
-### Phase 16: Synthesis
-**Goal**: All six per-plugin findings are merged into a single authoritative compatibility note and a ranked, classified fix/limitation backlog ready to seed a future versioned milestone
-**Depends on**: Phase 14, Phase 15
-**Requirements**: DELV-01, DELV-02
-**Success Criteria** (what must be TRUE):
-  1. A committed compatibility note presents all six per-plugin findings under the single SCHM-01 schema with a summary safe/degraded/broken matrix showing which Maestro operations are affected per plugin
-  2. A committed prioritized backlog lists every surfaced issue ranked by severity/frequency, each classified as slug-resolution tweak / later `admin_menu` re-hook / special-casing / documented limitation
-  3. Every backlog item carries a forward ID (e.g. COMPAT-01, COMPAT-02) ready to be referenced and scoped in a later versioned milestone without renaming
-  4. The backlog contains no orphaned issues — every finding from SURV-01 through SURV-06 that requires action appears in the backlog or is explicitly marked as a documented limitation
-**Plans**: 2 plans
-  - [ ] 16-01-PLAN.md — consolidated compatibility note (DELV-01): six per-plugin findings under one schema + summary safe/degraded/broken matrix (plugin × operation)
-  - [ ] 16-02-PLAN.md — ranked, classified COMPAT-xx fix/limitation backlog (DELV-02) with full SURV-NN traceability + FIX-xx seed link
+</details>
 
 ## Progress
 
 **Execution Order:**
-v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 complete (Phases 9–12, archived 2026-06-22; Phase 10 was a non-blocking research spike not shipped in v1.2). R1 in progress (Phases 13–16).
+v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). v1.2 complete (Phases 9–12, archived 2026-06-22; Phase 10 was a non-blocking research spike not shipped in v1.2). R1 complete (Phases 13–16, archived 2026-06-29; non-versioned research).
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -195,5 +143,5 @@ v1.0 complete (Phases 1–5, archived). v1.1 complete (Phases 6–8, archived). 
 | 12. Release Assets Refresh | v1.2 | 3/3 | Complete (shipped 2026-06-22) | 2026-06-22 |
 | 13. Compatibility Harness + Classification Schema | R1 | 2/2 | Complete | 2026-06-26 |
 | 14. WooCommerce Survey | R1 | 3/3 | Complete | 2026-06-28 |
-| 15. Remaining Survey Set | 5/5 | Complete    | 2026-06-29 | - |
-| 16. Synthesis | 2/2 | Complete    | 2026-06-29 | - |
+| 15. Remaining Survey Set | R1 | 5/5 | Complete | 2026-06-29 |
+| 16. Synthesis | R1 | 2/2 | Complete | 2026-06-29 |

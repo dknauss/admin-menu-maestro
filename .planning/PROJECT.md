@@ -15,39 +15,30 @@ Editing the admin menu happens directly on the menu, with zero ceremony and zero
 risk to access — changes are cosmetic deltas, never a rebuilt menu, and never a
 security boundary.
 
-## Current Milestone: R1 — Third-Party Compatibility Research
+## Current State
 
-**Goal:** Document how Maestro's sparse-delta replay behaves against the six
-highest-impact admin-menu-manipulating plugins, and produce a prioritized
-fix/limitation backlog plus a reproducible multi-plugin test harness.
+**No active milestone.** The last completed milestone, **R1 — Third-Party
+Compatibility Research**, finished 2026-06-29 (non-versioned research; audit
+passed 11/11). Next step: start the next milestone via `/gsd:new-milestone` —
+the natural candidate is a versioned milestone that scopes **FIX-xx** from the
+`COMPAT-xx` backlog (COMPAT-01/02/03 slug-resolution tweaks are the highest
+priority).
 
-**Track:** Research only — non-version (label `R1`). Produces planning artifacts
-and a committed wp-env harness; **no plugin code, no release tag, no SVN deploy.**
-The `vX.Y` numbering stays reserved for shipped plugin releases; the fixes R1
-surfaces ship in a later versioned milestone.
+**R1 outcome (research only — no plugin code, no release tag, no SVN deploy):**
+Characterized how Maestro's sparse-delta replay behaves against the six
+highest-impact admin-menu-manipulating plugins. Headline finding: **0 broken
+cells** across all six plugins × four Maestro operations — worst case is
+cosmetic "degraded". Deliverables (committed under `.planning/compat/` +
+`tests/compat/`): reproducible six-plugin wp-env harness, classification schema,
+six per-plugin surveys, consolidated compatibility note, and a ranked
+forward-ID'd fix/limitation backlog (42 issues → 13 COMPAT-xx items).
 
-**Survey set (locked priority order, from V2-16):** WooCommerce → Jetpack →
-Yoast SEO / Rank Math → Elementor (or another page builder) → WPForms → an
-LMS/membership plugin.
+## Shipped (v1.0 / v1.1 / v1.2) + Research (R1)
 
-**Deliverables:**
-- **Compatibility note** — per-plugin classification of how each registers and
-  manipulates the admin menu (custom positions, conditional/late injection,
-  re-registered menus, count badges baked into titles, custom separators, direct
-  `$menu`/`$submenu` surgery) and what breaks under Maestro's rename / reorder /
-  hide / re-icon.
-- **Prioritized fix/limitation backlog** — each issue classified as a
-  slug-resolution tweak, a later `admin_menu` re-hook, special-casing, or a
-  documented limitation, and ranked.
-- **Reproducible multi-plugin wp-env harness** — a committed env variant that
-  actually loads the offenders (the current `.wp-env.json` loads `plugins: []`
-  and exercises Maestro alone).
-
-## Shipped (v1.0 / v1.1 / v1.2)
-
-**1.2.0** shipped to WordPress.org on 2026-06-22 (tag `v1.2.0`). Phases 9, 11, 11.1, 11.2, and 12 complete; Phase 10 (third-party compatibility research spike) was non-blocking — its scope is now promoted to milestone **R1**.
-
-*All three plugin milestones (v1.0, v1.1, v1.2) are shipped and archived. See `.planning/MILESTONES.md` and `.planning/milestones/` for records.*
+**1.2.0** shipped to WordPress.org on 2026-06-22 (tag `v1.2.0`). All three plugin
+milestones (v1.0, v1.1, v1.2) are shipped and archived. **R1** (research,
+non-versioned) completed 2026-06-29 and is archived. See `.planning/MILESTONES.md`
+and `.planning/milestones/` for records.
 
 ## Requirements
 
@@ -82,13 +73,18 @@ LMS/membership plugin.
 - ✓ HARD-03 — race-safe save/reset/exit confirmed by Playwright e2e — v1.2
 - ✓ REL-07 — banner refreshed (balanced widths, REL-06 pipeline) — v1.2
 - ✓ REL-08 — 6 recaptured directory screenshots against the final v1.2 UI — v1.2
+- ✓ HARN-01/HARN-02 — reproducible six-plugin wp-env compat harness + admin/lower-privilege users — R1 (research)
+- ✓ SCHM-01 — classification schema + safe/degraded/broken matrix template — R1 (research)
+- ✓ SURV-01..06 — six per-plugin admin-menu manipulation surveys (Rank Math deferred) — R1 (research)
+- ✓ DELV-01 — consolidated compatibility note (6×4 matrix, 0 broken cells) — R1 (research)
+- ✓ DELV-02 — ranked COMPAT-xx fix/limitation backlog (42 issues → 13 items) — R1 (research)
 
 ### Backlog (carry-forward to next milestone)
 
 - [ ] UX-09 — pin the toolbar “Edit Mode” zone to the admin-menu column width (distinct from shipped UX-10)
 - [ ] BUG-08 — first-run banner text/button vertical centering (low cosmetic)
 - [ ] V2-15 — role cloning / per-user menu hiding
-- [→] V2-16 — WooCommerce-first third-party menu compatibility — **active in milestone R1** (research only; full 6-plugin survey)
+- [✓] V2-16 — WooCommerce-first third-party menu compatibility — **delivered by milestone R1** (research; full 6-plugin survey → COMPAT-xx backlog). Forward production fixes now tracked as FIX-xx (COMPAT-01/02/03 highest priority).
 - [ ] V2-17 — single-site privileged editor tier (edges toward the Out-of-Scope “page locking” line; enforced tier likely belongs in wp-sudo or a documented bridge)
 
 ### Out of Scope
@@ -132,6 +128,10 @@ LMS/membership plugin.
 | Reverted Phase 11 `flex-end` workaround to `align-items:center` after Phase 11.2 | Icon-only toolbar made the panel compact enough that the race(b) click-shift was no longer possible | ✓ Good |
 | Phase 11.2 recorded as a retroactive record-only phase | Toolbar redesign was built via live iteration outside the standard plan/execute flow; a decimal phase with 11.2-SUMMARY.md captured the work without forcing it into an incorrect post-hoc plan | ✓ Good |
 | Screenshot capture runs on an alternate wp-env tests port (8899) | Avoids port collision when the main wp-env instance (8888/8889) is already running; env var `WP_ENV_TESTS_PORT` makes the override explicit | ✓ Good |
+| R1 as a non-versioned research milestone (no tag, no SVN) | Compatibility research ships no plugin code; keeping `vX.Y` reserved for releases prevents version drift | ✓ Good |
+| SCHEMA.md pristine through Phase 13, finalized after Phase 14 | Surveys copy the template; stress-testing it against the hardest case (WooCommerce) before the other five locked the format so synthesis was mechanical | ✓ Good |
+| Source survey governs over pre-extraction on classification disputes (Phase 16) | Avoids synthesis introducing classifications the underlying evidence doesn't support (LifterLMS rename = safe) | ✓ Good |
+| Forward COMPAT-xx IDs with a no-renumber stability contract | Lets a later versioned milestone cite backlog items by number without churn | ✓ Good |
 
 ---
-*Last updated: 2026-06-22 — milestone R1 (Third-Party Compatibility Research) started*
+*Last updated: 2026-06-29 — milestone R1 (Third-Party Compatibility Research) complete and archived*
