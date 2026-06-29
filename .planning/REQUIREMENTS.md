@@ -30,7 +30,7 @@ Each survey requirement documents, for that plugin: **how** it registers/manipul
 - [x] **SURV-02**: Jetpack surveyed and documented.
 - [x] **SURV-03**: Yoast SEO / Rank Math surveyed and documented.
 - [x] **SURV-04**: Elementor (free; own top-level Elementor + Templates menus) surveyed and documented.
-- [ ] **SURV-05**: WPForms surveyed and documented.
+- [x] **SURV-05**: WPForms surveyed and documented.
 - [ ] **SURV-06**: LifterLMS (free LMS; own top-level + submenus) surveyed and documented.
 
 ### Synthesized Deliverables
@@ -71,7 +71,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SURV-02 | Phase 15 | Complete |
 | SURV-03 | Phase 15 | Complete |
 | SURV-04 | Phase 15 | Complete |
-| SURV-05 | Phase 15 | Pending |
+| SURV-05 | Phase 15 | Complete |
 | SURV-06 | Phase 15 | Pending |
 | DELV-01 | Phase 16 | Pending |
 | DELV-02 | Phase 16 | Pending |

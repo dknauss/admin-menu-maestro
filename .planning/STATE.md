@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
 status: planning
-stopped_at: Completed 15-03-PLAN.md
-last_updated: "2026-06-29T13:42:46.964Z"
+stopped_at: Completed 15-04-PLAN.md
+last_updated: "2026-06-29T14:09:28.291Z"
 last_activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
 progress:
   total_phases: 4
   completed_phases: 2
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 50
 ---
 
@@ -91,6 +91,7 @@ surfaces will be planned and shipped under a later versioned milestone.
 | Phase 15-remaining-survey-set P01 | 12m | 2 tasks | 6 files |
 | Phase 15-remaining-survey-set P02 | 55 | 2 tasks | 6 files |
 | Phase 15-remaining-survey-set P03 | 90 | 2 tasks | 6 files |
+| Phase 15-remaining-survey-set P04 | 45 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -159,6 +160,7 @@ Recent decisions affecting current work:
 - [Phase Phase 15-remaining-survey-set]: SURV-03: Yoast SEO dual-slug role-conditional registration (wpseo_dashboard for admin / wpseo_page_academy for editor+shop_manager) — documented as limitation; Rank Math out-of-scope/deferred (Yoast is locked SEO choice); 0 broken cells across 13 rows
 - [Phase 15-remaining-survey-set]: SURV-04: Elementor registers three top-level menus (elementor-home, Templates CPT, elementor); only elementor-home is visible — other two are CSS-hidden by admin_head; all three are valid Maestro replay-state targets
 - [Phase 15-remaining-survey-set]: SURV-04: 0 broken cells across 18 matrix rows (3 tops + 15 submenus); Website Templates has absolute URL slug with ver= version param (I1, slug-resolution tweak); Categories slug entity-encoded &amp; (I2, same as SURV-01 I3)
+- [Phase 15-remaining-survey-set]: SURV-05: WPForms Lite uses manage_options for all items — editor/shop_manager have no WPForms surface; submenus not even registered for those roles; 0 broken cells across 14 rows; Payments NEW\! badge + Addons color span = degraded rename (convention 3); Upgrade to Pro absolute URL slug = slug-resolution tweak
 
 ### Roadmap Evolution
 
@@ -179,6 +181,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-29T13:42:46.962Z
-Stopped at: Completed 15-03-PLAN.md
+Last session: 2026-06-29T14:09:28.289Z
+Stopped at: Completed 15-04-PLAN.md
 Resume file: None
