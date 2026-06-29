@@ -28,15 +28,15 @@ Each survey requirement documents, for that plugin: **how** it registers/manipul
 
 - [x] **SURV-01**: WooCommerce surveyed and documented (first priority — heaviest menu manipulator; own top-level + submenus).
 - [x] **SURV-02**: Jetpack surveyed and documented.
-- [x] **SURV-03**: Yoast SEO / Rank Math surveyed and documented.
+- [x] **SURV-03**: Yoast SEO surveyed and documented (Rank Math scoped out / deferred — see SURV-03 preamble).
 - [x] **SURV-04**: Elementor (free; own top-level Elementor + Templates menus) surveyed and documented.
 - [x] **SURV-05**: WPForms surveyed and documented.
 - [x] **SURV-06**: LifterLMS (free LMS; own top-level + submenus) surveyed and documented.
 
 ### Synthesized Deliverables
 
-- [ ] **DELV-01**: A consolidated compatibility note presents all six per-plugin findings under one consistent classification schema, with a summary of which Maestro operations (rename / reorder / hide / re-icon) are safe, degraded, or broken per plugin.
-- [ ] **DELV-02**: A prioritized fix/limitation backlog ranks every surfaced issue, classifies each (slug-resolution tweak / later `admin_menu` re-hook / special-casing / documented limitation), and assigns forward IDs ready to seed a later versioned milestone.
+- [x] **DELV-01**: A consolidated compatibility note presents all six per-plugin findings under one consistent classification schema, with a summary of which Maestro operations (rename / reorder / hide / re-icon) are safe, degraded, or broken per plugin.
+- [x] **DELV-02**: A prioritized fix/limitation backlog ranks every surfaced issue, classifies each (slug-resolution tweak / later `admin_menu` re-hook / special-casing / documented limitation), and assigns forward IDs ready to seed a later versioned milestone.
 
 ## Future Requirements
 
@@ -44,7 +44,7 @@ Deferred to a later versioned milestone. Tracked but not in the R1 roadmap.
 
 ### Compatibility Fixes
 
-- **FIX-xx**: The actual production menu-handling fixes surfaced and ranked by **DELV-02** (slug-resolution tweaks, later `admin_menu` re-hooks, special-casing). Scoped and shipped under a versioned milestone, not R1.
+- **FIX-xx**: The actual production menu-handling fixes surfaced and ranked by **DELV-02**. FIX-xx items will be scoped from the ranked [`COMPAT-xx` backlog in `.planning/compat/BACKLOG.md`](.planning/compat/BACKLOG.md), citing COMPAT-xx IDs without renumbering them. The three `slug-resolution tweak` COMPAT items (COMPAT-01, COMPAT-02, COMPAT-03) are the highest-priority FIX candidates — they are the only actionable items in the backlog and fix cross-plugin slug-matching issues that silently break user configs. All other COMPAT items are `documented limitation` (or `documented limitation` with a forward candidacy note for `special-casing`) and do not require production fixes unless a later milestone reprioritizes them. Scoped and shipped under a versioned milestone, not R1.
 
 ## Out of Scope
 
@@ -73,8 +73,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SURV-04 | Phase 15 | Complete |
 | SURV-05 | Phase 15 | Complete |
 | SURV-06 | Phase 15 | Complete |
-| DELV-01 | Phase 16 | Pending |
-| DELV-02 | Phase 16 | Pending |
+| DELV-01 | Phase 16 | Complete |
+| DELV-02 | Phase 16 | Complete |
 
 **Coverage:**
 - R1 requirements: 11 total

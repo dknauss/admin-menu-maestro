@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: R1
 milestone_name: Third-Party Compatibility Research
 status: planning
-stopped_at: Completed 15-05-PLAN.md
-last_updated: "2026-06-29T14:29:03.718Z"
+stopped_at: Completed 16-02-PLAN.md
+last_updated: "2026-06-29T16:51:58.471Z"
 last_activity: 2026-06-28 — Phase 14 complete and verified (4/4); ready to plan Phase 15
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 10
-  completed_plans: 10
+  completed_phases: 4
+  total_plans: 12
+  completed_plans: 12
   percent: 50
 ---
 
@@ -93,6 +93,8 @@ surfaces will be planned and shipped under a later versioned milestone.
 | Phase 15-remaining-survey-set P03 | 90 | 2 tasks | 6 files |
 | Phase 15-remaining-survey-set P04 | 45 | 2 tasks | 6 files |
 | Phase 15-remaining-survey-set P05 | 90 | 2 tasks | 6 files |
+| Phase 16-synthesis P01 | 8 | 2 tasks | 1 files |
+| Phase 16-synthesis P02 | 39 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -165,6 +167,10 @@ Recent decisions affecting current work:
 - [Phase 15-remaining-survey-set]: SURV-06: lms_manager not provisioned — three baseline roles suffice for Hide coverage (lms_manager would only replicate admin pattern for submenus already cap-gated from editor/shop_manager)
 - [Phase 15-remaining-survey-set]: SURV-06: llms-separator does NOT re-cluster on reorder (LifterLMS has no menu_order filter, unlike WooCommerce separator) — documented limitation I1
 - [Phase 15-remaining-survey-set]: SURV-06: lifterlms submenu Reorder degraded — submenu_order() via custom_menu_order overrides Maestro sub_order at render time (F6); documented limitation I2
+- [Phase 16-synthesis]: LifterLMS rename classification: source survey (SURV-06) governs over synthesis_inputs pre-extraction — taxonomy rename = safe when &amp;-encoded slug used; slug-resolution is a documented limitation, not a degraded classification
+- [Phase 16-synthesis]: COMPATIBILITY-NOTE.md cross-plugin cross-cut section names recurring patterns (badge-in-title loss, slug-resolution, render-time filter override, cosmetic hide, submenu N/A re-icon) without assigning COMPAT-xx IDs — those belong in DELV-02 (Plan 16-02)
+- [Phase 16-synthesis]: COMPAT-01..03 are actionable slug-resolution tweaks (highest FIX-xx priority); COMPAT-04..13 are documented limitations; 42 survey issues collapse to 13 COMPAT-xx items with 0 orphans
+- [Phase 16-synthesis]: FIX-xx in REQUIREMENTS.md now links BACKLOG.md (COMPAT-xx backlog) as its seed without renaming; COMPAT-07 (badge-loss) and COMPAT-10 (parent-hide non-cascading) carry forward candidacy notes for special-casing in a later milestone
 
 ### Roadmap Evolution
 
@@ -185,6 +191,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-29T14:25:14.561Z
-Stopped at: Completed 15-05-PLAN.md
+Last session: 2026-06-29T16:48:15.092Z
+Stopped at: Completed 16-02-PLAN.md
 Resume file: None
