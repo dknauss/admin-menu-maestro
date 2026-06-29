@@ -108,4 +108,5 @@ if ( ! function_exists( 'esc_url_raw' ) ) {
 
 $amm_inc = dirname( __DIR__ ) . '/includes/';
 require_once $amm_inc . 'class-ordering.php';
+require_once $amm_inc . 'class-slug.php';
 require_once $amm_inc . 'class-config.php';
