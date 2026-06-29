@@ -135,7 +135,10 @@ Full phase details, success criteria, and outcomes are archived in
   3. A rename or hide override on a WooCommerce, Elementor, or LifterLMS taxonomy submenu whose slug contains `&amp;` applies whether the stored key used `&` or `&amp;`; verified by the three R1 survey fixtures
   4. Two genuinely distinct rendered slugs never collapse to the same stored override key — a collision-guard test explicitly asserts that normalization is conservative (distinct-in, distinct-out)
   5. All existing PHP unit, integration, and Playwright e2e suites stay green; WPCS is clean; Plugin Check reports 0 errors
-**Plans**: TBD
+**Plans**: 3 plans
+  - [ ] 17-01-PLAN.md — Pure `Maestro\Slug::normalize()` (TDD) + six-fixture data provider + 4-case collision-guard + edge rows [FIX-01, FIX-02, FIX-03]
+  - [ ] 17-02-PLAN.md — Wire normalize() into Replay's two items[] seams + the `Ordering::submenu` reorder seam, with collision skip + integration coverage [FIX-01, FIX-02, FIX-03]
+  - [ ] 17-03-PLAN.md — Zero-regression gate (full unit+integration+e2e+WPCS+PHPStan+Plugin Check) + draft v1.3.0 changelog note [FIX-01, FIX-02, FIX-03]
 
 ### Phase 18: Release v1.3.0
 **Goal**: v1.3.0 is cut and on WordPress.org — the runtime zip builds clean, all suites pass, the tag exists, and SVN trunk is updated following the v1.2 release pipeline
