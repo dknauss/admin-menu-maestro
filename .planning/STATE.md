@@ -1,13 +1,13 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3.0
-milestone_name: Slug-Resolution Hardening
-status: roadmapped
-stopped_at: Roadmap created — Phase 17 (Slug Normalization) and Phase 18 (Release v1.3.0) defined; ready for plan-phase 17
-last_updated: "2026-06-29T18:45:00.000Z"
-last_activity: 2026-06-29 — Roadmap created for v1.3.0; 2 phases, 4 requirements mapped
+milestone: v1.0
+milestone_name: milestone
+status: "Roadmap locked. Phase 17 covers FIX-01/02/03 (single `normalize()` pure function + collision-guard test + zero-regression gate); Phase 18 covers REL-09 (build, Plugin Check, tag v1.3.0, SVN deploy). Out of scope: COMPAT-04 (level-qualified match), COMPAT-07 (badge preservation), COMPAT-10 (subtree-hide), and documented-limitation items COMPAT-05/06/08/09/11/12/13."
+stopped_at: Phase 17 context gathered
+last_updated: "2026-06-29T21:02:52.540Z"
+last_activity: 2026-06-29 — Roadmap created
 progress:
-  total_phases: 2
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -194,6 +194,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-29T18:45:00.000Z
-Stopped at: Roadmap created for v1.3.0 (Phases 17–18); traceability populated in REQUIREMENTS.md
-Resume file: None
+Last session: 2026-06-29T21:02:52.529Z
+Stopped at: Phase 17 context gathered
+Resume file: .planning/phases/17-slug-normalization/17-CONTEXT.md
