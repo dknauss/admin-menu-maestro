@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: R1
-milestone_name: Third-Party Compatibility Research
-status: complete
-stopped_at: R1 milestone complete and archived (audit passed 11/11)
-last_updated: "2026-06-29T18:00:00.000Z"
-last_activity: 2026-06-29 — R1 complete, audited (11/11), and archived to milestones/
+milestone: v1.3.0
+milestone_name: Slug-Resolution Hardening
+status: defining_requirements
+stopped_at: Milestone v1.3.0 started — defining requirements
+last_updated: "2026-06-29T18:30:00.000Z"
+last_activity: 2026-06-29 — Milestone v1.3.0 (Slug-Resolution Hardening) started
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -21,24 +21,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-29)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** No active milestone. R1 complete and archived. Next: `/gsd:new-milestone` — natural candidate is a versioned milestone scoping FIX-xx from the COMPAT-xx backlog (COMPAT-01/02/03 slug-resolution tweaks first).
+**Current focus:** Milestone v1.3.0 — Slug-Resolution Hardening. Defining requirements (FIX-01/02/03), then roadmap.
 
 ## Current Position
 
-Milestone: R1 — Third-Party Compatibility Research — **COMPLETE 2026-06-29** (audit passed 11/11)
-Phase: all 4 of 4 complete (13, 14, 15, 16) and archived to `.planning/milestones/R1-*`
-Plan: none pending — milestone closed
-Status: R1 delivered all five artifact classes (harness, schema, six surveys, compatibility note, COMPAT-xx backlog). Headline: 0 broken cells across six plugins × four operations; worst case cosmetic "degraded". 42 survey issues → 13 ranked COMPAT-xx items (COMPAT-01..03 actionable slug-resolution; rest documented limitations), 0 orphans. R1 boundary held: fixes classified and ranked, never implemented. Forward production fixes tracked as FIX-xx for a later versioned milestone. Phase 16 work squash-merged to `main`; feature branches deleted. Compat harness may still be RUNNING (http://localhost:8890) — stop with `npm run compat:stop` (docker needs sandbox-disabled).
-Last activity: 2026-06-29 — R1 complete, audited, and archived
+Milestone: v1.3.0 — Slug-Resolution Hardening — **STARTED 2026-06-29**
+Phase: not started (defining requirements)
+Plan: —
+Status: Scope locked to FIX-01/02/03 (seeded by COMPAT-01/02/03): normalize slug resolution so overrides survive absolute-URL slugs, `ver=` params, UTM params, and `&amp;`-encoded ampersands. Single normalization seam replacing the exact-match `isset( $items[ $slug ] )` lookups at `includes/class-replay.php:92` (top-level) and `:128` (submenu); resolve-time, non-destructive; TDD with the six R1 survey fixtures + collision-guard test. Out of scope: COMPAT-04 (level-qualified match), COMPAT-07 (badge preservation), COMPAT-10 (subtree-hide), and documented-limitation items COMPAT-05/06/08/09/11/12/13.
+Last activity: 2026-06-29 — Milestone v1.3.0 started; defining requirements
 
-Progress: [██████████] 100% (R1: 4 of 4 phases complete — Phases 13–16 done and archived)
+Progress: [░░░░░░░░░░] 0% (v1.3.0: phases not yet roadmapped)
 
 ## Release Binding
 
-**None.** R1 is a **research-only, non-versioned** milestone — it ships no plugin
-code and cuts no release. There is intentionally no target version, tag, or SVN
-deploy. `vX.Y` numbering stays reserved for shipped plugin releases; the fixes R1
-surfaces will be planned and shipped under a later versioned milestone.
+**Versioned minor release.** Target version `1.3.0`, tag `v1.3.0`, SVN deploy to
+WordPress.org `trunk` following the v1.2 release pipeline. `vX.Y` numbering is
+reserved for shipped plugin releases; v1.3.0 ships production menu-handling code
+(the slug-resolution normalization), unlike the research-only R1.
 
 ## Performance Metrics
 
