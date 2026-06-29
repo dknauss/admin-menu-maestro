@@ -72,16 +72,16 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FIX-01 | TBD | Pending |
-| FIX-02 | TBD | Pending |
-| FIX-03 | TBD | Pending |
-| REL-09 | TBD | Pending |
+| FIX-01 | Phase 17 | Pending |
+| FIX-02 | Phase 17 | Pending |
+| FIX-03 | Phase 17 | Pending |
+| REL-09 | Phase 18 | Pending |
 
 **Coverage:**
 - v1.3.0 requirements: 4 total (FIX-01, FIX-02, FIX-03, REL-09)
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 4 ⚠️ (resolved by roadmapper)
+- Mapped to phases: 4 (Phase 17: FIX-01, FIX-02, FIX-03 / Phase 18: REL-09)
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-06-29*
-*Last updated: 2026-06-29 after milestone v1.3.0 definition*
+*Last updated: 2026-06-29 after roadmap creation (traceability populated)*

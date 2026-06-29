@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.3.0
 milestone_name: Slug-Resolution Hardening
-status: defining_requirements
-stopped_at: Milestone v1.3.0 started — defining requirements
-last_updated: "2026-06-29T18:30:00.000Z"
-last_activity: 2026-06-29 — Milestone v1.3.0 (Slug-Resolution Hardening) started
+status: roadmapped
+stopped_at: Roadmap created — Phase 17 (Slug Normalization) and Phase 18 (Release v1.3.0) defined; ready for plan-phase 17
+last_updated: "2026-06-29T18:45:00.000Z"
+last_activity: 2026-06-29 — Roadmap created for v1.3.0; 2 phases, 4 requirements mapped
 progress:
-  total_phases: 0
+  total_phases: 2
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,17 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-29)
 
 **Core value:** Editing the admin menu happens directly on the menu, with zero ceremony and zero risk to access.
-**Current focus:** Milestone v1.3.0 — Slug-Resolution Hardening. Defining requirements (FIX-01/02/03), then roadmap.
+**Current focus:** Milestone v1.3.0 — Slug-Resolution Hardening. Roadmap complete; ready to plan Phase 17 (Slug Normalization).
 
 ## Current Position
 
-Milestone: v1.3.0 — Slug-Resolution Hardening — **STARTED 2026-06-29**
-Phase: not started (defining requirements)
+Milestone: v1.3.0 — Slug-Resolution Hardening — **ROADMAPPED 2026-06-29**
+Phase: 17 — Slug Normalization (not started)
 Plan: —
-Status: Scope locked to FIX-01/02/03 (seeded by COMPAT-01/02/03): normalize slug resolution so overrides survive absolute-URL slugs, `ver=` params, UTM params, and `&amp;`-encoded ampersands. Single normalization seam replacing the exact-match `isset( $items[ $slug ] )` lookups at `includes/class-replay.php:92` (top-level) and `:128` (submenu); resolve-time, non-destructive; TDD with the six R1 survey fixtures + collision-guard test. Out of scope: COMPAT-04 (level-qualified match), COMPAT-07 (badge preservation), COMPAT-10 (subtree-hide), and documented-limitation items COMPAT-05/06/08/09/11/12/13.
-Last activity: 2026-06-29 — Milestone v1.3.0 started; defining requirements
+Status: Roadmap locked. Phase 17 covers FIX-01/02/03 (single `normalize()` pure function + collision-guard test + zero-regression gate); Phase 18 covers REL-09 (build, Plugin Check, tag v1.3.0, SVN deploy). Out of scope: COMPAT-04 (level-qualified match), COMPAT-07 (badge preservation), COMPAT-10 (subtree-hide), and documented-limitation items COMPAT-05/06/08/09/11/12/13.
+Last activity: 2026-06-29 — Roadmap created
 
-Progress: [░░░░░░░░░░] 0% (v1.3.0: phases not yet roadmapped)
+Progress: [░░░░░░░░░░] 0% (v1.3.0: 0/2 phases complete)
 
 ## Release Binding
 
@@ -171,12 +171,15 @@ Recent decisions affecting current work:
 - [Phase 16-synthesis]: COMPATIBILITY-NOTE.md cross-plugin cross-cut section names recurring patterns (badge-in-title loss, slug-resolution, render-time filter override, cosmetic hide, submenu N/A re-icon) without assigning COMPAT-xx IDs — those belong in DELV-02 (Plan 16-02)
 - [Phase 16-synthesis]: COMPAT-01..03 are actionable slug-resolution tweaks (highest FIX-xx priority); COMPAT-04..13 are documented limitations; 42 survey issues collapse to 13 COMPAT-xx items with 0 orphans
 - [Phase 16-synthesis]: FIX-xx in REQUIREMENTS.md now links BACKLOG.md (COMPAT-xx backlog) as its seed without renaming; COMPAT-07 (badge-loss) and COMPAT-10 (parent-hide non-cascading) carry forward candidacy notes for special-casing in a later milestone
+- [v1.3.0 roadmap]: FIX-01/02/03 grouped into ONE implementation phase (Phase 17) — all three are normalization rules on the same `normalize()` pure function applied at the same two resolve seams in class-replay.php; splitting into three thin phases would create artificial boundaries around a single coherent unit of work
+- [v1.3.0 roadmap]: Phase 18 is a pure release phase (REL-09 only) following the v1.2 pipeline — build, Plugin Check, full-suite regression gate, tag v1.3.0, SVN deploy
 
 ### Roadmap Evolution
 
 - GSD milestone release binding added to STATE.md: v1.2 now carries explicit target release `1.2.0`, tag `v1.2.0`, cut condition, pipeline, and release checklist.
 - Phase 11.1 inserted after Phase 11: P1 review hardening — scope `custom_menu_order`, bound config payload, save-race E2E coverage (from the 2026-06-20 code-review follow-up). Lands inside the 9 → 11 → 12 cut path, before the 1.2.0 tag.
 - R1 roadmap created 2026-06-22: 4 phases (13–16), 11 requirements mapped; non-versioned research track, no release.
+- v1.3.0 roadmap created 2026-06-29: 2 phases (17–18), 4 requirements mapped; FIX-01/02/03 in Phase 17, REL-09 in Phase 18.
 
 ### Pending Todos
 
@@ -191,6 +194,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-29T16:48:15.092Z
-Stopped at: Completed 16-02-PLAN.md
+Last session: 2026-06-29T18:45:00.000Z
+Stopped at: Roadmap created for v1.3.0 (Phases 17–18); traceability populated in REQUIREMENTS.md
 Resume file: None
