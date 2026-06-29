@@ -22,9 +22,9 @@ and `:128` (submenu). The fix is one normalization seam applied to **both** the
 stored override key and the rendered slug before comparison — resolve-time and
 non-destructive (stored configs are never rewritten).
 
-- [ ] **FIX-01**: A saved override on an absolute-URL submenu slug keeps applying after the site moves to a different host, and after the plugin's `ver=` query param changes on update — verified against the Jetpack Settings and Elementor Website Templates fixtures. *(seeds COMPAT-01)*
-- [ ] **FIX-02**: A saved override on an external upgrade-link slug (WPForms "Upgrade to Pro") keeps applying when the slug's UTM query parameters drift between plugin versions — match resolves on the base URL + path, ignoring UTM params. *(seeds COMPAT-02)*
-- [ ] **FIX-03**: A saved override on a taxonomy submenu whose rendered slug contains an entity-encoded `&amp;` applies whether the stored key uses `&` or `&amp;` — both sides normalized through `html_entity_decode()` before compare (WooCommerce, Elementor, LifterLMS fixtures). *(seeds COMPAT-03)*
+- [x] **FIX-01**: A saved override on an absolute-URL submenu slug keeps applying after the site moves to a different host, and after the plugin's `ver=` query param changes on update — verified against the Jetpack Settings and Elementor Website Templates fixtures. *(seeds COMPAT-01)*
+- [x] **FIX-02**: A saved override on an external upgrade-link slug (WPForms "Upgrade to Pro") keeps applying when the slug's UTM query parameters drift between plugin versions — match resolves on the base URL + path, ignoring UTM params. *(seeds COMPAT-02)*
+- [x] **FIX-03**: A saved override on a taxonomy submenu whose rendered slug contains an entity-encoded `&amp;` applies whether the stored key uses `&` or `&amp;` — both sides normalized through `html_entity_decode()` before compare (WooCommerce, Elementor, LifterLMS fixtures). *(seeds COMPAT-03)*
 
 ### Release (REL)
 
@@ -72,9 +72,9 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FIX-01 | Phase 17 | Pending |
-| FIX-02 | Phase 17 | Pending |
-| FIX-03 | Phase 17 | Pending |
+| FIX-01 | Phase 17 | Complete |
+| FIX-02 | Phase 17 | Complete |
+| FIX-03 | Phase 17 | Complete |
 | REL-09 | Phase 18 | Pending |
 
 **Coverage:**

@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: "Roadmap locked. Phase 17 covers FIX-01/02/03 (single `normalize()` pure function + collision-guard test + zero-regression gate); Phase 18 covers REL-09 (build, Plugin Check, tag v1.3.0, SVN deploy). Out of scope: COMPAT-04 (level-qualified match), COMPAT-07 (badge preservation), COMPAT-10 (subtree-hide), and documented-limitation items COMPAT-05/06/08/09/11/12/13."
-stopped_at: Phase 17 context gathered
-last_updated: "2026-06-29T21:02:52.540Z"
+stopped_at: "Completed 17-01-PLAN.md — Maestro\Slug::normalize() pure resolver"
+last_updated: "2026-06-29T21:42:48.682Z"
 last_activity: 2026-06-29 — Roadmap created
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 1
   percent: 0
 ---
 
@@ -95,6 +95,7 @@ reserved for shipped plugin releases; v1.3.0 ships production menu-handling code
 | Phase 15-remaining-survey-set P05 | 90 | 2 tasks | 6 files |
 | Phase 16-synthesis P01 | 8 | 2 tasks | 1 files |
 | Phase 16-synthesis P02 | 39 | 2 tasks | 2 files |
+| Phase 17-slug-normalization P01 | 11 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -173,6 +174,8 @@ Recent decisions affecting current work:
 - [Phase 16-synthesis]: FIX-xx in REQUIREMENTS.md now links BACKLOG.md (COMPAT-xx backlog) as its seed without renaming; COMPAT-07 (badge-loss) and COMPAT-10 (parent-hide non-cascading) carry forward candidacy notes for special-casing in a later milestone
 - [v1.3.0 roadmap]: FIX-01/02/03 grouped into ONE implementation phase (Phase 17) — all three are normalization rules on the same `normalize()` pure function applied at the same two resolve seams in class-replay.php; splitting into three thin phases would create artificial boundaries around a single coherent unit of work
 - [v1.3.0 roadmap]: Phase 18 is a pure release phase (REL-09 only) following the v1.2 pipeline — build, Plugin Check, full-suite regression gate, tag v1.3.0, SVN deploy
+- [Phase 17-slug-normalization]: wp_parse_url() used over parse_url() for WPCS compliance; stubbed in bootstrap-unit.php; manual explode('&') tokenizer preserves duplicate params without deduplication
+- [Phase 17-slug-normalization]: strrpos('/wp-admin/') boundary detection enables host-move survival without exact admin_base match; TDD gate rule: RED in working tree, test+impl GREEN commit together
 
 ### Roadmap Evolution
 
@@ -194,6 +197,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-06-29T21:02:52.529Z
-Stopped at: Phase 17 context gathered
-Resume file: .planning/phases/17-slug-normalization/17-CONTEXT.md
+Last session: 2026-06-29T21:42:48.680Z
+Stopped at: Completed 17-01-PLAN.md — Maestro\Slug::normalize() pure resolver
+Resume file: None
