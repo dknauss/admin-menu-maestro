@@ -109,7 +109,7 @@ class Slug {
 		}
 
 		// External URL: keep host + path (no scheme), lowercase the host.
-		$parsed = parse_url( $slug );
+		$parsed = wp_parse_url( $slug );
 		if ( false === $parsed ) {
 			return $slug;
 		}
@@ -142,8 +142,8 @@ class Slug {
 			return $slug;
 		}
 
-		$path        = substr( $slug, 0, $query_start );
-		$query_raw   = substr( $slug, $query_start + 1 );
+		$path      = substr( $slug, 0, $query_start );
+		$query_raw = substr( $slug, $query_start + 1 );
 
 		if ( '' === $query_raw ) {
 			return $path;
