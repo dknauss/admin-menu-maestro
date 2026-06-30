@@ -503,6 +503,45 @@ class ReplayTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Editor model resolves hidden_roles via the SAME normalization replay() uses.
+	 * When the stored override key only matches the rendered slug after
+	 * normalization (here a host move), get_menu_model() must still report the
+	 * hidden roles. A raw $items[$slug] lookup would miss, the visibility panel
+	 * would show no checked roles, and the next full-replace autosave would delete
+	 * the working rule.
+	 */
+	public function test_get_menu_model_resolves_hidden_roles_via_normalized_key() {
+		global $menu;
+
+		$rendered_slug = 'https://example.com/wp-admin/admin.php?page=jetpack';
+		$stored_key    = 'http://oldhost.test/wp-admin/admin.php?page=jetpack';
+		// Both normalize (via the /wp-admin/ path boundary) to: admin.php?page=jetpack
+
+		$menu[20] = array( 'Jetpack', 'manage_options', $rendered_slug, '', 'menu-top', 'menu-jetpack', 'dashicons-admin-plugins' );
+
+		( new Config() )->save(
+			array( 'items' => array( $stored_key => array( 'hidden_roles' => array( 'editor' ) ) ) )
+		);
+
+		$model = ( new Replay( new Config() ) )->get_menu_model();
+
+		$node = null;
+		foreach ( $model as $entry ) {
+			if ( $entry['slug'] === $rendered_slug ) {
+				$node = $entry;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $node, 'Jetpack node must appear in the editor model.' );
+		$this->assertSame(
+			array( 'editor' ),
+			$node['hiddenRoles'],
+			'hidden_roles must resolve via normalized key, not a raw slug lookup.'
+		);
+	}
+
+	/**
 	 * Anti-regression guard: a plain already-simple slug (edit.php) with a stored
 	 * override still renames exactly as before — normalize() is a no-op on simple slugs
 	 * (idempotency guarantees zero behavior change for existing overrides).

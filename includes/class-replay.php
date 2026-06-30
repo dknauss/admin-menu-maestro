@@ -88,22 +88,9 @@ class Replay {
 		$base = function_exists( 'admin_url' ) ? admin_url( '' ) : '';
 
 		// Axis-1 collision guard: two distinct stored keys that normalize to the
-		// same key → mark that normalized key ambiguous; apply nothing for it.
-		$norm_items = array(); // normalized_key => override.
-		$norm_skip  = array(); // normalized_key => true (ambiguous, skip).
-		foreach ( $items as $stored_key => $override ) {
-			$nk = Slug::normalize( (string) $stored_key, $base );
-			if ( '' === $nk ) {
-				continue;
-			}
-			if ( isset( $norm_items[ $nk ] ) ) {
-				// Collision: two stored keys share a normalized key → mark ambiguous.
-				$norm_skip[ $nk ] = true;
-				unset( $norm_items[ $nk ] );
-			} elseif ( ! isset( $norm_skip[ $nk ] ) ) {
-				$norm_items[ $nk ] = $override;
-			}
-		}
+		// same key are ambiguous → apply nothing for that key. Shared with the
+		// editor model (get_menu_model) so apply and display agree.
+		list( $norm_items, $norm_skip ) = $this->normalized_items( $items, $base );
 
 		// --- Top-level: rename, icon, visibility -------------------------------
 		// Axis-2 collision guard: track which normalized key matched which distinct
@@ -349,6 +336,53 @@ class Replay {
 	}
 
 	/**
+	 * Build the normalized stored-override lookup with the Axis-1 collision guard:
+	 * two distinct stored keys that normalize to the same key are ambiguous and
+	 * resolve to nothing. Shared by replay() (which applies overrides) and
+	 * get_menu_model() (which shows them in the editor) so the two never drift.
+	 *
+	 * @param array  $items Stored items keyed by raw override key.
+	 * @param string $base  Admin base for Slug::normalize().
+	 * @return array{0: array<string, array>, 1: array<string, bool>} [ norm_items, norm_skip ]
+	 */
+	private function normalized_items( array $items, $base ) {
+		$norm_items = array(); // normalized_key => override.
+		$norm_skip  = array(); // normalized_key => true (ambiguous, skip).
+		foreach ( $items as $stored_key => $override ) {
+			$nk = Slug::normalize( (string) $stored_key, $base );
+			if ( '' === $nk ) {
+				continue;
+			}
+			if ( isset( $norm_items[ $nk ] ) ) {
+				$norm_skip[ $nk ] = true;
+				unset( $norm_items[ $nk ] );
+			} elseif ( ! isset( $norm_skip[ $nk ] ) ) {
+				$norm_items[ $nk ] = $override;
+			}
+		}
+		return array( $norm_items, $norm_skip );
+	}
+
+	/**
+	 * Resolve a rendered slug's stored hidden_roles through the normalized lookup,
+	 * mirroring how replay() decides which override applies. Returns an empty
+	 * array when the slug has no (unambiguous) stored override.
+	 *
+	 * @param string $slug       Rendered slug.
+	 * @param array  $norm_items Normalized override map from normalized_items().
+	 * @param array  $norm_skip  Ambiguous normalized keys from normalized_items().
+	 * @param string $base       Admin base for Slug::normalize().
+	 * @return array
+	 */
+	private function resolved_hidden_roles( $slug, array $norm_items, array $norm_skip, $base ) {
+		$nk = Slug::normalize( (string) $slug, $base );
+		if ( '' === $nk || isset( $norm_skip[ $nk ] ) || ! isset( $norm_items[ $nk ]['hidden_roles'] ) ) {
+			return array();
+		}
+		return $norm_items[ $nk ]['hidden_roles'];
+	}
+
+	/**
 	 * Build the effective menu model for the editor: the current, override-applied
 	 * state in render order, with the DOM <li> id for each top-level item so the
 	 * JS can locate nodes precisely instead of scraping hrefs.
@@ -369,6 +403,14 @@ class Replay {
 		$cfg   = $this->config->get();
 		$items = isset( $cfg['items'] ) ? $cfg['items'] : array();
 
+		// Resolve hidden_roles through the SAME normalized lookup replay() applies,
+		// not a raw $items[$slug] hit. A stored key that only matches after
+		// normalization (host move, ver=/utm_ drift, &amp; encoding) would
+		// otherwise show an empty visibility panel in the editor, and the next
+		// full-replace autosave would silently drop the working rule.
+		$base                           = function_exists( 'admin_url' ) ? admin_url( '' ) : '';
+		list( $norm_items, $norm_skip ) = $this->normalized_items( $items, $base );
+
 		foreach ( $menu as $row ) {
 			if ( empty( $row[2] ) || ( isset( $row[4] ) && false !== strpos( (string) $row[4], 'wp-menu-separator' ) ) ) {
 				continue; // skip separators in v1.
@@ -380,7 +422,7 @@ class Replay {
 				'liId'        => $this->li_id( $row ),
 				'title'       => isset( $row[0] ) ? wp_strip_all_tags( $row[0] ) : '',
 				'icon'        => isset( $row[6] ) ? $row[6] : '',
-				'hiddenRoles' => isset( $items[ $slug ]['hidden_roles'] ) ? $items[ $slug ]['hidden_roles'] : array(),
+				'hiddenRoles' => $this->resolved_hidden_roles( $slug, $norm_items, $norm_skip, $base ),
 				'submenu'     => array(),
 			);
 
@@ -392,7 +434,7 @@ class Replay {
 					$node['submenu'][] = array(
 						'slug'        => $sub[2],
 						'title'       => isset( $sub[0] ) ? wp_strip_all_tags( $sub[0] ) : '',
-						'hiddenRoles' => isset( $items[ $sub[2] ]['hidden_roles'] ) ? $items[ $sub[2] ]['hidden_roles'] : array(),
+						'hiddenRoles' => $this->resolved_hidden_roles( $sub[2], $norm_items, $norm_skip, $base ),
 					);
 				}
 			}
