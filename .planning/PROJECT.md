@@ -116,6 +116,7 @@ and `.planning/milestones/` for records.
 - [ ] V2-15 — role cloning / per-user menu hiding
 - [✓] V2-16 — WooCommerce-first third-party menu compatibility — **delivered by milestone R1** (research; full 6-plugin survey → COMPAT-xx backlog). Forward production fixes now tracked as FIX-xx (COMPAT-01/02/03 highest priority).
 - [ ] V2-17 — single-site privileged editor tier (edges toward the Out-of-Scope “page locking” line; enforced tier likely belongs in wp-sudo or a documented bridge)
+- [ ] DEMO-01 — slug-resolution showcase demo: a Playground demo that actually demonstrates FIX-01/02/03, not just a busier menu. Needs a **pre-seeded `maestro_config`** whose override keys are in one slug form (e.g. `&amp;`-encoded taxonomy, `ver=`-stamped, absolute-URL) while the menu renders another, so the user sees the override still land. Prefer a lightweight demo-only **fixture mu-plugin** (registers items with the R1 survey slug shapes; deterministic, near-zero Playground boot cost) over heavy real plugins. Optional secondary **“Try it with WooCommerce”** opt-in blueprint (wizard suppressed, version pinned) for name recognition; skip Elementor in the live demo (heaviest, onboarding-noisy, CSS-hides 2 of 3 menus per SURV-04). Out of v1.3.0 scope.
 
 ### Out of Scope
 
