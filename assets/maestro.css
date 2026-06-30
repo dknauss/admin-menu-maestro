@@ -46,6 +46,22 @@ body.maestro-editing #collapse-menu {
 	display: none !important;
 }
 
+/* Core menu separators (a ~11px-tall li.wp-menu-separator + inner div.separator)
+ * read as a stray dark band between groups while editing — most visibly above
+ * the Posts group — because the force-expanded submenus already cluster each
+ * group, so the gap looks like extra dead space enlarging the next item.
+ * Collapse separators in edit mode (li AND the inner div). Separators are not
+ * editable in v1, so nothing is lost; !important beats WP core's per-version
+ * separator sizing across admin colour schemes. */
+.maestro-editing #adminmenu li.wp-menu-separator,
+.maestro-editing #adminmenu li.wp-menu-separator .separator {
+	height: 0 !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+}
+
 /* ---------- accessibility utilities ------------------------------------- */
 
 /* Canonical WordPress .screen-reader-text implementation (clip-path variant).
