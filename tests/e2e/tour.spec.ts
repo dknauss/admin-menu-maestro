@@ -38,6 +38,18 @@ test( 'guided tour: auto-launch, step through, seen-flag, replay, Esc', async ( 
 	await page.locator( '.maestro-tour-help' ).click();
 	await expect( tour ).toBeVisible();
 
+	// Focus containment (aria-modal): focus escaping to the page behind the tour
+	// is pulled back inside it.
+	const contained = await page.evaluate( () => {
+		const bg = document.querySelector( '#adminmenu a' );
+		if ( bg ) {
+			( bg as HTMLElement ).focus();
+		}
+		const t = document.querySelector( '.maestro-tour' );
+		return !! t && t.contains( document.activeElement );
+	} );
+	expect( contained ).toBe( true );
+
 	// Esc closes it.
 	await page.keyboard.press( 'Escape' );
 	await expect( tour ).toHaveCount( 0 );

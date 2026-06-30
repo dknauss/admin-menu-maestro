@@ -1246,7 +1246,7 @@
 	// (role=dialog, focus-managed, Esc/Tab-trapped, wp.a11y.speak announcements,
 	// reduced-motion-safe via CSS). Auto-launches once on first run; replayable
 	// anytime via the toolbar "?" button.
-	var tour = { active: false, idx: 0, lastFocus: null, root: null, steps: null };
+	var tour = { active: false, idx: 0, lastFocus: null, root: null, steps: null, rendering: false };
 
 	function firstMenuItem() {
 		return document.querySelector( '#adminmenu > li.menu-top.maestro-item' );
@@ -1277,6 +1277,11 @@
 		tour.active = true;
 		tour.idx = 0;
 		tour.lastFocus = document.activeElement;
+		// Focus containment: the tooltip is aria-modal, so keep focus inside it.
+		// The Tab handler only cycles WITHIN the tour buttons; this catches focus
+		// escaping any other way (a click on the still-visible page behind it, the
+		// rename input gaining focus on selection) and pulls it back in.
+		document.addEventListener( 'focusin', onTourFocusIn, true );
 		renderTourStep();
 	}
 
@@ -1284,6 +1289,7 @@
 		tour.active = false;
 		if ( tour.root ) { tour.root.remove(); tour.root = null; }
 		document.removeEventListener( 'keydown', onTourKeydown, true );
+		document.removeEventListener( 'focusin', onTourFocusIn, true );
 		// Mark seen so the first-run auto-launch never fires again. Replay stays
 		// available via the toolbar "?" button. Storage may throw — ignore.
 		try {
@@ -1296,6 +1302,20 @@
 				f.focus( { preventScroll: true } );
 			} catch ( focusErr ) {
 				f.focus();
+			}
+		}
+	}
+
+	// Pull focus back into the modal coachmark if it escapes to the page behind it.
+	function onTourFocusIn( e ) {
+		if ( ! tour.active || tour.rendering || ! tour.root ) { return; }
+		if ( tour.root.contains( e.target ) ) { return; }
+		var btn = tour.root.querySelector( '.maestro-tour-next' ) || tour.root.querySelector( 'button' );
+		if ( btn ) {
+			try {
+				btn.focus( { preventScroll: true } );
+			} catch ( focusErr ) {
+				btn.focus();
 			}
 		}
 	}
@@ -1323,6 +1343,9 @@
 	}
 
 	function renderTourStep() {
+		// Suppress the focus-containment redirect while we tear down/rebuild the
+		// tooltip and run step.before() (which may select an item / move focus).
+		tour.rendering = true;
 		var step = tour.steps[ tour.idx ];
 		if ( step.before ) { step.before(); }
 
@@ -1398,6 +1421,7 @@
 		} catch ( focusErr ) {
 			next.focus();
 		}
+		tour.rendering = false;
 		if ( window.wp && window.wp.a11y && window.wp.a11y.speak ) {
 			window.wp.a11y.speak( step.text );
 		}
