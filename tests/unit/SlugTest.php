@@ -250,4 +250,41 @@ class SlugTest extends TestCase {
 			Slug::normalize( 'admin.php?page=x#a#b' )
 		);
 	}
+
+	// -------------------------------------------------------------------------
+	// Nested '/wp-admin/' inside a query value must not hijack the host strip
+	// -------------------------------------------------------------------------
+
+	/**
+	 * A '/wp-admin/' that appears inside a query-string value (e.g. a redirect
+	 * param) must NOT be treated as the admin boundary: only the URL PATH is
+	 * searched. Otherwise a host-moved key strips down to the nested page
+	 * (profile.php) and stops matching the real item. Regression guard for the
+	 * exact host-move case the wp-admin strip is meant to fix.
+	 */
+	public function test_nested_wp_admin_in_query_does_not_hijack_strip() {
+		$moved = 'https://newhost.test/wp-admin/admin.php?page=x&redirect=https://site.test/wp-admin/profile.php';
+
+		$this->assertSame(
+			'admin.php?page=x&redirect=https://site.test/wp-admin/profile.php',
+			Slug::normalize( $moved, self::ADMIN_BASE ),
+			'The query value /wp-admin/ must not hijack the path-based host strip.'
+		);
+	}
+
+	/**
+	 * The host-moved absolute form and the current-host relative form of the same
+	 * slug (whose query contains a nested /wp-admin/ value) must normalize equal,
+	 * so a stored override keeps applying after a host move.
+	 */
+	public function test_nested_wp_admin_host_move_normalizes_equal() {
+		$absolute = 'https://newhost.test/wp-admin/admin.php?page=x&redirect=https://site.test/wp-admin/profile.php';
+		$relative = 'admin.php?page=x&redirect=https://site.test/wp-admin/profile.php';
+
+		$this->assertSame(
+			Slug::normalize( $relative, self::ADMIN_BASE ),
+			Slug::normalize( $absolute, self::ADMIN_BASE ),
+			'Host-moved and current-host forms must collapse to the same key.'
+		);
+	}
 }

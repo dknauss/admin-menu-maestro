@@ -100,12 +100,18 @@ class Slug {
 			return substr( $slug, strlen( $admin_base ) );
 		}
 
-		// Any URL containing '/wp-admin/' → strip everything up to and including
-		// the last occurrence of '/wp-admin/' so a host move still normalizes.
+		// Any URL whose PATH contains '/wp-admin/' → strip everything up to and
+		// including the last path occurrence so a host move still normalizes.
+		// Search the PATH only: a nested admin URL inside a query value (e.g.
+		// ?redirect=https://other/wp-admin/profile.php) must not hijack the strip
+		// and collapse the key down to the nested page.
 		$wp_admin_marker = '/wp-admin/';
-		$marker_pos      = strrpos( $slug, $wp_admin_marker );
+		$query_pos       = strpos( $slug, '?' );
+		$path_part       = false !== $query_pos ? substr( $slug, 0, $query_pos ) : $slug;
+		$query_part      = false !== $query_pos ? substr( $slug, $query_pos ) : '';
+		$marker_pos      = strrpos( $path_part, $wp_admin_marker );
 		if ( false !== $marker_pos ) {
-			return substr( $slug, $marker_pos + strlen( $wp_admin_marker ) );
+			return substr( $path_part, $marker_pos + strlen( $wp_admin_marker ) ) . $query_part;
 		}
 
 		// External URL: keep host + path (no scheme), lowercase the host.
