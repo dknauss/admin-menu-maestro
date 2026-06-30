@@ -61,6 +61,19 @@ test.describe( 'Directory screenshots — v1.2 editor UI (MAESTRO_CAPTURE-gated)
 		fs.mkdirSync( SCREENSHOTS_DIR, { recursive: true } );
 	} );
 
+	// Suppress the first-run guided tour so its (aria-modal, focus-trapping)
+	// coachmark doesn't overlay or block the captured editor screenshots. The
+	// seen-flag must be set before the editor script runs, so use addInitScript.
+	test.beforeEach( async ( { page } ) => {
+		await page.addInitScript( () => {
+			try {
+				window.localStorage.setItem( 'maestroFirstRunDone', '1' );
+			} catch ( e ) {
+				// Storage blocked — capture may show the tour; not fatal.
+			}
+		} );
+	} );
+
 	// 1 — Editor active, top-level item selected (full context).
 	test( 'screenshot 1 — editor toolbar + selected item controls', async ( { page } ) => {
 		await enterEditorAndSelect( page );
