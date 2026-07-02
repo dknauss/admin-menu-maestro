@@ -1,0 +1,63 @@
+name: Playground demo asset
+
+# Publishes a CLEAN plugin ZIP for the "Try in Playground (main)" demo.
+#
+# On every push to main that touches the plugin, builds build/maestro-menu-editor.zip
+# via bin/build.sh (the runtime-only package — no tests/tooling/dev cruft) and uploads
+# it under a FIXED asset name on a rolling PRERELEASE tagged `playground-demo`. That
+# gives the main demo a stable, always-latest URL:
+#
+#   https://github.com/dknauss/Maestro/releases/download/playground-demo/maestro-menu-editor.zip
+#
+# blueprint-hosted.json installs it through the CORS proxy (git:directory is broken in
+# the browser Playground — `createHash is not a function`).
+#
+# Why PRERELEASE: `/releases/latest/download/` (used by the stable demo) resolves to the
+# latest *full* release only, so marking this prerelease keeps it from hijacking that URL.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'maestro-menu-editor.php'
+      - 'uninstall.php'
+      - 'includes/**'
+      - 'assets/**'
+      - 'languages/**'
+      - 'readme.txt'
+      - 'bin/build.sh'
+      - '.github/workflows/playground-demo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: playground-demo
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Build + publish rolling demo ZIP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build clean plugin ZIP
+        run: |
+          bash bin/build.sh
+          unzip -tq build/maestro-menu-editor.zip
+
+      - name: Publish rolling demo asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view playground-demo >/dev/null 2>&1; then
+            gh release upload playground-demo build/maestro-menu-editor.zip --clobber
+          else
+            gh release create playground-demo build/maestro-menu-editor.zip \
+              --prerelease \
+              --title "Playground demo (rolling main build)" \
+              --notes "Auto-built from \`main\` for the Try-in-Playground demo. Not a real release — the \`maestro-menu-editor.zip\` asset is rebuilt and replaced on every push to main."
+          fi
