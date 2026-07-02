@@ -3,7 +3,7 @@
 	"meta": {
 		"title": "Maestro — latest stable release demo",
 		"author": "dknauss",
-		"description": "In-place admin menu editor, with User Switching and test users (editor, author, contributor, subscriber) for trying per-role menu visibility. (pinned to the latest released version)."
+		"description": "In-place admin menu editor, with User Switching and test users (editor, author, contributor, subscriber) for trying per-role menu visibility. (installs the latest released version)."
 	},
 	"landingPage": "/wp-admin/index.php?maestro_edit=1",
 	"preferredVersions": { "php": "8.3", "wp": "latest" },
@@ -14,7 +14,7 @@
 			"step": "installPlugin",
 			"pluginData": {
 				"resource": "url",
-				"url": "https://wordpress-playground-cors-proxy.net/?https://github.com/dknauss/Maestro/releases/download/v1.3.0/maestro-menu-editor.zip"
+				"url": "https://wordpress-playground-cors-proxy.net/?https://github.com/dknauss/Maestro/releases/latest/download/maestro-menu-editor.zip"
 			},
 			"options": { "activate": true },
 			"progress": { "caption": "Installing Maestro" }

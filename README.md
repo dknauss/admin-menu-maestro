@@ -114,10 +114,10 @@ in the editor, then use **Switch To** (admin bar) to view the menu as that user.
 
 > **Hosted Playground:** two hosted blueprints are available, both served from `main` so their URLs are stable:
 >
-> - **[Latest release demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-stable.json)** — [`playground/blueprint-stable.json`](playground/blueprint-stable.json) installs the plugin from the latest release tag. This matches what users actually install from WordPress.org and is the primary "Try it live" link.
-> - **[Development build (main)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)** — [`playground/blueprint-hosted.json`](playground/blueprint-hosted.json) tracks the `main` branch (bleeding edge). Use this to preview unreleased changes.
+> - **[Latest release demo](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-stable.json)** — [`playground/blueprint-stable.json`](playground/blueprint-stable.json) installs the plugin from the latest GitHub release ZIP (`/releases/latest/download/`, through the Playground CORS proxy) — byte-identical to a release, and it always tracks the newest one. This is the primary "Try it live" link.
+> - **[Development build (main)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-hosted.json)** — [`playground/blueprint-hosted.json`](playground/blueprint-hosted.json) tracks the `main` branch (bleeding edge) via a `git:directory` resource. Use this to preview unreleased changes.
 >
-> Both use a `git:directory` resource; the local [`playground/blueprint.json`](playground/blueprint.json) mounts the working tree instead.
+> The local [`playground/blueprint.json`](playground/blueprint.json) mounts the working tree instead.
 
 ## Contributing
 

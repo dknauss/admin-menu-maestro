@@ -21,30 +21,24 @@ Installs the plugin via a `git:directory` resource pointing at the `main`
 branch. Every time this demo loads it pulls the latest commit on `main`, so it
 reflects unreleased changes. Use this to preview work in progress.
 
-### [`blueprint-stable.json`](blueprint-stable.json) — hosted, pinned to release tag
+### [`blueprint-stable.json`](blueprint-stable.json) — hosted, latest release
 
 Playground URL:
 `https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/dknauss/Maestro/main/playground/blueprint-stable.json`
 
-Installs the plugin via a `git:directory` resource pinned to the latest release
-tag (e.g. `v1.1.0`). This matches the version users install from WordPress.org
-and is the primary "Try it live" demo linked from the README.
-
-Note: the blueprint *file itself* is always served from `main` (stable URL),
-but the install step's `"ref"` inside the file is pinned to the release tag.
+Installs the plugin from the latest GitHub **release ZIP** —
+`https://github.com/dknauss/Maestro/releases/latest/download/maestro-menu-editor.zip`,
+fetched through the Playground CORS proxy (direct GitHub asset URLs fail CORS in
+the browser runtime). The `/releases/latest/download/` path always resolves to
+the newest release's asset, so this is byte-identical to what users install and
+always tracks the current release. This is the primary "Try it live" demo linked
+from the README. The release asset is built and attached by the release workflow
+(`bin/build.sh` + `.github/workflows/release.yml`).
 
 ## Release rule
 
-**`blueprint-stable.json`'s `"ref"` is bumped to the new tag during release
-prep by running `bin/prep-release.sh <version>`** (e.g. `bin/prep-release.sh
-1.2.0`). This script is run in the version-bump PR — the human-reviewed PR that
-updates version strings before the tag is created.
-
-### Why not a post-tag automation?
-
-Branch protection blocks the release workflow's `GITHUB_TOKEN` from pushing
-commits directly to the protected `main` branch. A post-tag CI job that bumped
-the blueprint ref would fail at push time. By including the bump in the
-release-prep PR instead, the change goes through normal review and lands on
-`main` before the tag is created, keeping the stable demo URL correct from the
-moment the release publishes.
+Nothing to do for the demos. The stable demo installs from
+`/releases/latest/download/`, which the release workflow refreshes automatically;
+the main demo tracks the `main` branch. Neither blueprint needs a per-release
+edit. (`bin/prep-release.sh` bumps the version strings in the plugin header and
+`readme.txt`; it no longer touches any blueprint.)
